@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { classroomLabs } from "../src/classroom/labs.mjs";
+import { FEEDER_PINS } from "../public/scripts/feeder/model.js";
 const root = new URL("../", import.meta.url);
 const template = await readFile(
   new URL("scripts/templates/wokwi.html", root),
@@ -20,4 +21,9 @@ for (const [key, lab] of Object.entries(classroomLabs)) {
     lab.libraries.length ? lab.libraries.join("\n") + "\n" : "",
   );
 }
-console.log("Prepared source-derived classroom and 3 ESP32 labs");
+const piezoPath = new URL("public/labs/piezo/", root);
+await mkdir(piezoPath, { recursive: true });
+const piezoSketch = await readFile(new URL("src/classroom/feeder-firmware/piezo.ino", root), "utf8");
+await writeFile(new URL("sketch.ino", piezoPath),
+  `#include <Arduino.h>\nconstexpr int PIEZO_PIN = ${FEEDER_PINS.piezo};\n\n${piezoSketch}`);
+console.log("Prepared classroom, 3 ESP32 labs, and the optional Piezo sketch");

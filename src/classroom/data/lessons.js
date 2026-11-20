@@ -305,6 +305,7 @@ export const LESSONS = [
     slideNum: 17,
     phaseId: 3,
     title: "Lab เครื่องให้อาหารแมว",
+    allowExternalTabs: true,
     fullName: "17. รวมเครื่องให้อาหารแมวใน Wokwi",
     subtitle: "สั่งฝาและเสียง → อ่านเซนเซอร์ → รวมระบบ",
     description:

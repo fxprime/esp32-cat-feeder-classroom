@@ -70,4 +70,6 @@ void loop() {
     step = Step::Ready;
     Serial.println("FLAP CLOSED");
   }
+  // พักการอ่านขา 1 ms ต่อรอบ คืนเวลาให้ตัวจำลอง · จับเวลาฝาด้วย millis()
+  delay(1);
 }

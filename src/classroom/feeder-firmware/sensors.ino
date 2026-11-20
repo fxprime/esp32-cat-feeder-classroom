@@ -20,4 +20,6 @@ void loop() {
       humidity, distanceCm, estimateFood(distanceCm), bowlBeam.active() ? "LOW" : "HIGH");
     if (!isfinite(humidity) || estimateFood(distanceCm) < 0) Serial.println("SENSOR_READING_INVALID");
   }
+  // พักการอ่านขา 1 ms ต่อรอบ คืนเวลาให้ตัวจำลอง · จับเวลาฝาด้วย millis()
+  delay(1);
 }
