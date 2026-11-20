@@ -38,6 +38,16 @@
     .copper-strip.is-visible {
       opacity: 0.42;
     }
+    .bb-hole:focus-visible { stroke: #1e40af; stroke-width: 3.5; }
+    .rail-jumper { opacity: 0; pointer-events: none; }
+    .rail-jumper[data-connected="true"] { opacity: 1; }
+    .rail-bridge-tools { margin-block-start: .7rem; }
+    .rail-bridge-tools legend { color: #134e4a; padding-bottom: .3rem; font-size: .88rem; font-weight: 800; }
+    .rail-bridge-options { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .rail-bridge-tools button { min-block-size: 44px; border: 1px solid #afd0c9; border-radius: .7rem; background: #f6fcfa; padding: .35rem .66rem; color: #205351; font-size: .81rem; font-weight: 700; cursor: pointer; }
+    .rail-bridge-tools button[aria-pressed="true"] { background: #d1fae5; border-color: #10835e; }
+    .rail-bridge-tools button:focus-visible { outline: 3px solid #0369a1; outline-offset: 2px; }
+    #rail-bridge-status { min-block-size: 1.4em; margin-block-start: .34rem; color: #425665; font-size: .8rem; }
   </style>
 <link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/breadboard-quiz.css"></head>
 <body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
@@ -90,7 +100,7 @@
           <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800">แนวที่ 1 • รางไฟริมบน-ล่าง (เส้นแดง + / น้ำเงิน -)</span>
         </div>
         <p class="text-xs sm:text-sm font-bold text-slate-800">
-          เชื่อมถึงกันเป็น <span class="text-emerald-600 underline decoration-2">แนวยาวตลอดทั้งแถว</span> (เอาไว้แจกไฟ + และ -; บอร์ดจริงบางรุ่นรางขาดกลาง)
+          บอร์ดตัวอย่างตัดรางตรงกลาง คู่ +/− แต่ละขอบจึงมี <span class="text-emerald-700 underline decoration-2">4 ช่วง</span> (+ ซ้าย, + ขวา, − ซ้าย, − ขวา) รวม 8 ช่วงเมื่อดูทั้งรางบนและล่าง
         </p>
       </div>
 
@@ -119,26 +129,26 @@
 
       <!-- Breadboard SVG Container -->
       <div class="w-full overflow-x-auto rounded-2xl bg-slate-100 p-2 sm:p-3 border border-slate-200">
-        <svg id="breadboardSvg" viewBox="0 0 880 390" class="w-full min-w-[640px] h-auto">
+        <svg id="breadboardSvg" viewBox="0 0 880 390" class="w-full min-w-[640px] h-auto" aria-label="แผงทดลองรางไฟที่แยกซ้ายและขวา">
           <!-- Breadboard Body -->
           <rect x="10" y="10" width="860" height="370" rx="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="4" />
 
           <!-- Power Rail Colored Lines -->
           <!-- Top + (Red) & - (Blue) -->
-          <line x1="58" y1="27" x2="825" y2="27" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+          <path d="M58 27H425M455 27H825" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
           <text x="36" y="39" font-size="16" font-weight="800" fill="#ef4444">+</text>
           <text x="840" y="39" font-size="16" font-weight="800" fill="#ef4444">+</text>
 
-          <line x1="58" y1="73" x2="825" y2="73" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" />
+          <path d="M58 73H425M455 73H825" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" />
           <text x="38" y="65" font-size="18" font-weight="800" fill="#3b82f6">–</text>
           <text x="842" y="65" font-size="18" font-weight="800" fill="#3b82f6">–</text>
 
           <!-- Bottom + (Red) & - (Blue) -->
-          <line x1="58" y1="317" x2="825" y2="317" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+          <path d="M58 317H425M455 317H825" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
           <text x="36" y="329" font-size="16" font-weight="800" fill="#ef4444">+</text>
           <text x="840" y="329" font-size="16" font-weight="800" fill="#ef4444">+</text>
 
-          <line x1="58" y1="363" x2="825" y2="363" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" />
+          <path d="M58 363H425M455 363H825" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" />
           <text x="38" y="355" font-size="18" font-weight="800" fill="#3b82f6">–</text>
           <text x="842" y="355" font-size="18" font-weight="800" fill="#3b82f6">–</text>
 
@@ -152,8 +162,19 @@
           <g id="stripsLayer"></g>
           <g id="labelsLayer"></g>
           <g id="holesLayer"></g>
+          <g id="railJumpersLayer" aria-hidden="true"></g>
         </svg>
       </div>
+      <fieldset class="rail-bridge-tools">
+        <legend>ลองต่อจัมเปอร์ข้ามรอยตัด</legend>
+        <div class="rail-bridge-options">
+          <button type="button" data-rail-bridge="rail-top-plus" aria-pressed="false">รางบน +</button>
+          <button type="button" data-rail-bridge="rail-top-minus" aria-pressed="false">รางบน −</button>
+          <button type="button" data-rail-bridge="rail-bot-plus" aria-pressed="false">รางล่าง +</button>
+          <button type="button" data-rail-bridge="rail-bot-minus" aria-pressed="false">รางล่าง −</button>
+        </div>
+        <p id="rail-bridge-status" role="status">แตะรูเพื่อดูครึ่งที่เชื่อมกัน หรือกดเลือกรางเพื่อต่อจัมเปอร์ขั้วเดียวกัน</p>
+      </fieldset>
     </section>
     <section class="bb-quiz-entry"><div><h2>Mini 1 · ต่อไฟแดงแจ้งปัญหา</h2><p>เริ่มจาก LED แดง 1 ดวง ลากสายแล้วดูเส้นทางกระแส ถ้าผ่านแล้วลองต่อหลายดวงในโจทย์เสริม</p></div><button id="begin-breadboard-quiz">เข้า Quiz · ลองต่อวงจร →</button></section>
     </div>
@@ -165,6 +186,10 @@
       const stripsLayer = document.getElementById('stripsLayer');
       const labelsLayer = document.getElementById('labelsLayer');
       const holesLayer = document.getElementById('holesLayer');
+      const jumpersLayer = document.getElementById('railJumpersLayer');
+      const bridgeStatus = document.getElementById('rail-bridge-status');
+      const bridgeButtons = [...document.querySelectorAll('[data-rail-bridge]')];
+      const jumpers = {};
       const xrayStatusBanner = document.getElementById('xrayStatusBanner');
       const holeCoordBadge = document.getElementById('holeCoordBadge');
       const railInfoCard = document.getElementById('railInfoCard');
@@ -177,6 +202,12 @@
       const numCols = 25;
       const startX = 68;
       const colStep = 31;
+      const railGapColumn = 13;
+      const railHalves = [
+        { id: 'left', name: 'ซ้าย', from: 1, to: railGapColumn - 1, peer: 'right' },
+        { id: 'right', name: 'ขวา', from: railGapColumn + 1, to: numCols, peer: 'left' },
+      ];
+      const holeX = col => startX + (col - 1) * colStep;
 
       const topRows = [
         { name: 'A', y: 98 },
@@ -210,46 +241,45 @@
         return el;
       }
 
-      // 1. Build Horizontal Power Rails
-      railRows.forEach((rail) => {
-        const strip = createSvgEl('rect', {
-          x: startX - 10,
-          y: rail.y - 8,
-          width: (numCols - 1) * colStep + 20,
-          height: 16,
-          rx: 8,
-          fill: '#22c55e',
-          class: 'copper-strip'
-        });
-        stripsLayer.appendChild(strip);
-
-        groups[rail.id] = {
-          stripEl: strip,
-          holeEls: [],
-          type: 'rail',
-          title: 'รางไฟแนวยาว: เชื่อมถึงกันทั้งหมด!',
-          coord: rail.label
-        };
-
-        for (let c = 1; c <= numCols; c++) {
-          const x = startX + (c - 1) * colStep;
-          const hole = createSvgEl('rect', {
-            x: x - 5.5,
-            y: rail.y - 5.5,
-            width: 11,
-            height: 11,
-            rx: 2.5,
-            fill: '#334155',
-            stroke: '#94a3b8',
-            'stroke-width': 1,
-            class: 'bb-hole',
-            'data-group': rail.id,
-            'data-coord': `${rail.label} ช่อง ${c}`
+      for (const rail of railRows) {
+        for (const half of railHalves) {
+          const groupId = `${rail.id}-${half.id}`;
+          const strip = createSvgEl('rect', {
+            x: holeX(half.from) - 10, y: rail.y - 8,
+            width: (half.to - half.from) * colStep + 20, height: 16, rx: 8,
+            fill: '#22c55e', class: 'copper-strip', 'data-rail-segment': groupId,
           });
-          holesLayer.appendChild(hole);
-          groups[rail.id].holeEls.push(hole);
+          stripsLayer.appendChild(strip);
+          const coord = `${rail.label} ฝั่ง${half.name}`;
+          const group = groups[groupId] = {
+            stripEl: strip, holeEls: [], type: 'rail', coord, railId: rail.id,
+            peerId: `${rail.id}-${half.peer}`, title: `${coord} · เชื่อมเฉพาะครึ่งเดียว`,
+          };
+          for (let col = half.from; col <= half.to; col++) {
+            const hole = createSvgEl('rect', {
+              x: holeX(col) - 5.5, y: rail.y - 5.5, width: 11, height: 11, rx: 2.5,
+              fill: '#334155', stroke: '#94a3b8', 'stroke-width': 1, class: 'bb-hole',
+              'data-group': groupId, 'data-coord': `${coord} ช่อง ${col}`,
+            });
+            if (col === half.from) {
+              hole.setAttribute('tabindex', '0');
+              hole.setAttribute('role', 'button');
+              hole.setAttribute('aria-label', `สำรวจ${coord}`);
+            }
+            holesLayer.appendChild(hole);
+            group.holeEls.push(hole);
+          }
         }
-      });
+        const mid = holeX(railGapColumn);
+        const bend = rail.y + (rail.id.endsWith('plus') ? -17 : 17);
+        const jumper = createSvgEl('path', {
+          d: `M${holeX(railGapColumn - 1)} ${rail.y} Q${mid} ${bend} ${holeX(railGapColumn + 1)} ${rail.y}`,
+          stroke: rail.id.endsWith('plus') ? '#b91c1c' : '#1d4ed8', 'stroke-width': 4,
+          'stroke-linecap': 'round', fill: 'none', class: 'rail-jumper', 'data-rail-jumper': rail.id,
+        });
+        jumpersLayer.appendChild(jumper);
+        jumpers[rail.id] = { wire: jumper, connected: false, label: rail.label };
+      }
 
       // 2. Build Column Labels (1..25) & Row Labels (A..E, F..J)
       for (let c = 1; c <= numCols; c++) {
@@ -353,12 +383,16 @@
         }
 
         const g = groups[groupId];
-        g.stripEl.classList.add('is-visible');
-        g.holeEls.forEach((h) => h.classList.add('is-connected'));
+        const connected = g.type === 'rail' && jumpers[g.railId].connected;
+        const neighbors = connected ? [g, groups[g.peerId]] : [g];
+        for (const neighbor of neighbors) {
+          neighbor.stripEl.classList.add('is-visible');
+          neighbor.holeEls.forEach(hole => hole.classList.add('is-connected'));
+        }
         if (originHoleEl) originHoleEl.classList.add('is-origin');
 
         xrayStatusBanner.className = 'inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-sm transition-colors';
-        xrayStatusBanner.innerHTML = `<span>⚡</span><span>${g.title}</span>`;
+        xrayStatusBanner.textContent = connected ? `⚡ ${jumpers[g.railId].label} · ซ้าย–ขวาถึงกันผ่านจัมเปอร์` : `⚡ ${g.title}`;
         holeCoordBadge.textContent = (originHoleEl ? originHoleEl.getAttribute('data-coord') : g.coord) + (lockedGroup === groupId ? ' (ล็อกไว้)' : '');
 
         if (g.type === 'rail') {
@@ -396,6 +430,27 @@
           highlightGroup(gId, hole);
         }
       });
+
+      holesLayer.addEventListener('keydown', event => {
+        if (!['Enter', ' '].includes(event.key) || !event.target.matches('[tabindex="0"]')) return;
+        event.preventDefault();
+        event.target.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      });
+      for (const button of bridgeButtons) {
+        button.addEventListener('click', () => {
+          const id = button.dataset.railBridge;
+          const jumper = jumpers[id];
+          jumper.connected = !jumper.connected;
+          button.setAttribute('aria-pressed', String(jumper.connected));
+          jumper.wire.dataset.connected = String(jumper.connected);
+          lockedGroup = `${id}-left`;
+          lockedHoleEl = null;
+          highlightGroup(lockedGroup, null);
+          bridgeStatus.textContent = jumper.connected
+            ? `${jumper.label} · ซ้าย–ขวาถึงกันผ่านจัมเปอร์`
+            : `${jumper.label} · ถอดจัมเปอร์แล้ว ซ้าย–ขวาแยกกัน`;
+        });
+      }
 
       toggleAllStripsBtn.addEventListener('click', () => {
         showAllStrips = !showAllStrips;

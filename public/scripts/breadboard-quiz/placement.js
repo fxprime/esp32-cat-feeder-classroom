@@ -41,8 +41,8 @@ export function partsFor(count,poses={},preview=null){
   return {id,type:id[0],index,rotation,a,b,cx,cy,angle,length,handle,placed:!!snapped,preview:preview?.id===id};
  });
 }
-export function sceneLayout(count,poses={},preview=null){
- const base=createLayout(count),parts=partsFor(count,poses,preview),locations=new Map();
+export function sceneLayout(count,poses={},preview=null,splitRails=true){
+ const base=createLayout(count,splitRails),parts=partsFor(count,poses,preview),locations=new Map();
  for(const part of parts){const ids=leadIds(part.id);locations.set(ids[0],part.a);locations.set(ids[1],part.b);}
  return {...base,parts,points:base.points.map(p=>locations.has(p.id)?{...p,x:locations.get(p.id).x,y:locations.get(p.id).y}:p)};
 }

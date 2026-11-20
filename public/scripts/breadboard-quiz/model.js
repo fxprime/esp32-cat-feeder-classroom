@@ -1,15 +1,17 @@
 // Electrical connectivity is checked by nets, never by a fixed answer/slot map.
+export const railSplitAfter = 9;
+
 export const challenges = [
   { id: 'one-led', count: 1, title: 'Mini 1 · ต่อไฟแดงแจ้งปัญหา',
-    prompt: 'ฝึกต่อไฟแดงของเครื่องให้อาหาร ใช้ราง 3.3 V และ GND ที่ต่อไว้แล้ว ปัก LED แดง 1 ดวงกับตัวต้านทาน 330 Ω แล้วตามทางไหลกลับ GND',
+    prompt: 'ไฟ 3.3 V และ GND เข้ารางบนฝั่งซ้าย ปัก LED แดง 1 ดวงกับ R 330 Ω ถ้าใช้รางขวา ให้ต่อจัมเปอร์ + ไป + และ − ไป − ข้ามรอยตัด',
     parts: 'LED สีแดง × 1 · R 330Ω × 1',
     success: 'ไฟแดงพร้อมใช้งาน กระแสไหลผ่านตัวต้านทานกับ LED กลับสู่ GND ตอนรวมเครื่องให้ย้ายต้นทางของแขนงจากราง 3.3 V ไปที่ GPIO23 เพื่อให้ ESP32 สั่งติดได้' },
   { id: 'three-leds', count: 3, title: 'โจทย์เสริม · ทำให้ LED ทั้ง 3 ดวงสว่าง',
-    prompt: 'มีไฟ 3.3V ที่รางเดิม ใช้ LED สีแดง 3 ดวงและตัวต้านทาน 330Ω ทั้ง 3 ตัว ต่อให้ทุกดวงสว่างพร้อมกัน โดยแต่ละดวงมีตัวต้านทานจำกัดกระแสของตัวเอง',
+    prompt: 'ต่อ LED แดง 3 ดวงให้สว่างพร้อมกัน แต่ละดวงใช้ R 330 Ω ของตัวเอง ไฟเข้ารางบนฝั่งซ้าย ถ้าใช้รางอีกครึ่งหนึ่งให้ต่อจัมเปอร์ข้ามรอยตัด',
     parts: 'LED สีแดง × 3 · R 330Ω × 3',
     success: 'สำเร็จ! LED ทั้ง 3 ดวงอยู่คนละแขนง มีตัวต้านทานของตัวเอง และใช้แหล่งจ่าย 3.3V / GND ร่วมกัน' },
 ];
-export function createLayout(count) {
+export function createLayout(count, splitRails = true) {
   const points = [];
   const pairCenters = count === 1 ? [285] : [285, 590, 895];
   for (let i = 0; i < count; i++) {
@@ -26,7 +28,14 @@ export function createLayout(count) {
     ...'FGHIJ'.split('').map((r,i)=>[r,583+i*24,'lower',r]),
     ['BP',734,'rail.BP','รางล่าง +'],['BN',768,'rail.BN','รางล่าง −']];
   for (const [row,y,group,label] of rows) for(let col=1; col<=18; col++) {
-    points.push({id:`${row}${col}`,x:180+(col-1)*44,y,net:group.startsWith('rail.')?group:`${group}.${col}`,label:`${label}${group.startsWith('rail.')?' ช่อง ':''}${col}`,type:'hole',locked:col===1&&(row==='P'||row==='N')});
+    const isRail = group.startsWith('rail.');
+    const rightHalf = col > railSplitAfter;
+    points.push({
+      id: `${row}${col}`, x: 180 + (col - 1) * 44, y,
+      net: isRail ? (splitRails && rightHalf ? `${group}.right` : group) : `${group}.${col}`,
+      label: isRail ? [label, splitRails ? `ฝั่ง${rightHalf ? 'ขวา' : 'ซ้าย'}` : '', `ช่อง ${col}`].filter(Boolean).join(' ') : `${label}${col}`,
+      type: 'hole', locked: col === 1 && (row === 'P' || row === 'N'),
+    });
   }
   return { points, pairs: pairCenters.map((center,i)=>({ledX:center-75,rX:center+70,index:i+1})) };
 }
@@ -39,9 +48,9 @@ export function connectionError(wires, from, to, count, ignoreId=null) {
   if(others.some(w=>[w.from,w.to].includes(from)||[w.from,w.to].includes(to)))return 'รูหรือขานี้มีสายอยู่แล้ว เลือกสายเดิมเพื่อลบ หรือย้ายปลายสายก่อน';
   return null;
 }
-export function validateCircuit(wires,count) {
+export function validateCircuit(wires,count,splitRails=true) {
   if(!Array.isArray(wires)||wires.length>80||![1,3].includes(count))return false;
-  const layout=createLayout(count), points=new Map(layout.points.map(p=>[p.id,p]));
+  const layout=createLayout(count,splitRails);
   const parent=new Map();
   function root(x){if(!parent.has(x))parent.set(x,x);if(parent.get(x)!==x)parent.set(x,root(parent.get(x)));return parent.get(x);}
   function join(a,b){parent.set(root(a),root(b));}

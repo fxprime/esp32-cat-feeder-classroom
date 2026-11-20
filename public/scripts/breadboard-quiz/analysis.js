@@ -27,8 +27,8 @@ function gaussian(a, b) {
   return result;
 }
 
-export function analyzeCircuit(wires,count) {
-  const layout=createLayout(count), points=new Map(layout.points.map(p=>[p.id,p]));
+export function analyzeCircuit(wires,count,splitRails=true) {
+  const layout=createLayout(count,splitRails), points=new Map(layout.points.map(p=>[p.id,p]));
   const net=id=>points.get(id)?.net||id;
   const validWires=wires.filter(w=>points.has(w.from)&&points.has(w.to));
   const components=[];

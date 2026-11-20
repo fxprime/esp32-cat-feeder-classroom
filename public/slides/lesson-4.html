@@ -37,9 +37,9 @@
       100% { transform: translateY(-65px) scale(1.65); opacity: 0; }
     }
     .smoke-puff { opacity: 0; transform-box: fill-box; transform-origin: center; }
-    .is-short .smoke-puff-1 { animation: smokeRise 1.6s ease-out infinite; }
-    .is-short .smoke-puff-2 { animation: smokeRise 1.6s ease-out 0.5s infinite; }
-    .is-short .smoke-puff-3 { animation: smokeRise 1.6s ease-out 1.0s infinite; }
+    .is-short .smoke-puff-1 { animation: smokeRise 1.6s ease-out 2; }
+    .is-short .smoke-puff-2 { animation: smokeRise 1.6s ease-out 0.5s 2; }
+    .is-short .smoke-puff-3 { animation: smokeRise 1.6s ease-out 1.0s 2; }
 
     /* Sparks flashing */
     @keyframes sparkFlash {
@@ -48,8 +48,8 @@
       70% { opacity: 0.2; transform: scale(0.85) rotate(-10deg); }
     }
     .spark-fx { opacity: 0; transform-box: fill-box; transform-origin: center; }
-    .is-short .spark-fx-1 { animation: sparkFlash 0.55s ease-in-out infinite; }
-    .is-short .spark-fx-2 { animation: sparkFlash 0.55s ease-in-out 0.25s infinite; }
+    .is-short .spark-fx-1 { animation: sparkFlash 0.75s ease-in-out 2; }
+    .is-short .spark-fx-2 { animation: sparkFlash 0.75s ease-in-out 0.25s 2; }
 
     /* LED Yellow Glow in Normal Mode */
     @keyframes ledShine {
@@ -73,6 +73,12 @@
       0%, 100% { stroke-opacity: 1; }
       50% { stroke-opacity: 0.45; }
     }
+    #modeNormalBtn[aria-pressed="true"] { background: #047857; color: #fff; }
+    #modeShortBtn[aria-pressed="true"] { background: #b91c1c; color: #fff; border-color: #b91c1c; }
+    @media (prefers-reduced-motion: reduce) {
+      .is-normal .led-dome, .is-short .short-arc, .is-short .smoke-puff, .is-short .spark-fx { animation: none; }
+    }
+
     .short-wire-group {
       opacity: 0;
       transition: opacity 0.25s ease;
@@ -81,7 +87,7 @@
       opacity: 1;
     }
     .is-short .short-arc {
-      animation: shortPulse 0.4s linear infinite;
+      animation: shortPulse 0.9s linear 2;
     }
 
     .safety-badges {
@@ -129,7 +135,9 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
-<link rel="stylesheet" href="../styles/slide-support.css"></head>
+<link rel="stylesheet" href="../styles/slide-support.css">
+<link rel="stylesheet" href="../styles/electrical-voltage.css">
+</head>
 <body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
 
   <!-- Top Progress Bar -->
@@ -149,19 +157,18 @@
     <section class="text-center mb-3">
       <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 mb-1.5">
         <span class="bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 bg-clip-text text-transparent">
-          กฎเหล็กเรื่องไฟฟ้า (จำแค่ 2 ข้อ)
+          กฎเหล็กเรื่องไฟฟ้า 3 ข้อ
         </span>
       </h1>
     </section>
 
-    <!-- 2 Golden Rules Cards -->
-    <section class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
+    <section class="electrical-rules grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
       <div id="rule1Card" class="bg-white/95 rounded-2xl p-3.5 sm:p-4 border-2 border-sky-300 shadow-sm transition-all duration-300">
         <div class="flex items-center gap-2 mb-1">
           <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-sky-100 text-sky-800">ข้อที่ 1 • วงจรต้องครบ</span>
         </div>
         <p class="text-sm sm:text-base font-bold text-slate-800 leading-snug">
-          ไฟต้องวิ่งออกจาก <span class="text-rose-600">ขั้วบวก (3.3V)</span> ผ่านอุปกรณ์ แล้วไหลกลับเข้า <span class="text-slate-700">ขั้วลบ (GND)</span> เสมอ
+          กระแสไหลจากขั้วบวก ผ่านอุปกรณ์ แล้วกลับถึง GND จึงเป็นวงจรปิด
         </p>
       </div>
 
@@ -170,8 +177,12 @@
           <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800">ข้อที่ 2 • ห้ามต่อช็อต!</span>
         </div>
         <p class="text-sm sm:text-base font-bold text-slate-800 leading-snug">
-          ห้ามเอาสายไฟ <span class="text-rose-600">3.3V</span> จิ้มเข้า <span class="text-slate-800">GND</span> โดยตรงเด็ดขาด จะเกิดการลัดวงจร กระแสสูง และเสี่ยงทำให้บอร์ดเสียหาย
+          ต่อ 3.3 V ถึง GND โดยตรงทำให้กระแสสูง และเสี่ยงให้แหล่งจ่ายหรือบอร์ดเสีย
         </p>
+      </div>
+      <div id="rule3Card" class="bg-white/95 rounded-2xl p-3.5 sm:p-4 border-2 border-amber-300 shadow-sm">
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900">ข้อที่ 3 • แรงดันต้องอยู่ในสเปก</span>
+        <p class="text-sm sm:text-base font-bold text-slate-800 leading-snug mt-1">GPIO ของ ESP32 ใช้ลอจิก 3.3 V สัญญาณ 5 V ที่เข้าขาโดยตรงอาจทำให้ขาหรือชิปเสีย</p>
       </div>
     </section>
 
@@ -181,7 +192,7 @@
       <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div class="flex flex-wrap items-center gap-2" role="group" aria-label="สลับโหมดวงจร">
           <button id="modeNormalBtn" type="button"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-emerald-600 text-white shadow-md transition active:scale-95 cursor-pointer">
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-emerald-50 text-emerald-800 shadow-sm transition active:scale-95 cursor-pointer">
             <span>✅</span>
             <span>โหมด 1: ต่อครบวงจร (ปกติ)</span>
           </button>
@@ -190,17 +201,18 @@
             <span>⚡</span>
             <span>โหมด 2: เผลอต่อ 3.3V ชน GND (ลัดวงจร)</span>
           </button>
+          <button id="modeVoltageBtn" type="button" class="safety-mode-voltage" aria-pressed="false">โหมด 3 · แรงดันเกินสเปก</button>
         </div>
 
         <!-- Warning Banner (only visible in short circuit mode) -->
-        <div id="shortWarningBanner" class="hidden items-center gap-2 px-4 py-1.5 rounded-xl bg-red-600 text-white font-extrabold text-xs sm:text-sm shadow-md animate-pulse">
+        <div id="shortWarningBanner" class="hidden items-center gap-2 px-4 py-1.5 rounded-xl bg-red-600 text-white font-extrabold text-xs sm:text-sm shadow-md">
           <span>🚨</span>
           <span>SHORT CIRCUIT! เสี่ยงบอร์ดเสียหาย</span>
         </div>
       </div>
 
       <!-- SVG Circuit Stage -->
-      <div class="w-full overflow-hidden rounded-2xl bg-gradient-to-b from-slate-50 to-slate-100 border border-slate-200 relative">
+      <div id="regular-circuit" class="w-full overflow-hidden rounded-2xl bg-gradient-to-b from-slate-50 to-slate-100 border border-slate-200 relative">
         <svg id="safetyCircuit" viewBox="0 0 780 320" class="w-full h-auto" role="img" aria-labelledby="safetyCircuitTitle safetyCircuitDesc">
           <title id="safetyCircuitTitle">ESP32 DevKit V1 / ESP32-WROOM-32: วงจร LED และการลัดวงจร</title>
           <desc id="safetyCircuitDesc">ขา 3V3 ของ ESP32 ต่อผ่านตัวต้านทาน 330 โอห์มและ LED กลับเข้า GND ห้ามต่อ 3V3 กับ GND โดยตรง</desc>
@@ -311,10 +323,46 @@
           </g>
 
           <!-- Flow Direction Labels -->
-          <text x="330" y="138" text-anchor="middle" font-size="11" font-weight="700" fill="#dc2626">3.3V ไหลออก ➔</text>
+          <text x="330" y="138" text-anchor="middle" font-size="11" font-weight="700" fill="#dc2626">จาก 3.3 V ผ่านโหลด ➔</text>
           <text x="440" y="224" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">⬅ ไหลกลับเข้า GND</text>
         </svg>
       </div>
+      <section id="voltage-circuit" class="voltage-circuit" aria-label="จำลองแรงดันที่เข้า GPIO33" data-voltage="3.3" data-state="normal" hidden>
+        <div class="voltage-actions" role="group" aria-label="เลือกสัญญาณที่จะส่งเข้า GPIO33">
+          <button type="button" data-voltage="3.3" aria-pressed="true">สัญญาณ 3.3 V</button>
+          <button type="button" data-voltage="5" aria-pressed="false">ลองป้อน 5 V</button>
+          <button type="button" data-replace-board disabled>เปลี่ยนบอร์ดจำลอง</button>
+        </div>
+        <svg class="voltage-art" viewBox="0 0 640 285" role="img" aria-labelledby="voltage-art-title">
+          <title id="voltage-art-title">แหล่งสัญญาณต่อ GPIO33 ของ ESP32 และใช้ GND ร่วมกัน</title>
+          <path d="M208 120H392" class="voltage-wire"/>
+          <path d="M208 183v43h189v-33" fill="none" stroke="#536779" stroke-width="5" stroke-linejoin="round"/>
+          <text x="294" y="250" text-anchor="middle" class="voltage-caption">GND ร่วม</text>
+          <rect x="38" y="76" width="172" height="125" rx="19" fill="#fff" stroke="#9ab9d3" stroke-width="3"/>
+          <text x="124" y="110" text-anchor="middle" class="voltage-caption">แหล่งสัญญาณ</text>
+          <text x="124" y="157" text-anchor="middle" class="voltage-number" data-voltage-number>3.3 V</text>
+          <circle cx="208" cy="120" r="6" fill="#1b7895" stroke="#fff" stroke-width="2"/>
+          <circle cx="208" cy="183" r="6" fill="#405770" stroke="#fff" stroke-width="2"/>
+          <rect x="390" y="47" width="214" height="160" rx="17" class="voltage-board"/>
+          <path d="M396 60v130M596 60v130" fill="none" stroke="#afccc1" stroke-width="7" stroke-dasharray="4 10"/>
+          <path d="M400 120h71m-37 0v39h80m-76 12h84" fill="none" stroke="#70b2a1" stroke-width="3"/>
+          <rect x="467" y="91" width="104" height="61" rx="9" class="voltage-chip"/>
+          <text x="519" y="128" text-anchor="middle" class="voltage-chip-label">ESP32</text>
+          <text x="430" y="106" text-anchor="middle" class="voltage-pin-label">GPIO33</text>
+          <circle cx="393" cy="120" r="10" class="voltage-pin"/>
+          <circle cx="397" cy="193" r="5" fill="#d9e6eb" stroke="#334155" stroke-width="2"/>
+          <circle cx="566" cy="175" r="6.5" class="voltage-led"/>
+          <circle cx="208" cy="120" r="6" class="voltage-pulse"/>
+          <g class="voltage-damage">
+            <circle cx="393" cy="120" r="22" fill="#5c1921" opacity=".82"/>
+            <path d="m387 102 11 12-10 5 11 15m-14-5-7 7m25-22 9-5" fill="none" stroke="#ffd3bd" stroke-width="2.7" stroke-linecap="round"/>
+            <path d="M407 93c-14-18 11-20 3-42m-13 32c-16-13 5-21-1-33" class="voltage-smoke"/>
+          </g>
+          <text x="494" y="241" text-anchor="middle" class="voltage-caption" data-voltage-reading>GPIO33 อ่าน HIGH</text>
+        </svg>
+        <p class="voltage-status" data-voltage-status role="status">ที่ลอจิก 3.3 V ขา GPIO อ่าน HIGH ได้ตามปกติ</p>
+        <p class="voltage-reference">สำหรับ ESP32 ที่ VDD 3.3 V สเปกระบุระดับอินพุต HIGH ถึง VDD + 0.3 V ใช้วงจรปรับระดับกับสัญญาณ 5 V <a href="https://documentation.espressif.com/esp32-wroom-32_datasheet_en.html#dc-characteristics-3-3-v-25-c" target="_blank" rel="noopener">สเปก Espressif</a></p>
+      </section>
     </section>
     <ul id="safetyBadges" class="safety-badges" aria-label="ข้อควรระวังในการต่อ ESP32">
       <li class="safety-badge safety-badge--voltage">
@@ -359,56 +407,58 @@
           bead.setAttribute('cx', String(pt.x));
           bead.setAttribute('cy', String(pt.y));
         });
-        rafId = requestAnimationFrame(animateElectrons);
+        if (!reducedMotion.matches) rafId = requestAnimationFrame(animateElectrons);
       }
+
+      const modeVoltageBtn = document.getElementById('modeVoltageBtn');
+      const rule3Card = document.getElementById('rule3Card');
+      const regular = document.getElementById('regular-circuit');
+      const voltage = document.getElementById('voltage-circuit');
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      const buttons = { normal: modeNormalBtn, short: modeShortBtn, voltage: modeVoltageBtn };
+      const cards = {
+        normal: [rule1Card, 'ring-sky-200'],
+        short: [rule2Card, 'ring-rose-300'],
+        voltage: [rule3Card, 'ring-amber-200'],
+      };
 
       function setMode(nextMode) {
         mode = nextMode;
-        modeNormalBtn.setAttribute('aria-pressed', String(mode === 'normal'));
-        modeShortBtn.setAttribute('aria-pressed', String(mode === 'short'));
-        document.getElementById('safetyCircuitDesc').textContent = mode === 'normal'
-          ? 'ESP32-WROOM-32: ขา 3V3 ต่อผ่านตัวต้านทาน 330 โอห์มและ LED กลับเข้า GND วงจรปกติ'
-          : 'ESP32-WROOM-32: สายต่อขา 3V3 กับ GND โดยตรง เกิดลัดวงจรและเสี่ยงเสียหาย เป็นภาพจำลอง ห้ามทดลองลัดวงจรจริง';
-        if (rafId) {
-          cancelAnimationFrame(rafId);
-          rafId = null;
+        const short = mode === 'short';
+        const voltageDemo = mode === 'voltage';
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = null;
+
+        for (const [key, button] of Object.entries(buttons)) {
+          const active = mode === key;
+          button.setAttribute('aria-pressed', String(active));
+          const [card, ring] = cards[key];
+          card.classList.toggle('ring-4', active);
+          card.classList.toggle(ring, active);
         }
-
-        if (mode === 'normal') {
-          simContainer.classList.remove('is-short', 'is-shaking', 'border-red-400', 'bg-red-50/40');
-          simContainer.classList.add('is-normal', 'border-slate-200');
-          shortWarningBanner.classList.add('hidden');
-          shortWarningBanner.classList.remove('inline-flex');
-          electronGroup.style.display = 'block';
-
-          modeNormalBtn.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-emerald-600 text-white shadow-md transition active:scale-95 cursor-pointer';
-          modeShortBtn.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-rose-50 text-rose-700 border-2 border-rose-300 hover:bg-rose-100 transition active:scale-95 cursor-pointer';
-
-          rule1Card.classList.add('ring-4', 'ring-sky-200');
-          rule2Card.classList.remove('ring-4', 'ring-rose-300');
-          animateElectrons();
-        } else {
-          simContainer.classList.remove('is-normal', 'border-slate-200');
-          simContainer.classList.add('is-short', 'border-red-400');
-          // Trigger shake reliably
-          simContainer.classList.remove('is-shaking');
+        regular.hidden = voltageDemo;
+        voltage.hidden = !voltageDemo;
+        simContainer.classList.toggle('is-normal', mode === 'normal');
+        simContainer.classList.toggle('is-short', short);
+        simContainer.classList.toggle('border-red-400', short);
+        simContainer.classList.toggle('border-slate-200', !short);
+        simContainer.classList.remove('is-shaking');
+        if (short && !reducedMotion.matches) {
           void simContainer.offsetWidth;
           simContainer.classList.add('is-shaking');
-
-          shortWarningBanner.classList.remove('hidden');
-          shortWarningBanner.classList.add('inline-flex');
-          electronGroup.style.display = 'none';
-
-          modeNormalBtn.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-slate-100 text-slate-600 border-2 border-slate-200 hover:bg-emerald-50 transition active:scale-95 cursor-pointer';
-          modeShortBtn.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-red-600 text-white shadow-md transition active:scale-95 cursor-pointer';
-
-          rule1Card.classList.remove('ring-4', 'ring-sky-200');
-          rule2Card.classList.add('ring-4', 'ring-rose-300');
         }
+        shortWarningBanner.classList.toggle('hidden', !short);
+        shortWarningBanner.classList.toggle('inline-flex', short);
+        electronGroup.style.display = short || voltageDemo ? 'none' : 'block';
+        document.getElementById('safetyCircuitDesc').textContent = short
+          ? 'สายต่อขา 3V3 กับ GND โดยตรง เกิดลัดวงจรและเสี่ยงเสียหาย'
+          : 'ขา 3V3 ต่อผ่านตัวต้านทาน 330 โอห์มและ LED กลับเข้า GND วงจรปกติ';
+        if (mode === 'normal') animateElectrons();
       }
 
-      modeNormalBtn.addEventListener('click', () => setMode('normal'));
-      modeShortBtn.addEventListener('click', () => setMode('short'));
+      for (const [key, button] of Object.entries(buttons)) {
+        button.addEventListener('click', () => setMode(key));
+      }
       setMode('normal');
 
       const badges = document.getElementById('safetyBadges');
@@ -461,5 +511,6 @@
     })();
   </script>
 
-<script src="../scripts/slide-support.js"></script></body>
+<script src="../scripts/slide-support.js"></script>
+<script type="module" src="../scripts/electrical-voltage.js"></script></body>
 </html>

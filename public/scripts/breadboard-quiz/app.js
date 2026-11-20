@@ -10,8 +10,19 @@ const drafts=new Map();
 let electrical=null,faultSignature='',flowPaused=false,flowOnScreen=true,flowObserver;
 let poses={},selectedPart=null,partDrag=null;
 let completed=[],current=0,wires=[],history=[],selected=null,pending=null,drag=null,serial=1,attempts=0,solved=false,review=false,nextTimer=null,svg,surface,layout,byId,quizVisible=false;
-try{const saved=JSON.parse(localStorage.getItem(storageKey));if(saved?.version===2&&Array.isArray(saved.completed))for(let i=0;i<Math.min(saved.completed.length,challenges.length);i++){const item=saved.completed[i];if(item.id!==challenges[i].id||(!validateCircuit(item.wires,challenges[i].count)||!validPlacedState(item.poses,item.wires,challenges[i].count)))break;completed.push(item);}}catch{}
-function persist(){try{localStorage.setItem(storageKey,JSON.stringify({version:2,completed}));}catch{const note=$('#quiz-storage-note');if(note)note.textContent='เบราว์เซอร์นี้เก็บความคืบหน้าไม่ได้ ทำต่อในหน้านี้ได้ตามปกติ';}}
+let splitRails=true;
+try{
+ const saved=JSON.parse(localStorage.getItem(storageKey));
+ if([2,3].includes(saved?.version)&&Array.isArray(saved.completed)){
+  for(const [index,challenge] of challenges.entries()){
+   const item=saved.completed[index];
+   const usedSplitRails=saved.version===3&&item?.splitRails!==false;
+   if(item?.id!==challenge.id||!validateCircuit(item.wires,challenge.count,usedSplitRails)||!validPlacedState(item.poses,item.wires,challenge.count))break;
+   completed.push({...item,splitRails:usedSplitRails});
+  }
+ }
+}catch{}
+function persist(){try{localStorage.setItem(storageKey,JSON.stringify({version:3,completed}));}catch{const note=$('#quiz-storage-note');if(note)note.textContent='เบราว์เซอร์นี้เก็บความคืบหน้าไม่ได้ ทำต่อในหน้านี้ได้ตามปกติ';}}
 function say(message){$('#quiz-status').textContent=message;}
 function clearTimer(){clearTimeout(nextTimer);nextTimer=null;}
 function showMode(quiz){
@@ -30,18 +41,19 @@ function backToLearn(){return '<button type="button" class="q-return-learn" data
 function progress(){return `<div class="q-quiz-nav">${backToLearn()}<div class="q-progress" aria-label="ความคืบหน้าแบบฝึกหัด">${challenges.map((c,i)=>`<span class="${completed[i]?'done':i===current?'current':''}" ${i===current?'aria-current="step"':''}>${completed[i]?'✓':i+1} <span>${i===0?'LED 1 ดวง':'LED หลายดวง'}</span></span>`).join('<i aria-hidden="true"></i>')}</div></div>`;}
 function renderCard(){
  clearTimer();cancelPointer(false);flowObserver?.disconnect();electrical=null;faultSignature='';const challenge=challenges[current];
+ splitRails=!review||completed[current].splitRails!==false;
  wires=(review?completed[current].wires:drafts.get(current)?.wires||[]).map(w=>({...w}));poses=structuredClone((review?completed[current]:drafts.get(current))?.poses||{});selectedPart=null;partDrag=null;history=[];serial=1;attempts=review?completed[current].attempts||1:drafts.get(current)?.attempts||0;selected=null;pending=null;solved=review;
- layout=sceneLayout(challenge.count,poses);byId=new Map(layout.points.map(p=>[p.id,p]));
+ layout=sceneLayout(challenge.count,poses,null,splitRails);byId=new Map(layout.points.map(p=>[p.id,p]));
  root.innerHTML=`${progress()}<article class="q-card ${review?'q-solved':''}" id="quiz-card" aria-labelledby="quiz-card-title">
- <div class="q-card-head"><div><span class="q-eyebrow">WIRING CHALLENGE / CARD ${String(current+1).padStart(2,'0')}</span><h2 id="quiz-card-title" tabindex="-1">${esc(challenge.title)}</h2><p>${esc(challenge.prompt)}</p></div><span class="q-parts-badge">${esc(challenge.parts)}</span></div>
+ <div class="q-card-head"><div><span class="q-eyebrow">WIRING CHALLENGE / CARD ${String(current+1).padStart(2,'0')}</span><h2 id="quiz-card-title" tabindex="-1">${esc(challenge.title)}</h2><p>${splitRails ? esc(challenge.prompt) : 'คำตอบที่บันทึกบนบอร์ดรุ่นเดิม ใช้รางไฟต่อเนื่องตลอดแถว'}</p></div><span class="q-parts-badge">${esc(challenge.parts)}</span></div>
  <div class="q-tools"><div><button id="quiz-part-rotate" disabled>หมุนอุปกรณ์ 90° · R</button><button id="quiz-part-unplug" disabled>ถอนกลับถาด</button><button id="quiz-undo">↶ ย้อนกลับ</button><button id="quiz-remove" disabled>ลบสายที่เลือก</button><button id="quiz-clear">เริ่มต่อข้อนี้ใหม่</button></div><div><label for="quiz-wire-color">สีสาย</label><select id="quiz-wire-color"><option value="#0b8b83">เขียว</option><option value="#da4f5f">แดง</option><option value="#416c9b">น้ำเงิน</option><option value="#bb812b">เหลือง</option><option value="#68717d">เทา</option></select><button id="quiz-fit" aria-pressed="false">พอดีจอ</button></div></div>
  <p class="q-instructions">ลากที่ตัว LED / ตัวต้านทาน แล้วปักขาทั้งสองลงรู · เลือกตัวแล้วกด R หรือปุ่มหมุน · สายจัมเปอร์ลากจากรูหนึ่งไปรูหนึ่ง <button id="quiz-help" aria-expanded="false">วิธีใช้คีย์บอร์ด</button></p>
  <p id="quiz-help-text" class="q-help" hidden>เลือกตัวอุปกรณ์แล้วกด R หมุน 90° ใช้ลูกศรเลื่อนอุปกรณ์ที่ปักแล้วทีละรู กด Delete ถอนอุปกรณ์ หรือใช้เมนูปักอุปกรณ์ด้านล่างโดยไม่ต้องลาก สายจัมเปอร์คลิกสองรูหรือเลือกจากช่องชื่อรูได้ Escape ยกเลิกการลาก</p>
  <section class="q-electrical" aria-label="ผลคำนวณวงจรที่คุณต่อ"><div class="q-electrical-head"><div><strong>ไฟจำลองเปิด · ดูกระแสจากสายที่คุณต่อ</strong><p>ลูกศรแสดงกระแสตามแบบแผน + → − · ภาพเคลื่อนไหวไม่ใช่ความเร็วอิเล็กตรอนจริง</p></div><button id="quiz-flow-toggle">หยุดภาพการไหล</button></div><div id="quiz-fault" role="alert" hidden></div><div id="quiz-readings"></div><details class="q-model-notes"><summary>ค่าคำนวณนี้มาจากอะไร?</summary><p>คำนวณ DC ด้วยกฎกระแสของ Kirchhoff: แหล่งจ่ายจำลอง 3.3V, R ภายใน 0.5Ω, จำกัดกระแส 100mA; สายแต่ละเส้น 0.1Ω; R 330Ω; LED สีแดงใช้แบบจำลอง Vf 2.0V + ความต้านทานไดนามิก 10Ω; แถบโลหะถือเป็นตัวนำอุดมคติ</p><p>เมื่อวงจรลัด แหล่งจ่ายจำลองจะลดแรงดันเพื่อรักษากระแสไม่เกิน 100mA ค่านี้เป็นสมมติฐานการสอน ไม่ใช่พิกัดป้องกันลัดวงจรของ ESP32 หรือค่าที่วัดจากอุปกรณ์จริง</p><p>LED จริงมี Vf ต่างกันตามรุ่น กระแส และอุณหภูมิ ดู <a href="https://learn.adafruit.com/all-about-leds?view=all" target="_blank" rel="noopener">หลักการคำนวณ LED / Ohm</a> และ <a href="https://www.rohde-schwarz.com/sg/products/test-and-measurement/essentials-test-equipment/dc-power-supplies/understanding-benchtop-power-supplies_256011.html" target="_blank" rel="noopener">แหล่งจ่าย CV / CC</a></p></details></section>
- <div id="quiz-scroll" class="q-stage-scroll">${drawBench(challenge.count,poses)}</div>
+ <div id="quiz-scroll" class="q-stage-scroll">${drawBench(challenge.count,poses,splitRails)}</div>
  <details class="q-placement-menu"><summary>ปัก / หมุนอุปกรณ์โดยไม่ต้องลาก</summary><div class="q-select-connect"><label>อุปกรณ์<select id="quiz-part-pick"></select></label><label>รูสำหรับขาแรก<select id="quiz-part-anchor"></select></label><label>ทิศขาทั้งสอง<select id="quiz-part-angle"><option value="0">0° → ขวา</option><option value="90">90° ↓ ลง</option><option value="180">180° ← ซ้าย</option><option value="270">270° ↑ ขึ้น</option></select></label><button id="quiz-part-insert">ปักอุปกรณ์</button></div><p class="q-small">LED: ขาแรกคือ A+ · ตัวต้านทาน: ขาแรกคือขา 1 · ภาพเป็นแผนผังย่อ ไม่ใช่สเกลระยะจริง</p></details><details class="q-keyboard"><summary>ต่อสายจัมเปอร์ด้วยชื่อรู</summary><div class="q-select-connect"><label for="quiz-from">ต้นทาง<select id="quiz-from"></select></label><label for="quiz-to">ปลายทาง<select id="quiz-to"></select></label><button id="quiz-connect">ต่อสาย</button></div></details>
  <div class="q-card-bottom"><div><p id="quiz-status" role="status" aria-live="polite" aria-atomic="true">${review?'นี่คือวงจรที่คุณต่อผ่านแล้ว':'มีไฟที่รางบน + / − แล้ว เริ่มลาก LED / ตัวต้านทานมาปัก แล้วต่อสายจัมเปอร์ได้เลย'}</p><span id="quiz-wire-count" class="q-small"></span><span id="quiz-attempts" class="q-small"></span></div><button id="quiz-check" class="q-primary">${review?'กลับผล Quiz':'ตรวจวงจรที่ต่อ'}</button></div>
- <p class="q-small q-disclaimer">ภาพและค่ากระแสเป็นผลคำนวณจากแบบจำลอง ไม่ได้วัดจากฮาร์ดแวร์จริง · รางไฟในแบบฝึกหัดนี้ต่อเนื่องทั้งแถว แต่รางบนกับรางล่างแยกกัน · บอร์ดจริงบางรุ่นรางขาดกลาง ให้ตรวจแถบโลหะก่อนใช้</p>
+ <p class="q-small q-disclaimer">ค่ากระแสคำนวณจากแบบจำลอง · ${splitRails ? 'รางไฟแต่ละเส้นแยกซ้าย–ขวาที่รอยตัดกลาง' : 'รางไฟแต่ละเส้นต่อเนื่องตลอดแถว'} · รางบนกับรางล่างแยกกัน</p>
  </article><p id="quiz-storage-note" class="q-small">บันทึกเฉพาะข้อที่ผ่านบนอุปกรณ์นี้ · ไม่มีปุ่มเฉลยระหว่างทำ</p>`;
  svg=$('#quiz-bench-svg');surface=$('.q-bench-surface');
  const options=`<option value="">เลือกชื่อรู</option><optgroup label="รู breadboard">${layout.points.filter(p=>p.type==='hole'&&!p.locked).map(p=>`<option value="${p.id}">${esc(p.label)}</option>`).join('')}</optgroup>`;
@@ -146,7 +158,7 @@ function keyboard(e){
 }
 
 function syncScene(){
- layout=sceneLayout(challenges[current].count,poses,partDrag?.moved?partDrag.preview:null);byId=new Map(layout.points.map(p=>[p.id,p]));
+ layout=sceneLayout(challenges[current].count,poses,partDrag?.moved?partDrag.preview:null,splitRails);byId=new Map(layout.points.map(p=>[p.id,p]));
  for(const part of layout.parts){
   const old=svg.querySelector(`[data-physical="${part.id}"]`);
   if(!partDrag?.moved||partDrag.id===part.id){if(old)old.outerHTML=componentSVG(part);}
@@ -219,10 +231,10 @@ function updateFlowMotion(){
 }
 function updateElectrical(){
  if(!$('#quiz-readings')||!svg)return;
- try{electrical=analyzeCircuit(wires,challenges[current].count);}catch{$('#quiz-readings').textContent='ไม่สามารถคำนวณวงจรนี้ได้ กรุณาปรับการต่อแล้วลองใหม่';return;}
+ try{electrical=analyzeCircuit(wires,challenges[current].count,splitRails);}catch{$('#quiz-readings').textContent='ไม่สามารถคำนวณวงจรนี้ได้ กรุณาปรับการต่อแล้วลองใหม่';return;}
  $('#quiz-readings').innerHTML=measurementHTML(electrical);
  $('#quiz-source-i').textContent=`${mA(electrical.totalCurrent)} mA`;$('#quiz-source-v').textContent=`${electrical.railVoltage.toFixed(2)} V`;
- $('#quiz-current-paths').innerHTML=flowSVG(electrical,challenges[current].count,poses);
+ $('#quiz-current-paths').innerHTML=flowSVG(electrical,challenges[current].count,poses,splitRails);
  const shortIds=new Set(electrical.shortWireIds);
  for(const wire of $('#quiz-wires').children)wire.classList.toggle('q-fault',shortIds.has(wire.dataset.wire));
  $('#quiz-card').classList.toggle('q-shorted',electrical.shortCircuit);

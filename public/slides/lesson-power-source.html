@@ -18,52 +18,10 @@
   <header class="power-hero">
     <p class="power-eyebrow">พื้นฐานการต่อวงจร ESP32</p>
     <h1>แหล่งพลังงาน <span>(Power Source)</span></h1>
-    <p>USB เลี้ยงบอร์ด ส่วน Servo ที่เปิดฝารับไฟจากแหล่งจ่ายอีกตัว ลองต่อทีละเส้นแล้วทดสอบ</p>
+    <p>เลือกลอง USB, Adapter, ถ่าน หรือแบตเตอรี่ แล้วต่อไฟให้ ESP32 กับ Servo ในเดโมฝาถังด้านล่าง</p>
   </header>
 
-  <section class="ff-card ff-power" data-feeder-power aria-labelledby="feeder-power-title">
-    <h2 id="feeder-power-title">ฝาถังขยับได้เมื่อไฟและสัญญาณครบ</h2>
-    <p>GPIO18 ส่งคำสั่งเปิดฝา ไฟ 5 V จากแหล่งจ่ายเลี้ยง Servo แล้วใช้ GND ร่วมเป็นจุดอ้างอิง</p>
-    <div class="ff-power-grid">
-      <svg class="ff-power-svg" viewBox="0 0 620 315" role="img" aria-labelledby="feeder-power-art">
-        <title id="feeder-power-art">USB เลี้ยง ESP32 ขา GPIO18 ส่งสัญญาณเข้า Servo ที่ใช้ไฟ 5 V ภายนอก และกราวด์ทุกฝั่งต่อร่วมกัน</title>
-        <g fill="none" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
-          <path class="ff-power-wire ff-usb-wire" d="M174 114h60"/>
-          <path class="ff-power-wire ff-adapter-wire" d="M163 240h50v-56h321v-43"/>
-          <path class="ff-power-wire ff-ground-wire" d="M163 260h349V142M305 161v99"/>
-          <path d="M352 112h88v18h28" stroke="#b45309"/>
-        </g>
-        <rect x="30" y="70" width="144" height="83" rx="11" fill="#f6fbfe" stroke="#5e91ad" stroke-width="2"/>
-        <rect x="62" y="92" width="48" height="30" rx="4" fill="#d3ebf9" stroke="#315e77" stroke-width="2"/>
-        <path d="M56 127h62" stroke="#315e77" stroke-width="3" stroke-linecap="round"/>
-        <text x="123" y="116" class="ff-svg-label">USB</text>
-        <rect x="233" y="71" width="120" height="91" rx="9" fill="#184d5e"/>
-        <rect x="252" y="91" width="82" height="36" rx="6" fill="#afc9d8"/>
-        <text x="264" y="114" class="ff-svg-label">ESP32</text>
-        <text x="355" y="96" class="ff-svg-label">GPIO18 · สัญญาณ</text>
-        <rect x="31" y="213" width="133" height="65" rx="11" fill="#fff6e9" stroke="#b98243" stroke-width="2"/>
-        <text x="46" y="240" class="ff-svg-label">แหล่งจ่าย 5 V</text>
-        <text x="46" y="262" class="ff-svg-label">สำหรับ Servo</text>
-        <text x="311" y="250" class="ff-svg-label">GND ร่วม</text>
-        <text x="420" y="174" class="ff-svg-label">สายไฟ 5 V</text>
-        <rect x="465" y="77" width="108" height="66" rx="10" fill="#d2ebff" stroke="#386c9a" stroke-width="2"/>
-        <path class="ff-test-arm" d="M480 125h65" stroke="#17394b" stroke-width="8" stroke-linecap="round"/>
-        <circle cx="480" cy="125" r="7" fill="#ffd285" stroke="#3c5a72" stroke-width="2"/>
-        <text x="486" y="104" class="ff-svg-label">Servo</text>
-      </svg>
-      <div class="ff-power-controls">
-        <button type="button" data-feeder-wire="usb" aria-pressed="false">USB → ESP32 <small>ยังไม่ต่อ</small></button>
-        <button type="button" data-feeder-wire="adapter" aria-pressed="false">แหล่งจ่าย 5 V → Servo <small>ยังไม่ต่อ</small></button>
-        <button type="button" data-feeder-wire="ground" aria-pressed="false">ต่อ GND ร่วม <small>ยังไม่ต่อ</small></button>
-        <button type="button" data-power-test class="ff-primary">ทดสอบสั่งเปิดฝา</button>
-        <p class="ff-power-status" role="status" data-feeder-power-status>ลองเสียบ USB อย่างเดียวก่อน แล้วทดสอบว่าฝาขยับได้หรือยัง</p>
-      </div>
-    </div>
-    <p>ภาพนี้แยกไฟ 5 V ของ Servo ออกจากไฟ USB ของบอร์ด เชื่อมเฉพาะ GND ร่วมกัน</p>
-  </section>
 
-  <details class="ff-extra">
-    <summary>ทดลองเพิ่ม · USB, Adapter, ถ่าน และแบตเตอรี่</summary>
   <nav class="power-picker" aria-label="เลือกแหล่งพลังงาน">
     <fieldset class="power-picker-group">
       <legend>On wire</legend>
@@ -122,6 +80,47 @@
 
   <section id="other-panel" class="power-card" aria-labelledby="other-title" hidden></section>
 
+  <section class="ff-card ff-power" data-feeder-power aria-labelledby="feeder-power-title">
+    <h2 id="feeder-power-title">ฝาถังขยับได้เมื่อไฟและสัญญาณครบ</h2>
+    <p>GPIO18 ส่งคำสั่งเปิดฝา ไฟ 5 V จากแหล่งจ่ายเลี้ยง Servo แล้วใช้ GND ร่วมเป็นจุดอ้างอิง</p>
+    <div class="ff-power-grid">
+      <svg class="ff-power-svg" viewBox="0 0 620 315" role="img" aria-labelledby="feeder-power-art">
+        <title id="feeder-power-art">USB เลี้ยง ESP32 ขา GPIO18 ส่งสัญญาณเข้า Servo ที่ใช้ไฟ 5 V ภายนอก และกราวด์ทุกฝั่งต่อร่วมกัน</title>
+        <g fill="none" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+          <path class="ff-power-wire ff-usb-wire" d="M174 114h60"/>
+          <path class="ff-power-wire ff-adapter-wire" d="M163 240h50v-56h321v-43"/>
+          <path class="ff-power-wire ff-ground-wire" d="M163 260h349V142M305 161v99"/>
+          <path d="M352 112h88v18h28" stroke="#b45309"/>
+        </g>
+        <rect x="30" y="70" width="144" height="83" rx="11" fill="#f6fbfe" stroke="#5e91ad" stroke-width="2"/>
+        <rect x="62" y="92" width="48" height="30" rx="4" fill="#d3ebf9" stroke="#315e77" stroke-width="2"/>
+        <path d="M56 127h62" stroke="#315e77" stroke-width="3" stroke-linecap="round"/>
+        <text x="123" y="116" class="ff-svg-label">USB</text>
+        <rect x="233" y="71" width="120" height="91" rx="9" fill="#184d5e"/>
+        <rect x="252" y="91" width="82" height="36" rx="6" fill="#afc9d8"/>
+        <text x="264" y="114" class="ff-svg-label">ESP32</text>
+        <text x="355" y="96" class="ff-svg-label">GPIO18 · สัญญาณ</text>
+        <rect x="31" y="213" width="133" height="65" rx="11" fill="#fff6e9" stroke="#b98243" stroke-width="2"/>
+        <text x="46" y="240" class="ff-svg-label">แหล่งจ่าย 5 V</text>
+        <text x="46" y="262" class="ff-svg-label">สำหรับ Servo</text>
+        <text x="311" y="250" class="ff-svg-label">GND ร่วม</text>
+        <text x="420" y="174" class="ff-svg-label">สายไฟ 5 V</text>
+        <rect x="465" y="77" width="108" height="66" rx="10" fill="#d2ebff" stroke="#386c9a" stroke-width="2"/>
+        <path class="ff-test-arm" d="M480 125h65" stroke="#17394b" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="480" cy="125" r="7" fill="#ffd285" stroke="#3c5a72" stroke-width="2"/>
+        <text x="486" y="104" class="ff-svg-label">Servo</text>
+      </svg>
+      <div class="ff-power-controls">
+        <button type="button" data-feeder-wire="usb" aria-pressed="false">USB → ESP32 <small>ยังไม่ต่อ</small></button>
+        <button type="button" data-feeder-wire="adapter" aria-pressed="false">แหล่งจ่าย 5 V → Servo <small>ยังไม่ต่อ</small></button>
+        <button type="button" data-feeder-wire="ground" aria-pressed="false">ต่อ GND ร่วม <small>ยังไม่ต่อ</small></button>
+        <button type="button" data-power-test class="ff-primary">ทดสอบสั่งเปิดฝา</button>
+        <p class="ff-power-status" role="status" data-feeder-power-status>ลองเสียบ USB อย่างเดียวก่อน แล้วทดสอบว่าฝาขยับได้หรือยัง</p>
+      </div>
+    </div>
+    <p>ภาพนี้แยกไฟ 5 V ของ Servo ออกจากไฟ USB ของบอร์ด เชื่อมเฉพาะ GND ร่วมกัน</p>
+  </section>
+
   <section class="power-card power-comparison" aria-labelledby="compare-title">
     <h2 id="compare-title">เลือกจากงานที่จะใช้</h2>
     <div class="compare-scroll" tabindex="0" role="region" aria-label="ตารางเปรียบเทียบแหล่งพลังงาน">
@@ -150,7 +149,6 @@
       <li><a href="https://energizer.com/apac/australia/wp-content/uploads/sites/3/2024/05/e91_max_na_AA.pdf" target="_blank" rel="noopener">Energizer · กราฟถ่านอัลคาไลน์ AA</a> และ <a href="https://www.panasonic.com/global/energy/products/eneloop/en/lineup/eneloop.html" target="_blank" rel="noopener">Panasonic · NiMH AA/AAA</a> · <a href="https://www.ikea.com/th/en/cat/batteries-battery-chargers-41070/" target="_blank" rel="noopener">ราคาถ่านชาร์จและที่ชาร์จ</a></li>
       <li><a href="https://www.molicel.com/wp-content/uploads/INR18650P28A-V2-80093.pdf" target="_blank" rel="noopener">Molicel · 18650</a> และ <a href="https://www.genstattu.com/4s-14-8v-lipo-battery.html" target="_blank" rel="noopener">Tattu · LiPo 4S</a> · <a href="https://www.fpvthai.com/collections/battery/products/tattu-14-8v-1550mah-120c" target="_blank" rel="noopener">ราคาแพ็กโดรนตัวอย่าง</a></li>
     </ul>
-  </details>
   </details>
 </main>
 <script type="module" src="../scripts/feeder-foundations.js"></script>

@@ -1,0 +1,58 @@
+.safety-mode-voltage, .voltage-actions button {
+  min-block-size: 44px;
+  padding: .38rem .75rem;
+  border: 1px solid #e2c6a1;
+  border-radius: .75rem;
+  background: #fff7ea;
+  color: #874316;
+  font-size: .85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.safety-mode-voltage:hover, .voltage-actions button:not(:disabled):hover { border-color: #b76a27; }
+.safety-mode-voltage[aria-pressed="true"] { background: #a64b13; color: #fff; border-color: #a64b13; }
+.safety-mode-voltage:focus-visible, .voltage-actions button:focus-visible { outline: 3px solid #0369a1; outline-offset: 2px; }
+.voltage-circuit { padding: .85rem; border: 1px solid #e4cabc; border-radius: 1rem; background: #fffaf5; }
+.voltage-actions { display: flex; flex-wrap: wrap; gap: .43rem; margin-bottom: .65rem; }
+.voltage-actions button[aria-pressed="true"] { background: #dff7ef; border-color: #499c80; color: #146450; }
+.voltage-actions button[data-voltage="5"][aria-pressed="true"] { background: #ffe3e5; border-color: #cc6977; color: #941f34; }
+.voltage-actions button:disabled { opacity: .65; cursor: default; }
+.voltage-art { display: block; width: 100%; max-width: 55rem; height: auto; margin-inline: auto; border-radius: .75rem; background: #f2f8fc; }
+.voltage-caption { font-size: 18px; font-weight: 700; fill: #28536e; }
+.voltage-number { font-size: 32px; font-weight: 800; fill: #12596f; }
+.voltage-board { fill: #17685f; stroke: #12463e; stroke-width: 3; }
+.voltage-chip { fill: #cce0e0; stroke: #e7f3f4; stroke-width: 2; }
+.voltage-chip-label { fill: #204264; font-size: 21px; font-weight: 800; }
+.voltage-pin-label { font-size: 16px; font-weight: 700; fill: #fff; }
+.voltage-wire { stroke: #2682af; stroke-width: 5; fill: none; }
+.voltage-pin { fill: #82e6bf; stroke: #e2fff4; stroke-width: 2; }
+.voltage-led { fill: #88efac; stroke: #dfffe9; stroke-width: 2; }
+.voltage-pulse { opacity: 0; fill: #ffd08e; stroke: #b9562d; stroke-width: 2; }
+.voltage-damage { opacity: 0; }
+.voltage-smoke { opacity: 0; fill: none; stroke: #5d5f71; stroke-width: 5; stroke-linecap: round; }
+[data-voltage="5"] .voltage-wire { stroke: #c7425b; }
+[data-voltage="5"] .voltage-number,
+[data-state="damaged"] [data-voltage-reading] { fill: #a5213a; }
+[data-state="surge"] .voltage-pin { fill: #ff936a; stroke: #fed296; filter: drop-shadow(0 0 6px #e94a46); }
+[data-state="damaged"] .voltage-pin { fill: #55232b; stroke: #cc6d64; }
+[data-state="damaged"] .voltage-chip { fill: #acaaa9; stroke: #c1c0c1; }
+[data-state="damaged"] .voltage-led { fill: #73848a; stroke: #a1b1bc; }
+[data-state="damaged"] .voltage-damage { opacity: 1; }
+.voltage-status { margin: .65rem 0 .25rem; color: #164d56; font-weight: 800; font-size: .95rem; }
+[data-state="surge"] .voltage-status, [data-state="damaged"] .voltage-status { color: #902635; }
+.voltage-reference { margin: 0; color: #3e5b72; font-size: .8rem; line-height: 1.6; }
+.voltage-reference a { color: #075985; text-decoration: underline; }
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-state="surge"] .voltage-pulse { animation: voltage-travel .68s ease-in-out both; }
+  [data-state="damaged"] .voltage-smoke { animation: voltage-smoke .78s ease-out 2 both; }
+}
+@keyframes voltage-travel {
+  0% { opacity: 0; transform: translateX(0); }
+  12%, 90% { opacity: 1; }
+  100% { opacity: .25; transform: translateX(185px); }
+}
+@keyframes voltage-smoke {
+  from { opacity: .8; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-18px); }
+}

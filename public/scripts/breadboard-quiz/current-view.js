@@ -3,8 +3,8 @@ import {wirePath,esc} from './drawing.js';
 const normal='#078878',danger='#da354b',warning='#ba791a';
 const line=points=>'M'+points.map(p=>`${p.x} ${p.y}`).join(' L');
 export const mA=value=>(Math.abs(value)*1000).toFixed(2);
-export function flowSVG(report,count,poses={}){
- const layout=sceneLayout(count,poses),points=new Map(layout.points.map(p=>[p.id,p]));
+export function flowSVG(report,count,poses={},splitRails=true){
+ const layout=sceneLayout(count,poses,null,splitRails),points=new Map(layout.points.map(p=>[p.id,p]));
  const shortIds=new Set(report.shortWireIds), paths=[];
  function add(d,current,label,color=normal){
   if(Math.abs(current)<report.model.visibleCurrent)return;
