@@ -38,6 +38,7 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const surfaceY = food => EMPTY_Y - (EMPTY_Y - FULL_Y) * food / 100;
 const distanceAt = food => FEEDER_LIMITS.emptyCm -
   (FEEDER_LIMITS.emptyCm - FEEDER_LIMITS.fullCm) * food / 100;
+const emptyFood = percent => percent <= FEEDER_LIMITS.emptyPercent;
 const clockAngle = minute => minute % (12 * 60) / 2;
 const angleDelta = (from, to) => ((to - from + 540) % 360) - 180;
 
@@ -62,6 +63,7 @@ function mountFeederScene(lab) {
   const bowlArt = scene.querySelector('[data-bowl-art]');
   const bowlLabel = scene.querySelector('[data-bowl-label]');
   const bowlCount = lab.querySelector('[data-bowl-count]');
+  const refillLabel = scene.querySelector('[data-refill-label]');
   const stream = [...scene.querySelectorAll('[data-pellet-stream] ellipse')];
   const dropInterval = (FEEDER_LIMITS.portionMs - FIRST_DROP_MS - FALL_MS) / stream.length;
   const bowlPellets = [];
@@ -90,6 +92,7 @@ function mountFeederScene(lab) {
   let clockDrag = null;
   let check = null;
   let refill = 0;
+  let refillFrom = 0;
   let closing = 0;
   let hit = 0;
   let frame = 0;
@@ -128,7 +131,12 @@ function mountFeederScene(lab) {
   function available(name) {
     if (name === 'level') return stage() === 'ready' && !busy(sim.getState()) && !check;
     if (name === 'old') return stage() === 'discard' && clockAvailable();
-    if (name === 'box') return stage() === 'refill' && clockAvailable();
+    if (name === 'box') {
+      const current = stage();
+      const percent = sim.getState().foodPercent;
+      const dryRefill = current === 'ready' && (emptyFood(percent) || finishedEating && percent < 100);
+      return clockAvailable() && (current === 'refill' || dryRefill);
+    }
     if (name === 'cloud') return refill === 0;
     return true;
   }
@@ -191,10 +199,7 @@ function mountFeederScene(lab) {
     if (wasAtBowl !== atBowl()) {
       hit = 700;
       input = 'cat';
-      if (!atBowl()) {
-        bitePose = 0;
-        finishedEating = false;
-      }
+      if (!atBowl()) bitePose = 0;
       applyInputs();
     }
   }
@@ -220,6 +225,7 @@ function mountFeederScene(lab) {
   }
 
   function startRefill() {
+    refillFrom = food;
     refill = REFILL_MS;
     input = 'level';
     moveActor('box', ...SPOUT, true);
@@ -228,15 +234,18 @@ function mountFeederScene(lab) {
 
   function updateRefill(elapsed) {
     refill = Math.max(0, refill - elapsed);
-    const progress = 1 - refill / REFILL_MS;
-    food = INITIAL_FOOD * Math.min(1, progress * 1.12);
+    const progress = Math.min(1, (1 - refill / REFILL_MS) * 1.12);
+    const target = wetFood ? INITIAL_FOOD : 100;
+    food = refillFrom + (target - refillFrom) * progress;
     if (refill === 0) {
-      wetFood = false;
-      discarded = false;
+      if (wetFood) {
+        wetFood = false;
+        discarded = false;
+        humidity = DRY_RH;
+        sim.reset();
+      }
       recovered = true;
-      humidity = DRY_RH;
-      check = null;
-      sim.reset();
+      finishedEating = false;
       actors.box.classList.remove('fs-pouring');
       moveActor('box', ...HOME.box, true);
     }
@@ -298,12 +307,13 @@ function mountFeederScene(lab) {
     }
   }
 
-  function getCopy(state, current) {
+  function getCopy(state, current, refillReady, refillOver) {
     const latest = state.events.at(-1);
     if (current === 'refilling') return ['กำลังเติมอาหารใหม่', 'ดูผิวอาหารสูงขึ้น ระยะที่วัดได้จะสั้นลง'];
     if (check) return [`ถึงมื้อ ${formatTime(check.slot)} น.`, 'หยุดรอดู ESP32 อ่านระดับอาหารกับความชื้นก่อนสั่ง Servo'];
     if (current === 'discard') return ['เอาอาหารชื้นออกจากถัง', 'จับกองอาหารชื้นในถังแล้วลากไปลงถังทิ้งทางขวา'];
-    if (current === 'refill') return ['เติมอาหารใหม่', 'ลากกล่องอาหารใหม่ไปวางที่ปากถัง เพื่อให้เครื่องพร้อมมื้อถัดไป'];
+    if (refillOver) return ['ปล่อยกล่องเพื่อเทอาหาร', 'เม็ดอาหารจะเติมลงถัง เครื่องจะจ่ายลงชามเมื่อถึงมื้อ'];
+    if (current === 'refill') return ['เติมอาหารใหม่', 'ลากกล่องที่ไฮไลท์ไปวางที่ปากถัง เพื่อให้เครื่องพร้อมมื้อถัดไป'];
     if (current === 'rain-off') return ['แจ้งเตือนแล้ว · เลื่อนเมฆออกก่อน', 'ลากเมฆกลับไปทางซ้าย อาหารในถังยังชื้นอยู่'];
     if (state.phase === 'beeping') return ['ส่งเสียงเตือนก่อนจ่าย', 'จากนั้นดูคำสั่ง Servo และฝาในภาพ'];
     if (state.phase === 'dispensing') return ['เปิดฝาให้เม็ดอาหารตก', 'สังเกตว่าอาหารในถังลดลงก่อนฝาหมุนกลับมาปิด'];
@@ -311,11 +321,13 @@ function mountFeederScene(lab) {
     if (current === 'raining') return ['ความชื้นกำลังสะสมในถัง', `เมื่อถึง ${FEEDER_LIMITS.humidity}% RH เครื่องจะแจ้งเตือนและงดจ่ายจนกว่าจะเปลี่ยนอาหาร`];
     if (clockDrag || input === 'clock' && nearMeal()) return [nearMeal() ? 'ปล่อยเข็มแล้วรอดูเครื่องทำงาน' : `หมุนเข็มไปที่มื้อ ${dueLabel()}`,
       'ขีดสีส้มบอกเวลาให้อาหาร'];
-    if (recovered) return ['ถังพร้อมสำหรับมื้อใหม่', `เติมอาหารใหม่แล้ว ไฟแดงดับ ลองหมุนเข็มไปรอที่มื้อ ${dueLabel()}`];
+    if (recovered) return ['เติมอาหารในถังแล้ว', `หมุนเข็มไปที่มื้อ ${dueLabel()} เพื่อจ่ายอาหารลงชาม`];
     if (drag?.name === 'level') return ['ปรับระดับอาหารในถัง', 'ดูเม็ดอาหารขยับตามเส้น ยิ่งอาหารสูง ระยะที่วัดได้ยิ่งสั้น'];
+    if (emptyFood(state.foodPercent)) return ['ถังอาหารหมด', 'ลากกล่องอาหารใหม่ที่ไฮไลท์ไปเทที่ปากถัง'];
     if (eating()) return ['แมวกำลังกิน', 'IR อ่าน LOW และเม็ดอาหารในชามค่อย ๆ ลดลง'];
-    if (finishedEating) return ['กินหมดชามแล้ว', `ฝาปิดอยู่ เครื่องรอมื้อ ${dueLabel()}`];
-    if (state.reason === 'empty') return ['มื้อก่อนงดจ่ายเพราะอาหารหมด', `เพิ่มระดับอาหารก่อน แล้วหมุนเข็มไปที่มื้อ ${dueLabel()}`];
+    if (finishedEating) return ['กินหมดชามแล้ว', refillReady
+      ? `ถังยังมีอาหาร ${state.foodPercent}% ลากกล่องไปเติมสำรอง หรือรอมื้อ ${dueLabel()}`
+      : `เครื่องรอมื้อ ${dueLabel()}`];
     if (latest?.type === 'arrival') return ['IR บันทึกว่ามีตัวมาที่ชามแล้ว', 'ลองลากแมวถอยออกเพื่อดูลำแสงกลับมา หรือลากเมฆเพื่อทดสอบถังชื้น'];
     if (atBowl()) return ['แมวบังลำแสง · IR อ่าน LOW', `เครื่องใช้เวลานัดจ่ายอาหาร มื้อถัดไป ${dueLabel()}`];
     if (bowlPieces > 0) return ['มีอาหารอยู่ในชาม', 'ลากแมวมาที่ชามเพื่อให้กินทีละเม็ด'];
@@ -334,7 +346,11 @@ function mountFeederScene(lab) {
     const rh = Math.floor(humidity);
     const angle = state.servoAngle;
     const servoMode = angle ? 'open' : closing ? 'closing' : 'closed';
-    const fault = wetFood || state.ledRed;
+    const tankEmpty = emptyFood(shownPercent);
+    const feederFault = state.ledRed && (state.reason !== 'empty' || emptyFood(state.foodPercent));
+    const fault = wetFood || feederFault;
+    const refillReady = available('box');
+    const refillOver = refillReady && drag?.name === 'box' && nearSpout(positions.box);
 
     data('stage', current);
     data('phase', state.phase);
@@ -343,6 +359,9 @@ function mountFeederScene(lab) {
     data('wet', wetFood);
     data('discarded', discarded);
     data('fault', fault);
+    data('tankEmpty', tankEmpty);
+    data('refillReady', refillReady);
+    data('refillOver', refillOver);
     data('clockDue', Boolean(check) || nearMeal());
     data('biting', bitePose > 0);
     data('servo', servoMode);
@@ -353,7 +372,7 @@ function mountFeederScene(lab) {
 
     scene.style.setProperty('--fs-mist', String(clamp((humidity - DRY_RH) / 25, wetFood && !discarded ? .39 : 0, .92)));
     attr(mask, 'y', y);
-    attr(mask, 'height', shownFood > 0 ? 332 - y : 0);
+    attr(mask, 'height', tankEmpty ? 0 : 332 - y);
     attr(levelArt, 'transform', `translate(0 ${y})`);
     attr(distanceLine, 'd', `M321 182V${y - 3}`);
     attr(rainArt, 'transform', `translate(${(positions.cloud[0] - CLOUD_X) * .7} 0)`);
@@ -364,7 +383,8 @@ function mountFeederScene(lab) {
     attr(actors.cat, 'aria-pressed', state.catAtBowl);
     attr(actors.cloud, 'aria-pressed', raining());
     attr(actors.cloud, 'aria-disabled', !available('cloud'));
-    attr(actors.box, 'aria-disabled', !available('box'));
+    attr(actors.box, 'aria-disabled', !refillReady);
+    text(refillLabel, refillOver ? 'ปล่อยเพื่อเติม' : refillReady ? 'ลากไปเติม' : 'อาหารใหม่');
     attr(actors.old, 'aria-disabled', !available('old'));
     attr(actors.level, 'aria-disabled', !available('level') && drag?.name !== 'level');
     attr(actors.level, 'aria-valuenow', shownPercent);
@@ -393,17 +413,17 @@ function mountFeederScene(lab) {
     text(artCommand, statement);
     text(process, check ? `ถึงมื้อแล้ว · อ่าน ${rh}% RH และอาหาร ${state.foodPercent}%` :
       wetFood ? `พบความชื้นถึงเกณฑ์ ${FEEDER_LIMITS.humidity}% RH · รอเปลี่ยนอาหาร` :
-      state.reason === 'empty' ? `มื้อก่อนพบอาหารเหลือไม่เกิน ${FEEDER_LIMITS.emptyPercent}%` :
+      feederFault ? `ถึงมื้อแล้วมีอาหารเหลือไม่เกิน ${FEEDER_LIMITS.emptyPercent}%` :
       busy(state) ? 'ความชื้นกับระดับอาหารผ่าน · จ่ายได้หนึ่งรอบ' :
       atBowl() ? 'IR อ่าน LOW เมื่อมีตัวมาที่ชาม' : `รอมื้อ ${dueLabel()} แล้วตรวจความชื้นกับระดับอาหาร`);
     text(output, angle ? 'Servo หมุนเพื่อเปิดทางให้อาหารตก' :
       closing ? 'Servo หมุนกลับเพื่อหยุดจ่าย' :
       wetFood ? 'ไฟแดงติด · แจ้งเจ้าของผ่าน Telegram (จำลอง)' :
-      state.ledRed ? 'ไฟแดงติด · แจ้งว่าอาหารหมด' :
+      feederFault ? 'ไฟแดงติด · แจ้งว่าอาหารหมด' :
       state.buzzer ? 'Buzzer เตือนก่อนเปิดฝา' :
       state.phase === 'watching' ? 'จ่ายแล้ว · IR เฝ้าดูที่ชาม' :
       state.portions ? 'จ่ายรอบล่าสุดเสร็จแล้ว' : 'รอคำสั่งจ่ายอาหาร');
-    const [heading, instruction] = getCopy(state, current);
+    const [heading, instruction] = getCopy(state, current, refillReady, refillOver);
     text(taskTitle, heading);
     text(taskDetail, instruction);
   }
