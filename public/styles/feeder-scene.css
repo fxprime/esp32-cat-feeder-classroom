@@ -19,6 +19,11 @@
 .fs-art-label { fill: #315675; font-size: 15px; font-weight: 700; }
 .fs-art-reading { fill: #315675; font-size: 14px; font-weight: 600; }
 .fs-art-reading .fs-art-number { fill: #105880; font-size: 17px; font-weight: 800; }
+.fs-clock-art rect { fill: #f6fbff; stroke: #a9cde5; stroke-width: 2; }
+.fs-clock-time { fill: #164a72; font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.fs-clock-due { fill: #9b430d; font-size: 15px; font-weight: 700; }
+.fs-lab[data-input="clock"] .fs-clock-art rect { fill: #e7f5ff; stroke: #5f9fc7; }
+.fs-lab[data-clock-due="true"] .fs-clock-art rect { fill: #fff5e4; stroke: #df954e; }
 .fs-servo-callout [data-art-command] { fill: #24466e; font: 700 15px ui-monospace, SFMono-Regular, Consolas, monospace; }
 .fs-lab:is([data-servo="open"], [data-servo="closing"]) .fs-servo-callout rect { fill: #d3f4e3; stroke: #6bbb94; }
 .fs-lab[data-wet="true"] .fs-art-humidity .fs-art-number { fill: #ac2347; }
@@ -51,7 +56,7 @@
 .fs-lab[data-servo="open"] .fs-gate { transform: rotate(90deg); }
 .fs-lab[data-fault="true"] .fs-lamp { fill: #dc314e; stroke: #ffdee5; filter: drop-shadow(0 0 5px #f2677f); }
 
-.fs-scene:not([data-ready]) [data-actor] { visibility: hidden; }
+.fs-scene:not([data-ready]) :is([data-actor], [data-clock-control]) { visibility: hidden; }
 .fs-lab button.fs-actor {
   position: absolute;
   z-index: 2;
@@ -106,12 +111,26 @@
   user-select: none;
 }
 .fs-level-control[aria-disabled="true"] { cursor: default; }
-.fs-level-control:focus-visible, .fs-lab button.fs-actor:focus-visible { outline: 3px solid #0369a1; outline-offset: 2px; }
+.fs-clock-control {
+  position: absolute;
+  z-index: 2;
+  inset: 40% auto auto 5%;
+  inline-size: 16.5%;
+  block-size: max(44px, 18%);
+  border-radius: 999px;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.fs-clock-control[data-dragging] { cursor: grabbing; }
+.fs-clock-control[aria-disabled="true"] { cursor: default; }
+.fs-level-control:focus-visible, .fs-clock-control:focus-visible, .fs-lab button.fs-actor:focus-visible { outline: 3px solid #0369a1; outline-offset: 2px; }
 
 .fs-scene-alert {
   position: absolute;
   z-index: 1;
-  inset: 39% auto auto 4%;
+  inset: 3% 4% auto auto;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
@@ -140,6 +159,7 @@
 .fs-readings div + div { margin-block-start: .10rem; }
 .fs-readings dd { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .1rem .38rem; margin: 0; color: #144c76; font-weight: 700; font-variant-numeric: tabular-nums; }
 .fs-lab[data-input="cat"] [data-sensor="ir"],
+.fs-lab[data-input="clock"] [data-sensor="clock"],
 .fs-lab[data-input="level"] [data-sensor="level"],
 .fs-lab[data-input="cloud"] [data-sensor="humidity"] { background: #d8eefc; }
 .fs-lab[data-fault="true"] [data-node="output"] { background: #fff2f4; border-color: #df8ba0; }

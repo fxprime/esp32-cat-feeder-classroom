@@ -159,7 +159,7 @@
     <section class="ff-card fs-lab" data-feeder-scene data-stage="ready" aria-labelledby="fs-title">
       <div class="fs-intro">
         <h2 id="fs-title">ลองกับเครื่องให้อาหารแมว</h2>
-        <p id="fs-instructions">ลากแมวไปที่ชาม ลากเส้นระดับอาหารขึ้นลง หรือเลื่อนเมฆมาเหนือถัง</p>
+        <p id="fs-instructions">หมุนเข็มไปที่ขีดสีส้ม แล้วปล่อยให้ ESP32 ตรวจถังและจ่ายอาหารตามเวลา</p>
       </div>
       <div class="fs-layout">
         <div class="fs-scene" data-scene>
@@ -267,6 +267,21 @@
               <path d="m388-4 4-4 4 4m-8 8 4 4 4-4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </g>
 
+            <g class="fs-clock-art">
+              <rect x="25" y="190" width="186" height="91" rx="18"/>
+              <circle cx="79" cy="236" r="34" fill="#fff" stroke="#7bb1d0" stroke-width="2"/>
+              <path d="M79 207v5m0 48v5M50 236h5m48 0h5" stroke="#9ab8ca" stroke-width="2" stroke-linecap="round"/>
+              <g data-clock-marker transform="rotate(240 79 236)">
+                <path d="M79 198v10" stroke="#cc5d0b" stroke-width="5" stroke-linecap="round"/>
+              </g>
+              <g data-clock-hand transform="rotate(210 79 236)">
+                <path d="M79 236v-26" stroke="#146ca4" stroke-width="5" stroke-linecap="round"/>
+              </g>
+              <circle cx="79" cy="236" r="4" fill="#146ca4"/>
+              <text x="123" y="218" class="fs-art-reading">นาฬิกา</text>
+              <text x="123" y="241" class="fs-clock-time" data-clock-time>07:00</text>
+              <text x="123" y="261" class="fs-clock-due" data-clock-due>มื้อ 08:00</text>
+            </g>
             <g class="fs-servo-callout" transform="translate(35 288)">
               <path d="M168 32h14l20 19" fill="none" stroke="#6a94b8" stroke-width="2" stroke-dasharray="4 4"/>
               <rect width="168" height="53" rx="13" fill="#f9fdff" stroke="#bfd8eb" stroke-width="1.7"/>
@@ -356,6 +371,9 @@
 
           <div class="fs-level-control" data-actor="level" role="slider" tabindex="0" aria-orientation="vertical"
             aria-label="ระดับอาหาร ลากเส้นขึ้นลงหรือใช้ลูกศร" aria-valuemin="0" aria-valuemax="100" aria-valuenow="78" aria-valuetext="78 เปอร์เซ็นต์ ระยะ 10 เซนติเมตร"></div>
+          <div class="fs-clock-control" data-clock-control role="slider" tabindex="0"
+            aria-label="นาฬิกาจำลอง หมุนเข็มหรือใช้ปุ่มลูกศร เลื่อนไปขีดสีส้มเพื่อถึงมื้อ"
+            aria-valuemin="360" aria-valuemax="480" aria-valuenow="420" aria-valuetext="07:00 น. มื้อถัดไป 08:00 น."></div>
 
           <button type="button" class="fs-actor fs-box" data-actor="box" aria-label="กล่องอาหารใหม่ ลากไปที่ปากถัง หรือกดเพื่อเติม"
             aria-disabled="true">
@@ -390,8 +408,9 @@
 
         <div class="fs-desk">
           <div class="fs-node" data-node="input">
-            <h3>Input <span>เซนเซอร์อ่านค่า</span></h3>
+            <h3>Input <span>เวลาและค่าจากเซนเซอร์</span></h3>
             <dl class="fs-readings">
+              <div data-sensor="clock"><dt><b>นาฬิกา</b> จำลอง</dt><dd data-value="clock">07:00 น.</dd></div>
               <div data-sensor="ir"><dt><b>IR</b> ที่ชาม</dt><dd data-value="ir">HIGH</dd></div>
               <div data-sensor="level"><dt><b>Ultrasonic</b> ถึงผิวอาหาร</dt><dd><span data-value="distance">10.0 ซม.</span><span data-value="food">78%</span></dd></div>
               <div data-sensor="humidity"><dt><b>DHT22</b> ในถัง</dt><dd data-value="humidity">55% RH</dd></div>
@@ -411,8 +430,8 @@
         </div>
       </div>
       <div class="fs-next" role="status">
-        <strong data-task-title>ลองให้อาหารหนึ่งมื้อ</strong>
-        <span data-task-detail>ลากเส้นสีฟ้าบนถังให้มีอาหาร แล้วปล่อยเส้นเพื่อจำลองถึงมื้อ</span>
+        <strong data-task-title>มื้อถัดไป 08:00 น.</strong>
+        <span data-task-detail>หมุนเข็มไปที่ขีดสีส้มแล้วปล่อย เส้นสีฟ้าใช้ลองปรับระดับอาหาร</span>
       </div>
     </section>
     <details class="ff-extra"><summary>ดูตัวอย่างเดิมเทียบกับการทำงานของร่างกาย</summary>
