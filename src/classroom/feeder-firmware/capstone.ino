@@ -65,7 +65,7 @@ void setup() {
   flap.attach(SERVO_PIN, 1000, 2000);
   flap.write(0);
   startTelegram();
-  Serial.println("READY - wait 2.1 seconds for DHT22; MEAL or m, duplicate test r");
+  Serial.println("READY - wait for the first HTU21D reading; MEAL or m, duplicate test r");
 }
 
 void loop() {

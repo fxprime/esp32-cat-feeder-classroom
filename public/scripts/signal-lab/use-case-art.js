@@ -220,7 +220,7 @@ export const useCaseArt = {
     right: feederBoard, signals: ["HIGH / LOW"],
   },
   "feeder-stock": { left: feederBoard, right: feederEndpoint("HC-SR04 ที่ปากถัง", "feeder-stock"), signals: ["TRIG 10 µs", "ECHO บอกระยะ"] },
-  "feeder-rh": { left: feederBoard, right: feederEndpoint("DHT22 ในถัง", "feeder-rh"), signals: ["เริ่มอ่าน", "ข้อมูลความชื้น"] },
+  "feeder-rh": { left: feederBoard, right: feederEndpoint("HTU21D ในถัง", "feeder-rh"), signals: ["คำสั่งผ่าน I²C", "ไบต์ความชื้น"] },
   "feeder-piezo": { left: feederEndpoint("แผ่นรับแรงกระแทก", "feeder-piezo"), right: feederBoard, signals: ["แรงดันหลังปรับระดับ"] },
   "feeder-alert": { left: feederBoard, right: feederEndpoint("ไฟแดง", "feeder-alert"), signals: ["HIGH ให้ไฟแดงติด"] },
   button: { left: endpoint("ปุ่มกริ่งหน้าบ้าน", "doorbell"), right: endpoint("ESP32 · GPIO19", "inputBoard"), signals: ["LOW = กดปุ่ม"] },

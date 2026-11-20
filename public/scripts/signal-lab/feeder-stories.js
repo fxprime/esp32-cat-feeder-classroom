@@ -57,42 +57,58 @@ function stockStory(distanceCm) {
 }
 
 const humidityBase = {
-  id: "feeder-rh", family: "Digital", both: true, tag: "DHT22",
+  id: "feeder-rh", family: "Digital", both: true, tag: "HTU21D · I²C",
   title: "ความชื้นหลายระดับ ส่งเป็น 0 กับ 1 ได้ยังไง?",
-  summary: "DHT22 วัดความชื้นอากาศ แล้วส่งข้อมูลดิจิทัลบนสาย DATA ที่ GPIO32",
-  wires: "DATA ↔ GPIO32", device: "DHT22 · ความชื้นอากาศในถัง", range: "ช่วงตอบข้อมูล",
-  message: "ความชื้นเปลี่ยนได้หลายระดับ แต่ DHT22 แปลงให้เป็นตัวเลขในเซนเซอร์ก่อน แล้วส่งตัวเลขด้วยพัลส์สองระดับ",
-  note: "กราฟซูมเฉพาะข้อมูลความชื้น 16 บิตแรก DHT22 ส่งอุณหภูมิและ checksum ต่อจากนี้ เกณฑ์งดจ่าย 70% RH ใช้ทดลองกับความชื้นของอากาศในถัง",
-  source: { label: "เซนเซอร์ DHT22 ในแบบจำลอง · Wokwi", url: "https://docs.wokwi.com/parts/wokwi-dht22" },
+  summary: "HTU21D วัดความชื้นอากาศแล้วส่งค่าเป็นไบต์ผ่าน I²C",
+  wires: "SDA 21 ⇄ · SCL 22 →", device: "HTU21D · ความชื้นอากาศในถัง",
+  message: "ESP32 ส่งจังหวะบน SCL ส่วน SDA ใช้ส่งคำสั่งและรับตัวเลขกลับมา",
+  note: "ซูมช่วงอ่านกลับจาก address 0x40 ที่ 100 kHz เห็น address อ่าน 0x81, ค่าดิบ 2 ไบต์ และ CRC โดย ESP32 ส่ง NACK หลังไบต์สุดท้าย",
+  source: { label: "HTU21D · TE Connectivity", url: "https://www.te.com/en/product-CAT-HSC0004.html" },
   useCase: {
-    title: "เช็กความชื้นก่อนจ่ายอาหาร", when: "เมื่อโปรแกรมอ่านค่าเซนเซอร์ที่ติดในถัง",
+    title: "เช็กความชื้นก่อนจ่ายอาหาร", when: "ESP32 อ่านเซนเซอร์ในถังตามรอบที่ตั้งไว้",
     routes: [
-      inputRoute("ESP32 GPIO32", "DHT22", "สัญญาณเริ่มการอ่านบนสาย DATA", "ขอข้อมูล"),
-      inputRoute("DHT22", "ESP32 GPIO32", "ความชื้น อุณหภูมิ และ checksum", "ตอบกลับ"),
+      inputRoute("ESP32", "HTU21D ที่ 0x40", "ส่งคำสั่งเริ่มวัด 0xF5 ผ่าน I²C", "เริ่มวัด"),
+      inputRoute("HTU21D", "ESP32", "ส่งค่าดิบความชื้น 2 ไบต์และ CRC บน SDA ตามจังหวะ SCL", "อ่านกลับ"),
     ],
-    result: "ESP32 แกะบิตกลับเป็น %RH ถ้าค่าถึง 70% ในแบบจำลอง ให้ปิดฝาและส่งเหตุที่งดจ่าย",
+    result: "ESP32 แปลงค่าดิบเป็น %RH ถ้าถึง 70% ในแบบจำลอง ให้ฝาปิดไว้และแจ้งเหตุที่งดจ่าย",
   },
   control: { label: "ความชื้นอากาศในถัง", min: 35, max: 90, step: 1, initial: 55, unit: "% RH" },
 };
 
 function humidityStory(percent) {
-  const bits = (percent * 10).toString(2).padStart(16, "0");
-  let elapsed = 0;
-  const microseconds = [[0, 0]];
-  for (const bit of bits) {
-    elapsed += 50;
-    microseconds.push([elapsed, 0], [elapsed, 1]);
-    elapsed += bit === "1" ? 70 : 27;
-    microseconds.push([elapsed, 1], [elapsed, 0]);
+  const raw = (Math.ceil((percent + 6) * 16384 / 125) << 2) | 2;
+  const dataBytes = [raw >> 8, raw & 0xff];
+  let crc = 0;
+  for (const byte of dataBytes) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit++) crc = ((crc << 1) ^ (crc & 0x80 ? 0x31 : 0)) & 0xff;
   }
+  const bytes = [0x81, ...dataBytes, crc];
+  const bits = bytes.flatMap((byte, index) => [
+    ...Array.from({ length: 8 }, (_, bit) => (byte >> (7 - bit)) & 1),
+    index === bytes.length - 1 ? 1 : 0,
+  ]);
+  const units = 4 * bits.length + 6;
+  const scl = [[0, 1]], sda = [[0, 1], [1, 1], [1, 0]];
+  let data = 0;
+  for (const [index, bit] of bits.entries()) {
+    const start = 2 + index * 4;
+    scl.push([start, 1], [start, 0], [start + 2, 0], [start + 2, 1]);
+    sda.push([start + 1, data], [start + 1, bit]);
+    data = bit;
+  }
+  scl.push([units - 4, 1], [units - 4, 0], [units - 2, 0], [units - 2, 1], [units, 1]);
+  sda.push([units - 3, data], [units - 3, 0], [units - 1, 0], [units - 1, 1], [units, 1]);
+  const track = points => points.map(([time, level]) => [time / units, level]);
   const blocked = percent >= FEEDER_LIMITS.humidity;
   return {
     ...humidityBase,
-    range: `${elapsed} µs · 16 บิต`,
-    tracks: [rail("DATA", microseconds.map(([time, level]) => [time / elapsed, level]))],
+    range: "36 จังหวะ · 100 kHz",
+    tracks: [rail("SCL", track(scl)), rail("SDA", track(sda))],
+    labels: [[.126, "Address · Read"], [.36, "RH MSB"], [.6, "RH LSB"], [.84, "CRC"]],
     read: time => ({
       on: blocked && time >= 1,
-      value: time < 1 ? "DHT22 กำลังส่งบิต" : `${percent}% RH · ${blocked ? "ถึงเกณฑ์งดจ่าย" : "ยังไม่ถึงเกณฑ์งดจ่าย"}`,
+      value: time < 1 ? "ESP32 กำลังอ่านข้อมูลผ่าน I²C" : `${percent}% RH · ${blocked ? "ถึงเกณฑ์งดจ่าย" : "ยังไม่ถึงเกณฑ์งดจ่าย"}`,
     }),
   };
 }

@@ -23,7 +23,7 @@ function modulePart(r) {
  const cx=x+168,cy=y+88;
  if(r.kind==='servo') shape+=`<circle cx="${cx}" cy="${cy}" r="25" fill="#c7dbed"/><g id="servo-arm" style="transform-origin:${cx}px ${cy}px"><rect x="${cx-5}" y="${cy-48}" width="10" height="65" rx="5" fill="#fff"/><circle cx="${cx}" cy="${cy}" r="6" fill="#2c4259"/></g>`;
  else if(r.kind==='ultrasonic') shape+=`<circle cx="${cx-25}" cy="${cy}" r="23" fill="#c9d8df" stroke="#162e3a" stroke-width="5"/><circle cx="${cx+27}" cy="${cy}" r="23" fill="#c9d8df" stroke="#162e3a" stroke-width="5"/>`;
- else if(r.kind==='dht') shape+=`<rect x="${cx-24}" y="${cy-32}" width="50" height="70" rx="6" fill="#f2eade"/>${Array.from({length:7},(_,i)=>`<path d="M${cx-18} ${cy-24+i*9}h36" stroke="#9cbbb2" stroke-width="3"/>`).join('')}`;
+ else if(r.kind==='htu21d') shape+=`<rect x="${cx-20}" y="${cy-20}" width="40" height="40" rx="6" fill="#253d47"/><circle cx="${cx}" cy="${cy}" r="5" fill="#bcd6df"/>`;
  else if(['pot','ldr','button','buzzer'].includes(r.kind)) shape+=`<circle cx="${cx}" cy="${cy}" r="33" fill="${r.kind==='ldr'?'#d6ab78':'#c8d1d9'}" stroke="#344e60" stroke-width="4"/><path id="dial" d="M${cx} ${cy}v-27" stroke="#314a5a" stroke-width="5" style="transform-origin:${cx}px ${cy}px"/>`;
  else if(r.kind==='rfid') shape+=`<rect x="${cx-37}" y="${cy-28}" width="65" height="95" rx="15" fill="none" stroke="#8ad4d1" stroke-width="3"/><rect x="${cx-28}" y="${cy-19}" width="47" height="77" rx="12" fill="none" stroke="#8ad4d1" stroke-width="3"/>`;
  else if(r.kind==='uart') shape+=boardSVG({x:x+110,y:y+40,height:240,used:['16','17']});

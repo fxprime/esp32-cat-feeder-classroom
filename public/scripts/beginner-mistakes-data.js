@@ -16,7 +16,7 @@ const firstError = (file,line,column,message,source,mark='^',severity='error') =
   verifyFailed,
 ].join('\n');
 
-const dhtSketch = '#include <DHT.h>\n\n'+sketch('  Serial.println("DHT ready");');
+const humiditySketch = '#include <Adafruit_HTU21DF.h>\n\n'+sketch('  Serial.println("HTU21D ready");');
 const braceSketch = sketch('  if (true) {', '    Serial.println("Snack time");', '  }');
 
 export const lessons = {
@@ -65,19 +65,18 @@ export const lessons = {
       goal:'พิมพ์ Snack time จากเงื่อนไขใน setup()',
     },
     {
-      id:'library', label:'หา DHT.h ไม่เจอ', phase:'คอมไพล์', category:'ไลบรารี · หาไฟล์ Header ไม่เจอ',
-      title:'ทำไม #include <DHT.h> แล้วหาไฟล์ไม่เจอ?',
-      intro:'ในตัวอย่างนี้สะกดชื่อไฟล์ถูกแล้ว แต่ยังไม่ติดตั้งไลบรารีที่มี DHT.h ลองดูว่าแก้ที่โค้ดหรือที่ Library Manager',
-      file:'catdht.ino', line:1,
-      broken:dhtSketch,
-      output:firstError('catdht.ino',1,10,'DHT.h: No such file or directory','#include <DHT.h>','^~~~~~~','fatal error'),
-      expectedTitle:'Output · ผลตัวอย่าง', expected:'Verify ผ่าน\n\nเมื่อ Upload แล้ว Serial Monitor แสดง\nDHT ready', answer:0,
-      choices:['ติดตั้ง DHT sensor library ของ Adafruit และ dependencies','เปลี่ยนชื่อใน #include เป็น DHT.cpp'],
-      hint:'DHT.h มาจากไลบรารี ให้เช็กชื่อผู้พัฒนาและตัวพิมพ์เล็ก–ใหญ่ของชื่อไฟล์ด้วย',
-      solved:'เมื่อติดตั้งไลบรารีกับ dependencies แล้ว ให้กด Verify ซ้ำเพื่อตรวจว่า Arduino IDE มองเห็น DHT.h',
-      goal:'ทดสอบว่าโปรเจกต์มองเห็นไลบรารี DHT ก่อนเริ่มเขียนโค้ดอ่านเซนเซอร์',
-      tried:'เช็กแล้วว่าเขียน DHT.h ตรงตามตัวอย่าง ยังไม่ได้ติดตั้งไลบรารีเพิ่ม',
-      forum:'https://forum.arduino.cc/t/dht-library-not-getting-recognised/549380',
+      id:'library', label:'หา Adafruit_HTU21DF.h ไม่เจอ', phase:'คอมไพล์', category:'ไลบรารี · หาไฟล์ Header ไม่เจอ',
+      title:'ทำไม #include <Adafruit_HTU21DF.h> แล้วหาไฟล์ไม่เจอ?',
+      intro:'ในตัวอย่างนี้สะกดชื่อไฟล์ถูกแล้ว แต่ยังไม่ติดตั้งไลบรารีที่มี Adafruit_HTU21DF.h ลองดูว่าแก้ที่โค้ดหรือที่ Library Manager',
+      file:'cat_humidity.ino', line:1,
+      broken:humiditySketch,
+      output:firstError('cat_humidity.ino',1,10,'Adafruit_HTU21DF.h: No such file or directory','#include <Adafruit_HTU21DF.h>','^~~~~~~~~~~~~~~~~~~','fatal error'),
+      expectedTitle:'Output · ผลตัวอย่าง', expected:'Verify ผ่าน\n\nเมื่อ Upload แล้ว Serial Monitor แสดง\nHTU21D ready', answer:0,
+      choices:['ติดตั้ง Adafruit HTU21DF และ Adafruit BusIO','เปลี่ยนชื่อใน #include เป็น Adafruit_HTU21DF.cpp'],
+      hint:'Adafruit_HTU21DF.h มาจากไลบรารี ให้เช็กชื่อผู้พัฒนาและตัวพิมพ์เล็ก–ใหญ่ของชื่อไฟล์ด้วย',
+      solved:'เมื่อติดตั้งไลบรารีกับ dependencies แล้ว ให้กด Verify ซ้ำเพื่อตรวจว่า Arduino IDE มองเห็น Adafruit_HTU21DF.h',
+      goal:'ทดสอบว่าโปรเจกต์มองเห็นไลบรารี HTU21D ก่อนเริ่มเขียนโค้ดอ่านเซนเซอร์',
+      tried:'เช็กแล้วว่าเขียน Adafruit_HTU21DF.h ตรงตามตัวอย่าง ยังไม่ได้ติดตั้งไลบรารีเพิ่ม',
     },
     {
       id:'value-type', label:'ชนิดข้อมูลไม่ตรง', phase:'คอมไพล์', category:'ชนิดข้อมูล · String กับ int',

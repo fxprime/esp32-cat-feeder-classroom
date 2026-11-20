@@ -73,7 +73,8 @@ for (const [gpio, pinName, connector] of [
   [FEEDER_PINS.servo, "SERVO_PIN", "flap:PWM"],
   [FEEDER_PINS.trigger, "TRIG_PIN", "stock:TRIG"],
   [FEEDER_PINS.echo, "ECHO_PIN", "echoTop:2"],
-  [FEEDER_PINS.humidity, "DHT_PIN", "air:SDA"],
+  [FEEDER_PINS.humiditySda, "SDA_PIN", "air:SDA"],
+  [FEEDER_PINS.humidityScl, "SCL_PIN", "air:SCL"],
   [FEEDER_PINS.buzzer, "BUZZER_PIN", "beep:2"],
   [FEEDER_PINS.led, "RED_LED_PIN", "ledR:1"],
 ]) {
@@ -81,5 +82,11 @@ for (const [gpio, pinName, connector] of [
   assert(capstone.ino.includes(`constexpr int ${pinName} = ${gpio};`));
   assert(connections.some(([a, b]) => (a === target && b === connector) || (b === target && a === connector)));
 }
-assert.deepEqual(capstone.libraries, ["ESP32Servo", "DHT sensor library for ESPx"]);
+assert.deepEqual(capstone.libraries, ["ESP32Servo"]);
+for (const lab of [classroomLabs.lab2, capstone]) {
+  assert.equal(lab.customChip, "htu21d");
+  const sensor = JSON.parse(lab.json).parts.find(part => part.id === "air");
+  assert.equal(sensor.type, "chip-htu21d");
+  assert(lab.ino.includes("HTU21D_MEASURE_RH = 0xF5"));
+}
 console.log("Cat feeder passed: beep/open/close, duplicate guard, IR arrival, humidity, empty and unreadable sensors, after-beep check, offline alert, pin consistency.");

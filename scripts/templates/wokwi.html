@@ -231,6 +231,15 @@
       </div>
 
       <!-- Part B: Parallel Code & Circuit Boxes -->
+      <aside id="htuChipSetup" hidden class="bg-white rounded-3xl p-4 border-2 border-cyan-200 text-sm leading-relaxed">
+        <h2 class="font-extrabold text-slate-900">เพิ่ม HTU21D ใน Wokwi</h2>
+        <p class="mt-1 text-slate-700">ก่อนวาง <code>diagram.json</code> กด <strong>+</strong> ใน Wokwi แล้วเลือก <strong>Custom Chip</strong> ตั้งชื่อ <code>htu21d</code> ภาษา C จากนั้นแทนเนื้อหาในไฟล์ที่ Wokwi สร้างด้วยไฟล์สองตัวนี้ เมื่อรันแล้วคลิก HTU21D เพื่อปรับค่า % RH</p>
+        <div class="mt-2 flex flex-wrap gap-3">
+          <a class="underline font-bold text-cyan-800" href="../labs/components/htu21d.chip.json" download="htu21d.chip.json">ดาวน์โหลด htu21d.chip.json</a>
+          <a class="underline font-bold text-cyan-800" href="../labs/components/htu21d.chip.c" download="htu21d.chip.c">ดาวน์โหลด htu21d.chip.c</a>
+          <a class="underline text-slate-700" href="https://docs.wokwi.com/chips-api/getting-started" target="_blank" rel="noopener">คู่มือ Custom Chip</a>
+        </div>
+      </aside>
       <div class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-lg border-2 border-slate-200 flex flex-col gap-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -310,6 +319,7 @@
       const labGoal = document.getElementById('labGoal');
       const wiringList = document.getElementById('wiringList');
       const libraryBox = document.getElementById('libraryBox');
+      const htuChipSetup = document.getElementById('htuChipSetup');
       const codeInoPre = document.getElementById('codeInoPre');
       const codeJsonPre = document.getElementById('codeJsonPre');
       const copyInoBtn = document.getElementById('copyInoBtn');
@@ -453,6 +463,7 @@
         labTitle.textContent = lab.title;
         labBadge.textContent = lab.badge;
         labGoal.textContent = lab.goal;
+        htuChipSetup.hidden = lab.customChip !== 'htu21d';
 
         wiringList.innerHTML = '';
         lab.wiring.forEach((w) => {

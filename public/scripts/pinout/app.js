@@ -108,7 +108,8 @@ function simulate(){
  case 'button':result=value?'กดปุ่ม → GPIO27 = LOW (0)':'ปล่อยปุ่ม → pull-up ภายใน → HIGH (1)';break;
  case 'pot':result=`ตำแหน่ง ${value}% → ≈ ${(value/100*3.3).toFixed(2)}V → raw เชิงอุดมคติ ${Math.round(value/100*4095)} / 4095 (ADC จริงอาจอิ่มตัว/ไม่เป็นเส้นตรง)`;break;
  case 'ldr':result=`แสง ${value}% → ค่าอ่านตัวอย่าง ${Math.round(value/100*4095)} · มากแปลว่าสว่างในวงจรตัวอย่าง ไม่ใช่ค่า lux`;break;
- case 'dht':case 'ds18':case 'i2c':result=`ข้อมูลตัวอย่าง ${value}°C ${recipe.id==='i2c'?'ผ่าน I²C (ไม่ใช่ค่าที่ได้จากการสแกน address)':'จากเซนเซอร์'} · รอการอ่านตามช่วงเวลาของอุปกรณ์`;break;
+ case 'htu21d':result=`ความชื้นตัวอย่าง ${value}% RH · รับผ่าน SDA ตามจังหวะ SCL`;break;
+ case 'ds18':case 'i2c':result=`ข้อมูลตัวอย่าง ${value}°C ${recipe.id==='i2c'?'ผ่าน I²C (ไม่ใช่ค่าที่ได้จากการสแกน address)':'จากเซนเซอร์'} · รอการอ่านตามช่วงเวลาของอุปกรณ์`;break;
  case 'ultrasonic':result=`ระยะ ${value}cm → Echo ประมาณ ${Math.round(value*2/.0343)}µs · divider ลด HIGH จาก 5V เหลือ ≈ 3.21V`;break;
  case 'spi':result=value?'พบแท็กตัวอย่าง → CS27 เลือก MFRC522 → อ่าน UID ผ่าน MISO19':'ยังไม่มีแท็กใกล้เสาอากาศ · SPI พร้อมรับส่ง';break;
  case 'uart':result=`A: Serial2.println(${value}) → TX17 → B: RX16 → ได้ "${value}\\r\\n" · B ส่งกลับทาง TX17 → A RX16 ได้เช่นกัน`;break;

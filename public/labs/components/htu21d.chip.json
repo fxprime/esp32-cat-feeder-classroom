@@ -1,0 +1,8 @@
+{
+  "name": "HTU21D",
+  "author": "ESP32 Classroom",
+  "pins": ["VCC", "GND", "SDA", "SCL"],
+  "controls": [
+    { "id": "humidity", "label": "Relative humidity (% RH)", "type": "range", "min": 0, "max": 100, "step": 1 }
+  ]
+}

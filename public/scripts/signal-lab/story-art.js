@@ -33,7 +33,7 @@ export const storyArt = {
     <path d="M76 41h72m-72 12h72m-72 12h72m-72 12h72" stroke="#5b88a5" stroke-width="5" stroke-dasharray="6 4"/>
     <path d="M88 112v11m17-11v11m17-11v11m17-11v11" stroke="#658095" stroke-width="3"/>
     <circle cx="188" cy="53" r="11" fill="#eaf2f8" stroke="#7b9ab1" stroke-width="2" class="story-humidity-state"/>
-    <text x="113" y="99" text-anchor="middle" font-size="13" fill="#175982">DHT22</text>
+    <text x="113" y="99" text-anchor="middle" font-size="13" fill="#175982">HTU21D</text>
   `),
   "feeder-piezo": svg(`
     <path d="M27 33l80 31 8-10L36 23Z" fill="#e8d7ff" stroke="#9569be" stroke-width="2"/>

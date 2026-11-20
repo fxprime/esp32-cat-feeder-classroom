@@ -50,7 +50,7 @@
 
 บท 3 ต้องมีผัง DevKit V1 30 พินสำหรับ ESP32-WROOM-32 รุ่นดั้งเดิม อธิบายทุกขาที่ออกหัวแถว รวมพินที่ห้ามใช้/ไม่ออกหัวแถวในหมายเหตุ กรองตาม peripheral โดยแยกทิศทางของ GPIO34–39 ที่รับสัญญาณ UART RX / SPI MISO / I²S DIN ได้แต่ส่งออกไม่ได้
 
-ให้เลือกจากพินหรืองานที่จะทำ แล้วเปิด 16 วงจร ได้แก่ Servo, DAC speaker, I²S speaker, DC motor driver, Brushless ESC, Active/Passive Buzzer, Button, Pot, LDR, DHT22, HC-SR04, I²C sensor, SPI RFID, DS18B20 และ UART สองบอร์ด ทุกวงจรต้องมีภาพเวกเตอร์ที่ไฮไลต์สายได้ รายการเดินสายทีละเส้น ไฟเลี้ยง/ราง breadboard อุปกรณ์ ข้อจำกัด และโค้ด Arduino-ESP32 core 3.x จากข้อมูลชุดเดียว
+ให้เลือกจากพินหรืองานที่จะทำ แล้วเปิด 16 วงจร ได้แก่ Servo, DAC speaker, I²S speaker, DC motor driver, Brushless ESC, Active/Passive Buzzer, Button, Pot, LDR, HTU21D, HC-SR04, I²C sensor, SPI RFID, DS18B20 และ UART สองบอร์ด ทุกวงจรต้องมีภาพเวกเตอร์ที่ไฮไลต์สายได้ รายการเดินสายทีละเส้น ไฟเลี้ยง/ราง breadboard อุปกรณ์ ข้อจำกัด และโค้ด Arduino-ESP32 core 3.x จากข้อมูลชุดเดียว
 
 วาดวงจรและข้อมูล classic ESP32 เองโดยอ้างอิงแนวทาง esp-labs-web (MIT); อย่าคัดลอก pin map ESP32-S3 หรืออ้างว่ากู้ prompt ต้นฉบับได้ ใช้ SVG สำหรับโต้ตอบ WebP ขนาดพอดีสำหรับ thumbnails และดาวน์โหลด Motion opt-in มีหยุดและ reduced motion เสียงสาธิตเป็น Web Audio ที่กดเล่นเองและจำกัดเวลา ตรวจพลังงานแยก, common GND, divider, BTL speaker และ GPIO input-only ด้วย assertions ที่มีประโยชน์
 

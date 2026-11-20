@@ -61,7 +61,7 @@ function describeEffect(before, after) {
   switch (line) {
     case 'read-clock': return {kind:'clock', symbol:'millis', icon:'clock', label:`millis() → now = ${format(vars.now.value)} ms`};
     case 'timing-if': return {kind:'jump', symbol:'if', icon:'branch', label:`${format(vars.elapsed.value)} ≥ ${format(vars.intervalMs.value)} ms · ${vars.elapsed.value>=vars.intervalMs.value?'จริง':'เท็จ'}`, target:vars.elapsed.value>=vars.intervalMs.value?'stamp':'loop-close'};
-    case 'read-humidity': return {kind:'read', symbol:'readHumidity', icon:'gpio', pin:32, label:'DHT22 → GPIO32 → humidityRH'};
+    case 'read-humidity': return {kind:'read', symbol:'readHumidity', icon:'gpio', pin:21, label:'HTU21D → I²C → humidityRH'};
     case 'humidity-if': {
       const blocked = vars.humidityRH.value === 'NaN' || vars.humidityRH.value >= vars.RH_LIMIT.value;
       return {kind:'jump', symbol:'if', icon:'branch', label:blocked?'จริง → เข้า if':'เท็จ → ไป else', target:blocked?'high':'else'};

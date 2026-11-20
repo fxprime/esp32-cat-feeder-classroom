@@ -17,7 +17,7 @@
 | Servo | 18 · ไฟเลี้ยง 5 V ที่เหมาะกับ Servo และ GND ร่วมเมื่อใช้ของจริง |
 | Passive buzzer | 25 |
 | HC-SR04 | TRIG 26, ECHO 27 ที่จุดกึ่งกลางตัวแบ่ง 1 kΩ/1.8 kΩ |
-| DHT22 | 32 · pull-up 10 kΩ ไป 3V3 |
+| HTU21D | SDA 21, SCL 22 · I²C 0x40 · VCC 3V3 |
 | IR สะท้อนที่ชาม | 33 · Active LOW · Wokwi ใช้สวิตช์แทน OUT ของเซนเซอร์ |
 | Piezo เสริม | 34 / ADC1 ผ่านวงจรปรับสัญญาณให้เหมาะกับ 3.3 V |
 
@@ -28,6 +28,8 @@
 ใช้ Node.js 22.12+ จากนั้นรัน `npm install`, `npm run dev` หรือ `npm run build` ตามงาน ผล build อยู่ใน `dist/` เว็บเป็น static โค้ดสำหรับ Wokwi อยู่ใน `public/labs/lab1` ถึง `lab3` และสร้างจาก `src/classroom/labs.mjs` รวมกับสเก็ตช์ใน `src/classroom/feeder-firmware/`
 
 `npm run check:feeder` ทดสอบเวลาและเงื่อนไขการจ่าย ไฟแดง สถานะออฟไลน์ มื้อซ้ำ IR และผังขา Lab แล้ว `npm run build` รันการตรวจเดิมของคอร์สด้วย
+
+ใน Wokwi ให้เพิ่ม Custom Chip ชื่อ `htu21d` ภาษา C ก่อนวางผัง Lab 2–3 แล้วแทนเนื้อหาของไฟล์ชิปทั้งสองด้วยไฟล์ใน `public/labs/components/` คลิกตัวชิปตอนจำลองเพื่อเลื่อนค่า % RH โค้ด Lab อ่านผ่าน I²C จาก address 0x40 แบบเดียวกับตอนใช้เซนเซอร์จริง
 
 ## แจ้งเตือนสำหรับเดโมครู
 

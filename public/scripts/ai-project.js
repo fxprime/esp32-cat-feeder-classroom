@@ -32,7 +32,7 @@ const presets = {
     goal: 'เช็กความชื้นและอาหารในถังก่อนจ่ายหนึ่งรอบ แล้วดูว่ามีตัวมาที่ชามหรือยัง',
     budget: '',
     time: 'ช่วง Lab ตอนท้ายวัน',
-    tools: 'ESP32 DevKit V1, DHT22, Ultrasonic, IR สะท้อน Active LOW, Servo, buzzer, LED แดง, Breadboard และ Wokwi',
+    tools: 'ESP32 DevKit V1, HTU21D, Ultrasonic, IR สะท้อน Active LOW, Servo, buzzer, LED แดง, Breadboard และ Wokwi',
     limits: 'มีปุ่มให้อาหาร Manual ใช้เกณฑ์ความชื้นเพื่อสาธิต เปิดฝาทีละมื้อ และตรวจค่าที่เห็นจริงใน Lab',
   },
   plant: {

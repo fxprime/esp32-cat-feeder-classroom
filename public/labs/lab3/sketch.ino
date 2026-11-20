@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <DHTesp.h>
+#include <Wire.h>
 
 #include <ESP32Servo.h>
 
@@ -11,7 +11,8 @@ constexpr int BEEP_MS = 600;
 constexpr int PORTION_MS = 1100;
 constexpr int TRIG_PIN = 26;
 constexpr int ECHO_PIN = 27;
-constexpr int DHT_PIN = 32;
+constexpr int SDA_PIN = 21;
+constexpr int SCL_PIN = 22;
 constexpr int IR_PIN = 33;
 constexpr int FULL_CM = 6;
 constexpr int EMPTY_CM = 24;
@@ -46,17 +47,22 @@ public:
 };
 
 
-DHTesp dht;
+constexpr uint8_t HTU21D_ADDRESS = 0x40;
+constexpr uint8_t HTU21D_MEASURE_RH = 0xF5;  // No-hold mode: release I²C during conversion.
+constexpr uint32_t RH_CONVERSION_MS = 25;
+constexpr uint32_t RH_PERIOD_MS = 2100;
+bool humidityPending = false;
 float humidity = NAN;
 float distanceCm = NAN;
 uint32_t lastHumidity;
 uint32_t lastDistance;
 
 void setupSensors() {
-  dht.setup(DHT_PIN, DHTesp::DHT22);
+  Wire.begin(SDA_PIN, SCL_PIN, 100000);
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
-  lastHumidity = lastDistance = millis();
+  lastDistance = millis();
+  lastHumidity = lastDistance - RH_PERIOD_MS;
 }
 
 float readDistanceCm() {
@@ -76,15 +82,43 @@ int estimateFood(float cm) {
   return lroundf(constrain(fraction, 0.0f, 1.0f) * 100);
 }
 
+// HTU21D sends two data bytes and CRC-8 (polynomial 0x31).
+uint8_t htuCrc(uint8_t high, uint8_t low) {
+  uint8_t crc = 0;
+  const uint8_t bytes[] = {high, low};
+  for (uint8_t byte : bytes) {
+    crc ^= byte;
+    for (int bit = 0; bit < 8; ++bit) {
+      crc = (crc & 0x80) ? (crc << 1) ^ 0x31 : crc << 1;
+    }
+  }
+  return crc;
+}
+
+float readHumidityResult() {
+  if (Wire.requestFrom(HTU21D_ADDRESS, 3) != 3) return NAN;
+  uint8_t high = Wire.read();
+  uint8_t low = Wire.read();
+  uint8_t crc = Wire.read();
+  if (htuCrc(high, low) != crc) return NAN;
+  uint16_t raw = (uint16_t(high) << 8) | (low & 0xFC);
+  return constrain(-6.0f + 125.0f * raw / 65536.0f, 0.0f, 100.0f);
+}
+
 void sampleSensors(uint32_t now) {
   if (now - lastDistance >= 250) {
     lastDistance = now;
     distanceCm = readDistanceCm();
   }
-  if (now - lastHumidity >= 2100) {
+  if (humidityPending && now - lastHumidity >= RH_CONVERSION_MS) {
+    humidity = readHumidityResult();
+    humidityPending = false;
+  } else if (!humidityPending && now - lastHumidity >= RH_PERIOD_MS) {
     lastHumidity = now;
-    humidity = dht.getHumidity();
-    if (dht.getStatus() != DHTesp::ERROR_NONE) humidity = NAN;
+    Wire.beginTransmission(HTU21D_ADDRESS);
+    Wire.write(HTU21D_MEASURE_RH);
+    humidityPending = Wire.endTransmission() == 0;
+    if (!humidityPending) humidity = NAN;
   }
 }
 
@@ -227,7 +261,7 @@ void setup() {
   flap.attach(SERVO_PIN, 1000, 2000);
   flap.write(0);
   startTelegram();
-  Serial.println("READY - wait 2.1 seconds for DHT22; MEAL or m, duplicate test r");
+  Serial.println("READY - wait for the first HTU21D reading; MEAL or m, duplicate test r");
 }
 
 void loop() {

@@ -1,6 +1,6 @@
 export const FEEDER_PINS = Object.freeze({
   led: 23, servo: 18, buzzer: 25, trigger: 26, echo: 27,
-  humidity: 32, infrared: 33, meal: 19, piezo: 34,
+  humiditySda: 21, humidityScl: 22, infrared: 33, meal: 19, piezo: 34,
 });
 
 export const FEEDER_LIMITS = Object.freeze({

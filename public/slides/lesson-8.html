@@ -273,10 +273,10 @@
       <div class="fp-grid">
         <fieldset class="fp-controls">
           <legend>อินพุตของบอร์ด</legend>
-          <label for="meal-humidity">DHT22 · ความชื้นอากาศในถัง <output id="meal-humidity-value" for="meal-humidity">55% RH</output></label>
+          <label for="meal-humidity">HTU21D · ความชื้นอากาศในถัง <output id="meal-humidity-value" for="meal-humidity">55% RH</output></label>
           <input type="range" id="meal-humidity" min="30" max="95" value="55" aria-describedby="meal-threshold">
           <p id="meal-threshold" class="text-xs">ตั้งเกณฑ์สาธิตไว้ที่ 70% RH ขึ้นไป</p>
-          <label><input type="checkbox" id="meal-sensor-error"> จำลอง DHT22 อ่านไม่ได้</label>
+          <label><input type="checkbox" id="meal-sensor-error"> จำลอง HTU21D อ่านไม่ได้</label>
           <label for="meal-distance">Ultrasonic · ระยะจากหัววัดถึงผิวเม็ด <output id="meal-distance-value" for="meal-distance">10 ซม.</output></label>
           <input type="range" id="meal-distance" min="6" max="24" value="10">
           <label><input type="checkbox" id="meal-ir"> แมวอยู่ในระยะ IR สะท้อน <output id="meal-ir-value" for="meal-ir">HIGH · ยังตรวจไม่พบ</output></label>
