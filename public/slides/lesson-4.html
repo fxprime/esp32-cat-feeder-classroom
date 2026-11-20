@@ -418,7 +418,7 @@
       </li>
     </ul>
     <section class="button-demo" id="button-demo" aria-labelledby="button-demo-title" data-on="false">
-      <h2 id="button-demo-title">ปุ่ม “ถึงมื้อ” ส่งเลขอะไรให้ ESP32?</h2>
+      <h2 id="button-demo-title">ปุ่ม “ให้อาหาร Manual” ส่งเลขอะไรให้ ESP32?</h2>
       <p id="button-demo-instruction" class="button-demo-instruction">กดปุ่มหนึ่งครั้งเพื่อปิดหน้าสัมผัส แล้วกดอีกครั้งเพื่อปล่อย</p>
 
       <div class="button-demo-grid">
@@ -432,7 +432,7 @@
               <path d="M45 27h22" stroke="#fff" stroke-opacity=".65" stroke-width="2.5" stroke-linecap="round"/>
             </g>
           </svg>
-          <strong id="demo-button-label">ปุ่มถึงมื้อ</strong>
+          <strong id="demo-button-label">ให้อาหาร Manual</strong>
           <span class="button-demo-state" id="demo-button-state" aria-hidden="true">ปล่อยอยู่</span>
         </button>
 
@@ -474,7 +474,7 @@
 
       <div class="button-demo-wiring">
         <svg viewBox="0 0 560 178" role="img" aria-labelledby="ff-button-title ff-button-desc">
-          <title id="ff-button-title">วงจรปุ่มถึงมื้อที่ GPIO19</title>
+          <title id="ff-button-title">วงจรปุ่มให้อาหาร Manual ที่ GPIO19</title>
           <desc id="ff-button-desc">ตัวต้านทานภายใน ESP32 ดึงขา GPIO19 ไปที่ 3V3 เมื่อปล่อยปุ่ม เมื่อกด ปุ่มต่อ GPIO19 เข้ากับ GND</desc>
           <rect x="19" y="12" width="293" height="150" rx="15" fill="#fff" stroke="#bfdbeb" stroke-width="2"/>
           <text x="34" y="40" class="button-wire-label">ภายใน ESP32</text>
@@ -488,7 +488,7 @@
           <path class="button-wire-open" d="M375 100l63-27" stroke="#b45309" stroke-width="4" stroke-linecap="round"/>
           <path class="button-wire-closed" d="M375 100h66" stroke="#0e7490" stroke-width="4" stroke-linecap="round"/>
           <path d="M441 100h62v18m-16 0h32m-25 7h18m-13 7h8" fill="none" stroke="#3c4d62" stroke-width="3" stroke-linecap="round"/>
-          <text x="384" y="54" class="button-wire-label">ปุ่มถึงมื้อ</text>
+          <text x="408" y="54" text-anchor="middle" class="button-wire-label">ให้อาหาร Manual</text>
           <text x="485" y="157" class="button-wire-label">GND</text>
         </svg>
         <div><p><code>INPUT_PULLUP</code> ดึง GPIO19 ขึ้นไปที่ 3.3 V ตอนปล่อย ผลคือ <strong>HIGH (1)</strong></p><p>พอกดปุ่ม ขานี้ต่อถึง GND ผลคือ <strong>LOW (0)</strong></p></div>

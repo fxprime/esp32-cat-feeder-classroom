@@ -13,7 +13,7 @@ const infrared = {
   tracks: [rail("IR OUT", [[0, 1], [.26, 1], [.26, 0], [.66, 0], [.66, 1], [1, 1]])],
   labels: [[.12, "โล่ง"], [.46, "บังลำแสง"], [.83, "โล่ง"]],
   message: "เมื่อแมวบังลำแสง ตัวรับแบบนี้ส่ง LOW ให้บอร์ด ESP32 บันทึกว่าแมวมาที่ชาม",
-  note: "ตัวรับ OUT แบบ open collector ใช้ pull-up ไป 3.3 V และ GND ร่วมกัน สถานะนี้บอกว่าลำแสงถูกบัง จังหวะเริ่มจ่ายอาหารมาจากปุ่มถึงมื้อ GPIO19",
+  note: "ตัวรับ OUT แบบ open collector ใช้ pull-up ไป 3.3 V และ GND ร่วมกัน สถานะนี้บอกว่าลำแสงถูกบัง กดปุ่ม “ให้อาหาร Manual” ที่ GPIO19 เพื่อสั่งจ่ายอาหาร",
   source: { label: "การต่อ IR break beam · Adafruit", url: "https://learn.adafruit.com/ir-breakbeam-sensors/arduino" },
   useCase: {
     title: "บันทึกเวลาที่แมวมาที่ชาม", when: "เมื่อมีตัวเดินผ่านหน้าชามและบังลำแสง",

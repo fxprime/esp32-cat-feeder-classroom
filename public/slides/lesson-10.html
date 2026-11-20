@@ -115,7 +115,7 @@
     <section id="feeder-final" class="feeder-final" aria-labelledby="feeder-final-title" hidden>
       <div>
         <h2 id="feeder-final-title">ลองทดสอบเครื่องให้อาหารทั้งระบบ</h2>
-        <p>เลือกสภาพถังแล้วกดถึงมื้อ ดูว่าฝาเปิดหรือระบบงดจ่าย จากนั้นลองบัง IR ตอนฝาปิดเพื่อบันทึกการมาที่ชาม</p>
+        <p>เลือกสภาพถังแล้วกด “ให้อาหาร Manual” ดูว่าฝาเปิดหรือระบบงดจ่าย จากนั้นลองบัง IR ตอนฝาปิดเพื่อบันทึกการมาที่ชาม</p>
       </div>
       <div class="final-grid">
         <div class="final-controls">
@@ -133,7 +133,7 @@
           <label><input type="checkbox" id="final-beam"> บังลำแสง IR ที่ชาม</label>
           <label><input type="checkbox" id="final-wifi" checked> เครือข่ายออนไลน์ในแบบจำลอง</label>
           <div class="final-option-row">
-            <button type="button" class="final-action" id="final-meal">ถึงมื้อ</button>
+            <button type="button" class="final-action" id="final-meal">ให้อาหาร Manual</button>
             <button type="button" id="final-duplicate" disabled>ส่งมื้อเดิมซ้ำ</button>
             <button type="button" id="final-reset">เริ่มใหม่</button>
           </div>
@@ -157,7 +157,7 @@
             <path class="final-beam-clear" d="M58 158h194" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 5"/><path class="final-beam-block" d="M58 158h153" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 5"/><rect x="51" y="150" width="11" height="16" rx="3" fill="#5275ae"/><rect x="248" y="150" width="11" height="16" rx="3" fill="#5275ae"/>
             <g class="final-cat" fill="#64799c" stroke="#344b73" stroke-width="2"><path d="M220 175q-12-2-12-13l-5-17 13 7 12-1 14-7-4 18q2 13-18 13z"/><circle cx="218" cy="163" r="1" fill="#fff"/><circle cx="230" cy="162" r="1" fill="#fff"/></g>
           </svg>
-          <p class="final-status" id="final-status" role="status">รอถึงมื้อ · ฝาปิด</p>
+          <p class="final-status" id="final-status" role="status">รอคำสั่งให้อาหาร · ฝาปิด</p>
           <p id="final-count"></p>
           <span id="final-clock" aria-hidden="true"></span>
         </div>

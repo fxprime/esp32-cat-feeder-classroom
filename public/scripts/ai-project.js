@@ -3,15 +3,15 @@ import { FEEDER_LIMITS } from './feeder/model.js';
 
 const feederTests = {
   normal: {
-    input: 'ความชื้น 55% RH · ระยะถึงผิวเม็ด 10 ซม. · กดถึงมื้อหนึ่งครั้ง',
+    input: 'ความชื้น 55% RH · ระยะถึงผิวเม็ด 10 ซม. · กด “ให้อาหาร Manual”หนึ่งครั้ง',
     pass: 'Buzzer ดังหนึ่งครั้ง ฝาเปิดแล้วปิดหนึ่งรอบ ไฟแดงดับ',
   },
   humid: {
-    input: `ตั้งความชื้น ${FEEDER_LIMITS.humidity}% RH · ระดับอาหารปกติ · กดถึงมื้อ`,
+    input: `ตั้งความชื้น ${FEEDER_LIMITS.humidity}% RH · ระดับอาหารปกติ · กด “ให้อาหาร Manual”`,
     pass: 'ฝาปิดอยู่ ไฟแดงติดและแจ้งเหตุถังชื้นครั้งเดียว ทดสอบเทียบกับค่าต่ำกว่าเกณฑ์ 1% RH',
   },
   empty: {
-    input: `ความชื้น 55% RH · ปรับระยะเป็น ${FEEDER_LIMITS.emptyCm} ซม. · กดถึงมื้อ`,
+    input: `ความชื้น 55% RH · ปรับระยะเป็น ${FEEDER_LIMITS.emptyCm} ซม. · กด “ให้อาหาร Manual”`,
     pass: 'หน้าเครื่องแสดงอาหารหมด ฝาปิดอยู่ และแจ้งเหตุว่าอาหารหมด',
   },
   repeat: {
@@ -33,7 +33,7 @@ const presets = {
     budget: '',
     time: 'ช่วง Lab ตอนท้ายวัน',
     tools: 'ESP32 DevKit V1, DHT22, Ultrasonic, IR break beam, Servo, buzzer, LED แดง, Breadboard และ Wokwi',
-    limits: 'มีปุ่มจำลองถึงมื้อ ใช้เกณฑ์ความชื้นเพื่อสาธิต เปิดฝาทีละมื้อ และตรวจค่าที่เห็นจริงใน Lab',
+    limits: 'มีปุ่มให้อาหาร Manual ใช้เกณฑ์ความชื้นเพื่อสาธิต เปิดฝาทีละมื้อ และตรวจค่าที่เห็นจริงใน Lab',
   },
   plant: {
     idea: 'ระบบเตือนรดน้ำต้นไม้',

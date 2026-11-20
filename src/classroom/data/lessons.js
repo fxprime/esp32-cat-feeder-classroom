@@ -41,7 +41,7 @@ export const LESSONS = [
     phaseId: 1,
     title: "ESP32 คืออะไร?",
     fullName: "1. ESP32 คืออะไร?",
-    subtitle: "กดถึงมื้อ แล้วดูว่า ESP32 สั่งจ่ายอาหารตอนไหน",
+    subtitle: "กด “ให้อาหาร Manual” แล้วดูว่า ESP32 สั่งจ่ายอาหารตอนไหน",
     description:
       "ดูเดโมจ่ายอาหารมื้อปกติและงดจ่ายเมื่อถังชื้น แล้วสำรวจตัวอย่างสมองกลอื่นในโหมด X-Ray",
     file: "lesson-1.html",

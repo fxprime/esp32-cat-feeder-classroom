@@ -11,7 +11,7 @@ const clock = $("#final-clock");
 const mealButton = $("#final-meal");
 const duplicate = $("#final-duplicate");
 const phases = {
-  idle: "รอถึงมื้อ · ฝาปิด",
+  idle: "รอคำสั่งให้อาหาร · ฝาปิด",
   beeping: "เตือนก่อนจ่าย · ฝายังปิด",
   dispensing: "กำลังจ่าย · ฝาเปิด 90°",
   watching: "ปิดฝาแล้ว · กำลังดูว่ามีตัวมาที่ชามไหม",
