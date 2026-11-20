@@ -36,6 +36,7 @@ function mountFeederScene(lab) {
   const distanceLine = scene.querySelector('[data-distance-line]');
   const artFood = scene.querySelector('[data-art-food]');
   const artHumidity = scene.querySelector('[data-art-humidity]');
+  const artCommand = scene.querySelector('[data-art-command]');
   const rainArt = scene.querySelector('[data-rain-art]');
   const alert = scene.querySelector('[data-scene-alert]');
   const taskTitle = lab.querySelector('[data-task-title]');
@@ -247,7 +248,9 @@ function mountFeederScene(lab) {
     text(artFood, `${distance} ซม. · ${shownPercent}%`);
     text(artHumidity, `${rh}% RH`);
     text(servo, angle ? 'ฝาเปิด · 90°' : closing ? 'กำลังปิดฝา · 0°' : 'ฝาปิด · 0°');
-    text(command, `servo.write(${angle});`);
+    const statement = `servo.write(${angle});`;
+    text(command, statement);
+    text(artCommand, statement);
     text(process, check ? `อ่าน ${rh}% RH และอาหาร ${state.foodPercent}% แล้วเทียบเกณฑ์` :
       wetFood ? `พบความชื้นถึงเกณฑ์ ${FEEDER_LIMITS.humidity}% RH · รอเปลี่ยนอาหาร` :
       state.reason === 'empty' ? `อาหารเหลือถึงเกณฑ์ถังหมด ${FEEDER_LIMITS.emptyPercent}%` :

@@ -19,6 +19,8 @@
 .fs-art-label { fill: #315675; font-size: 15px; font-weight: 700; }
 .fs-art-reading { fill: #315675; font-size: 14px; font-weight: 600; }
 .fs-art-reading .fs-art-number { fill: #105880; font-size: 17px; font-weight: 800; }
+.fs-servo-callout [data-art-command] { fill: #24466e; font: 700 15px ui-monospace, SFMono-Regular, Consolas, monospace; }
+.fs-lab:is([data-servo="open"], [data-servo="closing"]) .fs-servo-callout rect { fill: #d3f4e3; stroke: #6bbb94; }
 .fs-lab[data-wet="true"] .fs-art-humidity .fs-art-number { fill: #ac2347; }
 .fs-guide { fill: none; stroke: #6a94b8; stroke-width: 2.7; stroke-dasharray: 5 6; }
 .fs-cloud-target, .fs-pour-target, .fs-bin-highlight { fill: #d4effb; stroke: #5599c4; stroke-width: 2.5; stroke-dasharray: 5 5; }
