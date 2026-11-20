@@ -1,0 +1,71 @@
+.playground-code-card{background:#282a36}
+.playground-code{margin:0;min-width:0;overflow:auto;white-space:normal;user-select:text;tab-size:2;color:#f8f8f2}
+.playground-code code{display:block;white-space:normal;font:inherit;background:transparent}
+.playground-code .code-line{display:block;min-height:1.8em;white-space:pre;padding:.125rem .375rem;border-left:3px solid transparent;color:#f8f8f2}
+.playground-code .code-line.is-running{background:#44475a;border-left-color:#8be9fd}
+.playground-code:focus-visible{outline:3px solid #8be9fd;outline-offset:4px;border-radius:6px}
+
+.wiring-library-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin-block-start: .7rem;
+  min-block-size: 44px;
+  padding: .5rem .85rem;
+  border: 1px solid #c4b5fd;
+  border-radius: .9rem;
+  background: #f5f3ff;
+  color: #5b21b6;
+  font-size: .88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.wiring-library-trigger:hover { background: #ede9fe; border-color: #8b5cf6; }
+.wiring-library {
+  margin: auto;
+  padding: 0;
+  inline-size: min(75rem, calc(100% - 2rem));
+  block-size: min(54rem, calc(100% - 2rem));
+  max-inline-size: none;
+  max-block-size: none;
+  border: 1px solid #c4b5fd;
+  border-radius: 1.15rem;
+  background: #eff7f6;
+  color: #1e293b;
+  box-shadow: 0 16px 60px #1c144c55;
+}
+.wiring-library[open] { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+.wiring-library::backdrop { background: #17203499; }
+.wiring-library-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .55rem;
+  padding: .42rem clamp(.55rem, 2vw, 1.1rem);
+  border-block-end: 1px solid #ddd6fe;
+  background: #f5f3ff;
+  color: #4c1d95;
+}
+.wiring-library-bar h2 { font-weight: 800; font-size: clamp(.86rem, 2.5vw, 1.05rem); }
+.wiring-library-bar button {
+  min-block-size: 44px;
+  padding-inline: .65rem;
+  border: 1px solid #c4b5fd;
+  border-radius: .65rem;
+  background: #fff;
+  color: #5b21b6;
+  font-size: .85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.wiring-library-bar button:hover { background: #ede9fe; }
+.wiring-library iframe { display: block; inline-size: 100%; block-size: 100%; min-block-size: 0; border: 0; }
+@media (max-width: 40rem) {
+  .wiring-library {
+    inline-size: calc(100% - .6rem);
+    block-size: calc(100% - .6rem);
+    border-radius: .75rem;
+  }
+}

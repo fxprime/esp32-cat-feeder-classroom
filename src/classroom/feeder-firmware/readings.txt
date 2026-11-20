@@ -1,0 +1,41 @@
+DHTesp dht;
+float humidity = NAN;
+float distanceCm = NAN;
+uint32_t lastHumidity;
+uint32_t lastDistance;
+
+void setupSensors() {
+  dht.setup(DHT_PIN, DHTesp::DHT22);
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  lastHumidity = lastDistance = millis();
+}
+
+float readDistanceCm() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  // Only long enough for a hopper this small. A missing echo returns 0.
+  const uint32_t echo = pulseIn(ECHO_PIN, HIGH, 6000);
+  return echo ? echo / 58.0f : NAN;
+}
+
+int estimateFood(float cm) {
+  if (!isfinite(cm) || cm < 2 || cm > 60) return -1;
+  const float fraction = (EMPTY_CM - cm) / (EMPTY_CM - FULL_CM);
+  return lroundf(constrain(fraction, 0.0f, 1.0f) * 100);
+}
+
+void sampleSensors(uint32_t now) {
+  if (now - lastDistance >= 250) {
+    lastDistance = now;
+    distanceCm = readDistanceCm();
+  }
+  if (now - lastHumidity >= 2100) {
+    lastHumidity = now;
+    humidity = dht.getHumidity();
+    if (dht.getStatus() != DHTesp::ERROR_NONE) humidity = NAN;
+  }
+}

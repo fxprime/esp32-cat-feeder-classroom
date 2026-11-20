@@ -1,0 +1,146 @@
+.board-intro {
+  color: #183747;
+  background: linear-gradient(135deg, #ecfeff, #f0fdfa 56%, #f0fdf4);
+  font-family: Prompt, system-ui, sans-serif;
+}
+.board-lesson {
+  max-inline-size: 66rem;
+  margin-inline: auto;
+  padding: clamp(1rem, 4vw, 2.4rem) clamp(.65rem, 3vw, 1.65rem);
+}
+.board-heading { text-align: center; margin-block-end: clamp(.8rem, 2.5vw, 1.5rem); }
+.board-heading h1 {
+  color: #0f685d;
+  font-size: clamp(1.55rem, 4.5vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.24;
+  margin-block-end: .42rem;
+}
+.board-heading p { color: #475569; font-size: clamp(.9rem, 2vw, 1rem); }
+.board-explorer {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(.55rem, 3.2vw, 2rem);
+  padding: clamp(.55rem, 2.4vw, 1.5rem);
+  border: 1px solid #b6e3dc;
+  border-radius: 1.5rem;
+  background: #ffffffda;
+  box-shadow: 0 16px 36px #0f635514;
+}
+.board-figure {
+  position: relative;
+  z-index: 2;
+  inline-size: min(100%, 27rem);
+  aspect-ratio: 480 / 510;
+  justify-self: center;
+}
+.board-drawing { display: block; inline-size: 100%; block-size: auto; }
+.board-mark { color: #679589; }
+.board-mark path { stroke: currentColor; stroke-width: 3; fill: none; stroke-linecap: round; }
+.board-target {
+  fill: var(--target-fill, #effcf8);
+  stroke: var(--target-stroke, currentColor);
+  stroke-width: 3;
+  filter: var(--target-glow, none);
+}
+.board-target-frame { fill: none; }
+.board-mark text { fill: #fff; font-size: 14px; font-weight: 700; }
+:is(.board-explorer[data-selected="usb"] [data-mark="usb"],
+    .board-explorer[data-selected="3v3"] [data-mark="3v3"],
+    .board-explorer[data-selected="gnd"] [data-mark="gnd"],
+    .board-explorer[data-selected="gpio"] [data-mark="gpio"],
+    .board-explorer[data-selected="wifi"] [data-mark="wifi"]) {
+  color: #b45309;
+  --target-fill: #fde68a;
+  --target-stroke: #fbbf24;
+  --target-glow: drop-shadow(0 0 6px #fbbf24);
+}
+.board-connection {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
+}
+.board-wire, .board-wire-pulse { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.board-wire { stroke: #b45309; stroke-width: 2; }
+.board-wire-pulse { stroke: #fbbf24; stroke-width: 5; stroke-dasharray: .12 .88; opacity: 0; }
+.board-point, .board-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  min-block-size: 44px;
+  min-inline-size: 44px;
+  cursor: pointer;
+}
+.board-point {
+  left: var(--point-x);
+  top: var(--point-y);
+  inline-size: clamp(3.4rem, 12vw, 5rem);
+  padding-inline: .16rem;
+  border: 2px solid #9bd1c7;
+  border-radius: .8rem;
+  background: #fff;
+  color: #115e59;
+  font-size: clamp(.85rem, 2.4vw, 1rem);
+  font-weight: 800;
+}
+.board-point[data-point="usb"] { --point-x: 50%; --point-y: 93%; }
+.board-point[data-point="3v3"] { --point-x: 84%; --point-y: 70.8%; }
+.board-point[data-point="gnd"] { --point-x: 16%; --point-y: 66.3%; }
+.board-point[data-point="gpio"] { --point-x: 84%; --point-y: 14.7%; }
+.board-point[data-point="wifi"] { --point-x: 16%; --point-y: 14.7%; }
+.board-hotspot {
+  left: var(--hit-x);
+  top: var(--hit-y);
+  border-radius: .65rem;
+  background: transparent;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.board-hotspot[data-point="usb"] { --hit-x: 50%; --hit-y: 82.2%; inline-size: 13%; }
+.board-hotspot[data-point="3v3"] { --hit-x: 68.75%; --hit-y: 76.3%; }
+.board-hotspot[data-point="gnd"] { --hit-x: 31.25%; --hit-y: 71.4%; }
+.board-hotspot[data-point="gpio"] { --hit-x: 68.75%; --hit-y: 7.65%; }
+.board-hotspot[data-point="wifi"] { --hit-x: 50%; --hit-y: 14.2%; inline-size: 23.3%; block-size: 17%; }
+.board-hotspot:hover { box-shadow: inset 0 0 0 2px #fbbf2490; }
+.board-point:hover { border-color: #0f766e; background: #f0fdfa; }
+.board-point[aria-pressed="true"] { border-color: #d97706; background: #fef3c7; color: #78350f; }
+.board-point:focus-visible, .board-hotspot:focus-visible { outline: 3px solid #0369a1; outline-offset: 3px; }
+.board-detail {
+  min-inline-size: 0;
+  min-block-size: 12rem;
+  padding: clamp(.8rem, 3vw, 1.6rem);
+  border: 1px solid #b6e3dc;
+  border-radius: 1.2rem;
+  background: #f0fdfa;
+}
+.board-function {
+  display: inline-block;
+  padding: .28rem .65rem;
+  border-radius: 2rem;
+  background: #ccfbf1;
+  color: #115e59;
+  font-size: .84rem;
+  font-weight: 700;
+}
+.board-detail h2 {
+  color: #0f514b;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.4;
+  margin-block: .34rem .25rem;
+}
+.board-detail > p:last-child { color: #334155; line-height: 1.7; font-size: 1rem; }
+@media (max-width: 43rem) {
+  .board-explorer { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
+  .board-figure { inline-size: min(100%, 22rem); }
+  .board-detail { min-block-size: 10.5rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .board-point { transition: background-color 160ms ease, border-color 160ms ease; }
+  .board-mark path, .board-mark .board-target { transition: stroke 160ms ease, fill 160ms ease; }
+}

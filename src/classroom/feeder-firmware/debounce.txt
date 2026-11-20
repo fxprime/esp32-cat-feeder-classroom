@@ -1,0 +1,24 @@
+class DebouncedInput {
+  uint8_t pin;
+  bool raw = HIGH;
+  bool stable = HIGH;
+  uint32_t changedAt = 0;
+public:
+  explicit DebouncedInput(uint8_t pinNumber) : pin(pinNumber) {}
+  void begin() {
+    pinMode(pin, INPUT_PULLUP);
+    raw = stable = digitalRead(pin);
+    changedAt = millis();
+  }
+  bool fell(uint32_t now) {
+    const bool reading = digitalRead(pin);
+    if (reading != raw) {
+      raw = reading;
+      changedAt = now;
+    }
+    if (stable == raw || now - changedAt < 30) return false;
+    stable = raw;
+    return stable == LOW;
+  }
+  bool active() const { return stable == LOW; }
+};

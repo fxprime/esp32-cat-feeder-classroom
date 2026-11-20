@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>รู้จักบอร์ด ESP32 DevKit V1 · ESP32 Classroom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../styles/classroom.css">
+  <link rel="stylesheet" href="../styles/slide-support.css">
+  <link rel="stylesheet" href="../styles/board-intro.css">
+</head>
+<body class="board-intro">
+  <main class="board-lesson">
+    <header class="board-heading">
+      <h1>รู้จักบอร์ด ESP32 DevKit V1</h1>
+      <p>กดดูว่าขาไหนรับข้อมูลจากชาม ขาไหนสั่งไฟ และจุดไหนส่งข้อความถึงเจ้าของ</p>
+    </header>
+
+    <section class="board-explorer" aria-label="สำรวจห้าจุดบนบอร์ด ESP32" data-selected="usb">
+      <svg class="board-connection" aria-hidden="true">
+        <defs><marker id="board-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="m1 1 8 4-8 4" fill="none" stroke="#b45309" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+        <path class="board-wire" marker-end="url(#board-arrow)"/>
+        <path class="board-wire-pulse" pathLength="1"/>
+      </svg>
+      <div class="board-figure" role="group" aria-label="เลือก USB, 3V3, GND, GPIO หรือ Wi-Fi">
+        <svg class="board-drawing" viewBox="0 0 480 510" aria-hidden="true">
+          <rect x="150" y="18" width="180" height="409" rx="17" fill="#12685c" stroke="#0c443e" stroke-width="3"/>
+          <path d="M150 35v358m180-358v358" stroke="#afccc1" stroke-width="16" stroke-dasharray="8 17"/>
+          <circle cx="165" cy="27" r="4" fill="#c5e1d8"/>
+          <circle cx="315" cy="27" r="4" fill="#c5e1d8"/>
+          <rect x="186" y="31" width="108" height="83" rx="5" fill="#164339"/>
+          <path d="M197 94V42h13v39h14V42h14v39h14V42h14v39h14" fill="none" stroke="#e8c171" stroke-width="4"/>
+          <rect x="186" y="119" width="108" height="104" rx="6" fill="#c7d6d3" stroke="#effaf5" stroke-width="2"/>
+          <text x="240" y="166" text-anchor="middle" fill="#17413b" font-size="23" font-weight="800">ESP32</text>
+          <text x="240" y="189" text-anchor="middle" fill="#36544f" font-size="13" font-weight="600">WROOM-32</text>
+          <path d="M171 240v56h27m111-56v56h-27M181 361h37v-35h53v34h27" fill="none" stroke="#66a998" stroke-width="2"/>
+          <rect x="220" y="262" width="45" height="55" rx="5" fill="#23343e"/>
+          <path d="M215 270h-8m8 12h-8m8 12h-8m8 12h-8m63-36h8m-8 12h8m-8 12h8m-8 12h8" stroke="#b7c8bd" stroke-width="3"/>
+          <rect x="172" y="385" width="19" height="14" rx="3" fill="#afccc1"/>
+          <rect x="289" y="385" width="19" height="14" rx="3" fill="#afccc1"/>
+          <rect x="212" y="399" width="56" height="41" rx="6" fill="#bbc9ce" stroke="#536470" stroke-width="3"/>
+          <rect x="222" y="411" width="36" height="15" rx="4" fill="#243a43"/>
+
+          <g class="board-mark" data-mark="usb">
+            <path d="M240 439v37"/>
+            <rect class="board-target board-target-frame" x="210" y="397" width="60" height="45" rx="7"/>
+          </g>
+          <g class="board-mark" data-mark="3v3">
+            <path d="M330 389h30v-28h43"/>
+            <circle class="board-target" cx="330" cy="389" r="8"/>
+          </g>
+          <g class="board-mark" data-mark="gnd">
+            <path d="M150 364h-29v-26H76"/>
+            <circle class="board-target" cx="150" cy="364" r="8"/>
+          </g>
+          <g class="board-mark" data-mark="gpio">
+            <path d="M330 39h30v36h43"/>
+            <circle class="board-target" cx="330" cy="39" r="8"/>
+            <text x="313" y="44" text-anchor="end">23</text>
+          </g>
+          <g class="board-mark" data-mark="wifi">
+            <path d="M184 75H76"/>
+            <rect class="board-target board-target-frame" x="184" y="29" width="112" height="87" rx="7"/>
+          </g>
+        </svg>
+
+        <button type="button" class="board-hotspot" data-point="usb" tabindex="-1" aria-label="พอร์ต USB บนบอร์ด" aria-controls="board-point-detail" aria-pressed="true"></button>
+        <button type="button" class="board-hotspot" data-point="3v3" tabindex="-1" aria-label="ขา 3V3 บนบอร์ด" aria-controls="board-point-detail" aria-pressed="false"></button>
+        <button type="button" class="board-hotspot" data-point="gnd" tabindex="-1" aria-label="ขา GND บนบอร์ด" aria-controls="board-point-detail" aria-pressed="false"></button>
+        <button type="button" class="board-hotspot" data-point="gpio" tabindex="-1" aria-label="ขา GPIO23 บนบอร์ด" aria-controls="board-point-detail" aria-pressed="false"></button>
+        <button type="button" class="board-hotspot" data-point="wifi" tabindex="-1" aria-label="เสาอากาศ Wi-Fi บนบอร์ด" aria-controls="board-point-detail" aria-pressed="false"></button>
+        <button type="button" class="board-point" data-point="usb" aria-controls="board-point-detail" aria-pressed="true">USB</button>
+        <button type="button" class="board-point" data-point="3v3" aria-controls="board-point-detail" aria-pressed="false">3V3</button>
+        <button type="button" class="board-point" data-point="gnd" aria-controls="board-point-detail" aria-pressed="false">GND</button>
+        <button type="button" class="board-point" data-point="gpio" aria-controls="board-point-detail" aria-pressed="false">GPIO</button>
+        <button type="button" class="board-point" data-point="wifi" aria-controls="board-point-detail" aria-pressed="false">Wi‑Fi</button>
+      </div>
+
+      <div class="board-detail" id="board-point-detail" role="status">
+        <p class="board-function" id="board-function">ไฟเข้าบอร์ด</p>
+        <h2 id="board-point-title">USB</h2>
+        <p id="board-point-description">เสียบสาย USB เพื่อเลี้ยงบอร์ดและอัปโหลดโค้ดจากคอมพิวเตอร์ ส่วน Servo ของฝามีไฟเลี้ยงของตัวเอง ใช้ GND ร่วมกับบอร์ด</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    const explorer = document.querySelector('.board-explorer');
+    const figure = explorer.querySelector('.board-figure');
+    const detail = explorer.querySelector('.board-detail');
+    const buttons = explorer.querySelectorAll('[data-point]');
+    const connection = explorer.querySelector('.board-connection');
+    const wire = connection.querySelector('.board-wire');
+    const pulse = connection.querySelector('.board-wire-pulse');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    let pulseAnimation;
+    const functionLabel = document.getElementById('board-function');
+    const title = document.getElementById('board-point-title');
+    const description = document.getElementById('board-point-description');
+    const points = {
+      usb: {
+        name: 'USB',
+        purpose: 'ไฟเข้าบอร์ด',
+        description: 'เสียบสาย USB เพื่อเลี้ยงบอร์ดและอัปโหลดโค้ดจากคอมพิวเตอร์ ส่วน Servo ของฝามีไฟเลี้ยงของตัวเอง ใช้ GND ร่วมกับบอร์ด',
+      },
+      '3v3': {
+        name: '3V3',
+        purpose: 'จ่ายไฟให้อุปกรณ์',
+        description: 'ขานี้จ่ายไฟ 3.3 V ให้เซนเซอร์ที่รองรับ เช่น DHT22 ในวงจรที่เราจะต่อ',
+      },
+      gnd: {
+        name: 'GND',
+        purpose: 'กราวด์',
+        description: 'เป็นจุดอ้างอิง 0 V ของสัญญาณและทางกลับของกระแส ให้ ESP32 กับแหล่งจ่าย Servo ใช้ GND ร่วมกัน',
+      },
+      gpio: {
+        name: 'GPIO',
+        purpose: 'รับหรือส่งสัญญาณ',
+        description: 'ในเครื่องนี้ GPIO23 ที่ไฮไลต์เป็น Output สั่ง LED แดง ส่วน GPIO33 เป็น Input อ่านว่าลำแสง IR ข้างชามถูกบังหรือยัง',
+      },
+      wifi: {
+        name: 'Wi‑Fi 2.4 GHz',
+        purpose: 'จุดเด่นของบอร์ด · IoT',
+        description: 'ESP32 ต่อ Wi‑Fi 2.4 GHz ผ่านเสาอากาศด้านบน เครื่องให้อาหารจึงส่งข้อความถึงโทรศัพท์ได้ เช่น “งดจ่ายมื้อนี้ ถังชื้นเกินเกณฑ์”',
+      },
+    };
+
+    function positionWire() {
+      const { selected } = explorer.dataset;
+      const label = figure.querySelector(`.board-point[data-point="${selected}"]`).getBoundingClientRect();
+      const board = figure.getBoundingClientRect();
+      const panel = detail.getBoundingClientRect();
+      const origin = connection.getBoundingClientRect();
+      if (!origin.width || !origin.height) return;
+      const x = value => value - origin.left;
+      const y = value => value - origin.top;
+      const leftLabel = selected === 'gnd' || selected === 'wifi';
+      const labelY = y(label.top + label.height / 2);
+      const labelX = x(leftLabel ? label.left : label.right);
+      const stacked = panel.top >= board.bottom;
+      let path;
+
+      if (stacked && selected === 'usb') {
+        path = `M${x(label.left + label.width / 2)} ${y(label.bottom)} V${y(panel.top + 7)}`;
+      } else if (stacked) {
+        const lane = leftLabel ? board.left + 4 : board.right - 4;
+        const entry = panel.left + panel.width * (leftLabel ? .2 : .8);
+        path = `M${labelX} ${labelY} H${x(lane)} V${y(panel.top - 8)} H${x(entry)} V${y(panel.top + 7)}`;
+      } else {
+        const bend = x((board.right + panel.left) / 2);
+        const panelY = y(panel.top + panel.height / 2);
+        const aroundBoard = selected === 'wifi' ? board.top + 4 : board.bottom - 4;
+        const approach = leftLabel ? `H${x(board.left + 4)} V${y(aroundBoard)}` : '';
+        path = `M${labelX} ${labelY} ${approach} H${bend} V${panelY} H${x(panel.left + 9)}`;
+      }
+      wire.setAttribute('d', path);
+      pulse.setAttribute('d', path);
+    }
+
+    const wireLayout = new ResizeObserver(positionWire);
+    for (const element of [explorer, figure, detail]) wireLayout.observe(element);
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const key = button.dataset.point;
+        const point = points[key];
+        explorer.dataset.selected = key;
+        buttons.forEach(item => item.setAttribute('aria-pressed', String(item.dataset.point === key)));
+        functionLabel.textContent = point.purpose;
+        title.textContent = point.name;
+        description.textContent = point.description;
+        positionWire();
+        pulseAnimation?.cancel();
+        if (!reducedMotion.matches) {
+          pulseAnimation = pulse.animate([
+            { opacity: 0, strokeDashoffset: '.12', offset: 0 },
+            { opacity: 1, offset: .13 },
+            { opacity: 1, offset: .84 },
+            { opacity: 0, strokeDashoffset: '-1', offset: 1 },
+          ], { duration: 620, easing: 'ease-in-out' });
+        }
+      });
+    });
+  </script>
+  <script src="../scripts/slide-support.js"></script>
+</body>
+</html>

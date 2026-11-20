@@ -1,0 +1,11 @@
+{
+  "tool": "Turnitout Humanizer",
+  "url": "https://turnitout.streamlit.app/",
+  "date": "2026-11-18",
+  "scope": "Six lesson introductions and six observation questions, with technical terms protected",
+  "inputCharacters": 1320,
+  "outputCharacters": 1320,
+  "unchanged": true,
+  "inputSha256": "f01e064af8580c474b5af27f1ba3bb4dc9e8a47691a48fd373c8f1b774dcf4ec",
+  "outputSha256": "f01e064af8580c474b5af27f1ba3bb4dc9e8a47691a48fd373c8f1b774dcf4ec"
+}

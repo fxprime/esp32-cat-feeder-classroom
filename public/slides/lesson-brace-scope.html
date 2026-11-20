@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>อ่าน Scope จากโค้ด · ESP32 Classroom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/classroom.css">
+  <link rel="stylesheet" href="../styles/slide-support.css">
+  <link rel="stylesheet" href="../styles/block-types.css">
+</head>
+<body class="scope-lesson">
+  <main class="scope-page">
+    <header class="scope-intro">
+      <h1>อ่านโค้ดทีละ <span>Scope { }</span></h1>
+      <p>พออ่านค่าจากเซนเซอร์แล้ว ลองดูว่าปีกกาคู่ไหนครอบคำสั่งที่จะทำต่อ</p>
+      <nav class="scope-variants" aria-label="เลือกตัวอย่าง Scope">
+        <button type="button" data-scope-kind="feeder" aria-pressed="true">เครื่องให้อาหารแมว · if / else</button>
+        <button type="button" data-scope-kind="gate" aria-pressed="false">ตัวอย่างเพิ่มเติม · ไม้กั้นและลูป</button>
+      </nav>
+      <span class="scope-hint">ชี้หรือแตะบรรทัดไหนก็ได้ในโค้ดเพื่อดูบล็อกนั้น</span>
+    </header>
+
+    <div class="scope-workbench">
+      <section class="scope-code-panel" aria-labelledby="scope-code-title">
+        <div class="scope-editor-head">
+          <h2 id="scope-code-title">ตัดสินใจก่อนเปิดฝาถังอาหาร</h2>
+          <span>Arduino C++</span>
+        </div>
+        <div id="scope-code" class="scope-code" aria-label="โค้ดตัวอย่าง canDispense"></div>
+      </section>
+
+      <aside class="scope-inspector" aria-labelledby="scope-type">
+        <div id="scope-readout" role="status" aria-atomic="true">
+          <h2 id="scope-type"></h2>
+          <dl>
+            <dt>รับอะไร</dt>
+            <dd id="scope-input"></dd>
+            <dt>ทำแล้วได้อะไร</dt>
+            <dd id="scope-output"></dd>
+          </dl>
+          <p class="scope-example"><strong>ถ้าพูดแบบคน</strong><span id="scope-example"></span></p>
+        </div>
+        <fieldset class="scope-test" id="scope-feeder-controls">
+          <legend>ลองค่าแล้วดูว่าข้ามปีกกาไหน</legend>
+          <label>ความชื้นในถัง <output for="scope-rh" id="scope-rh-value">55% RH</output><input id="scope-rh" type="range" min="30" max="95" value="55"></label>
+          <label><input id="scope-empty" type="checkbox"> ถังอาหารหมด</label>
+          <label><input id="scope-unreadable" type="checkbox"> อ่านความชื้นไม่ได้</label>
+          <button type="button" id="scope-run">ลองเรียก canDispense()</button>
+          <p id="scope-result" role="status">ปรับค่า แล้วลองกดเรียกฟังก์ชัน</p>
+        </fieldset>
+      </aside>
+    </div>
+
+    <footer class="scope-foot">
+      <p id="scope-footnote">ฟังก์ชันนี้คืนผลให้ผู้เรียก เครื่องจะใช้ผลนี้ก่อนส่งเสียงหรือขยับฝาถัง</p>
+      <a href="https://docs.arduino.cc/learn/programming/reference/" target="_blank" rel="noopener">คู่มือภาษา Arduino</a>
+    </footer>
+  </main>
+  <script src="../scripts/slide-support.js"></script>
+  <script type="module" src="../scripts/brace-scope.js"></script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สไลด์ 6: วิธีใช้ Breadboard (โฟโต้บอร์ด) — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
+  <link rel="stylesheet" href="../styles/classroom.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Prompt', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfeff 50%, #f8fafc 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bb-hole {
+      cursor: pointer;
+      transition: fill 0.15s ease, stroke 0.15s ease, transform 0.12s ease;
+    }
+    .bb-hole.is-connected {
+      fill: #22c55e;
+      stroke: #15803d;
+      stroke-width: 1.8;
+    }
+    .bb-hole.is-origin {
+      fill: #4ade80;
+      stroke: #14532d;
+      stroke-width: 2.2;
+    }
+    .copper-strip {
+      opacity: 0;
+      transition: opacity 0.18s ease;
+      pointer-events: none;
+    }
+    .copper-strip.is-visible {
+      opacity: 0.42;
+    }
+  </style>
+<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/breadboard-quiz.css"></head>
+<body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
+
+  <!-- Top Progress Bar -->
+  <header class="w-full max-w-6xl mx-auto px-4 pt-3 pb-1 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2.5">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-sm">
+        ESP32 ม.4 • คาบที่ 1
+      </span>
+      <span class="text-xs sm:text-sm font-semibold text-slate-600 bg-white/80 backdrop-blur px-3 py-1 rounded-full border border-slate-200">
+        สไลด์ที่ 5 / 12
+      </span>
+    </div>
+
+    <div id="breadboardLearnTools" class="flex items-center gap-2">
+      <button id="toggleAllStripsBtn" type="button"
+        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition active:scale-95 cursor-pointer">
+        <span>👁️</span>
+        <span id="toggleAllStripsText">แสดงแถบโลหะทั้งหมด</span>
+      </button>
+      <button id="clearSelectionBtn" type="button"
+        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-white hover:bg-emerald-50 text-emerald-700 border-2 border-emerald-500 shadow-sm transition active:scale-95 cursor-pointer">
+        <span>🔄</span>
+        <span>ล้างจุดที่เลือก</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="w-full max-w-6xl mx-auto px-4 py-2 flex-1 flex flex-col justify-center">
+    <!-- Slide Header -->
+    <section class="text-center mb-3">
+      <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 mb-1.5">
+        <span class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
+          วิธีใช้ Breadboard (โฟโต้บอร์ด)
+        </span>
+      </h1>
+      <p class="text-xs sm:text-base font-semibold text-slate-600">
+        Mini 1 · ต่อไฟแดงแจ้งปัญหาของเครื่องให้อาหาร แล้วตามดูว่ากระแสไหลกลับทางไหน
+      </p>
+    </section>
+
+    <nav class="bb-mode-tabs" aria-label="เลือกสำรวจหรือทำ Quiz"><button id="breadboard-learn-tab" aria-pressed="true">01 · สำรวจ Breadboard</button><button id="breadboard-quiz-tab" aria-pressed="false">02 · ทำ Quiz ต่อวงจร <span>2 การ์ด</span></button></nav>
+    <section id="breadboard-quiz" class="q-root" hidden aria-label="Quiz ต่อวงจรบน Breadboard"></section>
+    <div id="breadboard-learn">
+    <!-- 2 Explanation Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3.5">
+      <div id="railInfoCard" class="bg-white/95 rounded-2xl p-3 border-2 border-rose-200 shadow-sm transition-all duration-200">
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800">แนวที่ 1 • รางไฟริมบน-ล่าง (เส้นแดง + / น้ำเงิน -)</span>
+        </div>
+        <p class="text-xs sm:text-sm font-bold text-slate-800">
+          เชื่อมถึงกันเป็น <span class="text-emerald-600 underline decoration-2">แนวยาวตลอดทั้งแถว</span> (เอาไว้แจกไฟ + และ -; บอร์ดจริงบางรุ่นรางขาดกลาง)
+        </p>
+      </div>
+
+      <div id="midInfoCard" class="bg-white/95 rounded-2xl p-3 border-2 border-teal-200 shadow-sm transition-all duration-200">
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-teal-100 text-teal-800">แนวที่ 2 • โซนตรงกลาง (แถว A–E และ F–J)</span>
+        </div>
+        <p class="text-xs sm:text-sm font-bold text-slate-800">
+          เชื่อมถึงกันเป็น <span class="text-emerald-600 underline decoration-2">แนวตั้งทีละ 5 รู</span> (มีร่องกลางคั่น บน-ล่างไม่เชื่อมกัน)
+        </p>
+      </div>
+    </section>
+
+    <!-- Breadboard X-Ray Interactive Stage -->
+    <section class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-xl border-2 border-emerald-200">
+      <!-- Live Callout Banner -->
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div id="xrayStatusBanner" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs sm:text-sm font-bold border border-slate-200 transition-colors">
+          <span>🔍</span>
+          <span>เอาเมาส์ชี้ หรือคลิกที่รูใดก็ได้บน Breadboard เพื่อ X-Ray แผ่นโลหะด้านใน!</span>
+        </div>
+        <span id="holeCoordBadge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          พร้อมสำรวจ
+        </span>
+      </div>
+
+      <!-- Breadboard SVG Container -->
+      <div class="w-full overflow-x-auto rounded-2xl bg-slate-100 p-2 sm:p-3 border border-slate-200">
+        <svg id="breadboardSvg" viewBox="0 0 880 390" class="w-full min-w-[640px] h-auto">
+          <!-- Breadboard Body -->
+          <rect x="10" y="10" width="860" height="370" rx="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="4" />
+
+          <!-- Power Rail Colored Lines -->
+          <!-- Top + (Red) & - (Blue) -->
+          <line x1="58" y1="27" x2="825" y2="27" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+          <text x="36" y="39" font-size="16" font-weight="800" fill="#ef4444">+</text>
+          <text x="840" y="39" font-size="16" font-weight="800" fill="#ef4444">+</text>
+
+          <line x1="58" y1="73" x2="825" y2="73" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" />
+          <text x="38" y="65" font-size="18" font-weight="800" fill="#3b82f6">–</text>
+          <text x="842" y="65" font-size="18" font-weight="800" fill="#3b82f6">–</text>
+
+          <!-- Bottom + (Red) & - (Blue) -->
+          <line x1="58" y1="317" x2="825" y2="317" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+          <text x="36" y="329" font-size="16" font-weight="800" fill="#ef4444">+</text>
+          <text x="840" y="329" font-size="16" font-weight="800" fill="#ef4444">+</text>
+
+          <line x1="58" y1="363" x2="825" y2="363" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" />
+          <text x="38" y="355" font-size="18" font-weight="800" fill="#3b82f6">–</text>
+          <text x="842" y="355" font-size="18" font-weight="800" fill="#3b82f6">–</text>
+
+          <!-- Center Trench / Ravine -->
+          <rect x="30" y="183" width="820" height="24" rx="6" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.5" />
+          <text x="440" y="199" text-anchor="middle" font-size="11" font-weight="700" fill="#64748b">
+            ━━━━━ ร่องตรงกลาง (ฝั่ง A–E กับ F–J ไม่เชื่อมถึงกัน) ━━━━━
+          </text>
+
+          <!-- Dynamic Layers populated by JS -->
+          <g id="stripsLayer"></g>
+          <g id="labelsLayer"></g>
+          <g id="holesLayer"></g>
+        </svg>
+      </div>
+    </section>
+    <section class="bb-quiz-entry"><div><h2>Mini 1 · ต่อไฟแดงแจ้งปัญหา</h2><p>เริ่มจาก LED แดง 1 ดวง ลากสายแล้วดูเส้นทางกระแส ถ้าผ่านแล้วลองต่อหลายดวงในโจทย์เสริม</p></div><button id="begin-breadboard-quiz">เข้า Quiz · ลองต่อวงจร →</button></section>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const stripsLayer = document.getElementById('stripsLayer');
+      const labelsLayer = document.getElementById('labelsLayer');
+      const holesLayer = document.getElementById('holesLayer');
+      const xrayStatusBanner = document.getElementById('xrayStatusBanner');
+      const holeCoordBadge = document.getElementById('holeCoordBadge');
+      const railInfoCard = document.getElementById('railInfoCard');
+      const midInfoCard = document.getElementById('midInfoCard');
+      const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+      const toggleAllStripsBtn = document.getElementById('toggleAllStripsBtn');
+      const toggleAllStripsText = document.getElementById('toggleAllStripsText');
+      let showAllStrips = false;
+
+      const numCols = 25;
+      const startX = 68;
+      const colStep = 31;
+
+      const topRows = [
+        { name: 'A', y: 98 },
+        { name: 'B', y: 116 },
+        { name: 'C', y: 134 },
+        { name: 'D', y: 152 },
+        { name: 'E', y: 170 }
+      ];
+      const botRows = [
+        { name: 'F', y: 220 },
+        { name: 'G', y: 238 },
+        { name: 'H', y: 256 },
+        { name: 'I', y: 274 },
+        { name: 'J', y: 292 }
+      ];
+
+      const railRows = [
+        { id: 'rail-top-plus',  label: 'รางไฟบน (+)',  y: 38 },
+        { id: 'rail-top-minus', label: 'รางไฟบน (–)',  y: 60 },
+        { id: 'rail-bot-plus',  label: 'รางไฟล่าง (+)', y: 330 },
+        { id: 'rail-bot-minus', label: 'รางไฟล่าง (–)', y: 352 }
+      ];
+
+      const groups = {}; // groupId -> { stripEl, holeEls: [], type: 'rail'|'col', label }
+      let lockedGroup = null;
+      let lockedHoleEl = null;
+
+      function createSvgEl(tag, attrs) {
+        const el = document.createElementNS(svgNS, tag);
+        Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, String(v)));
+        return el;
+      }
+
+      // 1. Build Horizontal Power Rails
+      railRows.forEach((rail) => {
+        const strip = createSvgEl('rect', {
+          x: startX - 10,
+          y: rail.y - 8,
+          width: (numCols - 1) * colStep + 20,
+          height: 16,
+          rx: 8,
+          fill: '#22c55e',
+          class: 'copper-strip'
+        });
+        stripsLayer.appendChild(strip);
+
+        groups[rail.id] = {
+          stripEl: strip,
+          holeEls: [],
+          type: 'rail',
+          title: 'รางไฟแนวยาว: เชื่อมถึงกันทั้งหมด!',
+          coord: rail.label
+        };
+
+        for (let c = 1; c <= numCols; c++) {
+          const x = startX + (c - 1) * colStep;
+          const hole = createSvgEl('rect', {
+            x: x - 5.5,
+            y: rail.y - 5.5,
+            width: 11,
+            height: 11,
+            rx: 2.5,
+            fill: '#334155',
+            stroke: '#94a3b8',
+            'stroke-width': 1,
+            class: 'bb-hole',
+            'data-group': rail.id,
+            'data-coord': `${rail.label} ช่อง ${c}`
+          });
+          holesLayer.appendChild(hole);
+          groups[rail.id].holeEls.push(hole);
+        }
+      });
+
+      // 2. Build Column Labels (1..25) & Row Labels (A..E, F..J)
+      for (let c = 1; c <= numCols; c++) {
+        const x = startX + (c - 1) * colStep;
+        if (c === 1 || c % 5 === 0) {
+          const topLbl = createSvgEl('text', {
+            x, y: 85, 'text-anchor': 'middle', 'font-size': 9.5, 'font-weight': 700, fill: '#64748b'
+          });
+          topLbl.textContent = String(c);
+          labelsLayer.appendChild(topLbl);
+
+          const botLbl = createSvgEl('text', {
+            x, y: 309, 'text-anchor': 'middle', 'font-size': 9.5, 'font-weight': 700, fill: '#64748b'
+          });
+          botLbl.textContent = String(c);
+          labelsLayer.appendChild(botLbl);
+        }
+      }
+
+      [...topRows, ...botRows].forEach((r) => {
+        const lblL = createSvgEl('text', {
+          x: 42, y: r.y + 3.5, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 800, fill: '#475569'
+        });
+        lblL.textContent = r.name;
+        labelsLayer.appendChild(lblL);
+
+        const lblR = createSvgEl('text', {
+          x: 842, y: r.y + 3.5, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 800, fill: '#475569'
+        });
+        lblR.textContent = r.name;
+        labelsLayer.appendChild(lblR);
+      });
+
+      // 3. Build Middle 5-Hole Vertical Columns (Top A-E and Bottom F-J)
+      function buildZoneColumns(prefix, rows, zoneTitle) {
+        const yMin = rows[0].y - 9;
+        const height = rows[rows.length - 1].y - rows[0].y + 18;
+
+        for (let c = 1; c <= numCols; c++) {
+          const x = startX + (c - 1) * colStep;
+          const groupId = `${prefix}-col-${c}`;
+
+          const strip = createSvgEl('rect', {
+            x: x - 8,
+            y: yMin,
+            width: 16,
+            height,
+            rx: 8,
+            fill: '#22c55e',
+            class: 'copper-strip'
+          });
+          stripsLayer.appendChild(strip);
+
+          groups[groupId] = {
+            stripEl: strip,
+            holeEls: [],
+            type: 'col',
+            title: `แนวตั้ง 5 รู: เชื่อมเฉพาะคอลัมน์ ${c} (${zoneTitle} — ข้ามร่องกลางไม่ได้)`
+          };
+
+          rows.forEach((r) => {
+            const hole = createSvgEl('rect', {
+              x: x - 5.5,
+              y: r.y - 5.5,
+              width: 11,
+              height: 11,
+              rx: 2.5,
+              fill: '#334155',
+              stroke: '#94a3b8',
+              'stroke-width': 1,
+              class: 'bb-hole',
+              'data-group': groupId,
+              'data-coord': `รู ${r.name}${c}`
+            });
+            holesLayer.appendChild(hole);
+            groups[groupId].holeEls.push(hole);
+          });
+        }
+      }
+
+      buildZoneColumns('top', topRows, 'ฝั่งบน A–E');
+      buildZoneColumns('bot', botRows, 'ฝั่งล่าง F–J');
+
+      // 4. Highlighting & Interaction
+      function clearVisuals() {
+        Object.values(groups).forEach((g) => {
+          g.stripEl.classList.toggle('is-visible', showAllStrips);
+          g.holeEls.forEach((h) => h.classList.remove('is-connected', 'is-origin'));
+        });
+      }
+
+      function highlightGroup(groupId, originHoleEl) {
+        clearVisuals();
+        if (!groupId || !groups[groupId]) {
+          xrayStatusBanner.className = 'inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs sm:text-sm font-bold border border-slate-200 transition-colors';
+          xrayStatusBanner.innerHTML = '<span>🔍</span><span>เอาเมาส์ชี้ หรือคลิกที่รูใดก็ได้บน Breadboard เพื่อ X-Ray แผ่นโลหะด้านใน!</span>';
+          holeCoordBadge.textContent = 'พร้อมสำรวจ';
+          railInfoCard.classList.remove('ring-4', 'ring-emerald-300', 'bg-emerald-50');
+          midInfoCard.classList.remove('ring-4', 'ring-emerald-300', 'bg-emerald-50');
+          return;
+        }
+
+        const g = groups[groupId];
+        g.stripEl.classList.add('is-visible');
+        g.holeEls.forEach((h) => h.classList.add('is-connected'));
+        if (originHoleEl) originHoleEl.classList.add('is-origin');
+
+        xrayStatusBanner.className = 'inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-sm transition-colors';
+        xrayStatusBanner.innerHTML = `<span>⚡</span><span>${g.title}</span>`;
+        holeCoordBadge.textContent = (originHoleEl ? originHoleEl.getAttribute('data-coord') : g.coord) + (lockedGroup === groupId ? ' (ล็อกไว้)' : '');
+
+        if (g.type === 'rail') {
+          railInfoCard.classList.add('ring-4', 'ring-emerald-300', 'bg-emerald-50');
+          midInfoCard.classList.remove('ring-4', 'ring-emerald-300', 'bg-emerald-50');
+        } else {
+          midInfoCard.classList.add('ring-4', 'ring-emerald-300', 'bg-emerald-50');
+          railInfoCard.classList.remove('ring-4', 'ring-emerald-300', 'bg-emerald-50');
+        }
+      }
+
+      holesLayer.addEventListener('mouseover', (e) => {
+        const hole = e.target.closest('.bb-hole');
+        if (!hole) return;
+        if (lockedGroup) return;
+        highlightGroup(hole.getAttribute('data-group'), hole);
+      });
+
+      holesLayer.addEventListener('mouseleave', () => {
+        if (lockedGroup) return;
+        highlightGroup(null, null);
+      });
+
+      holesLayer.addEventListener('click', (e) => {
+        const hole = e.target.closest('.bb-hole');
+        if (!hole) return;
+        const gId = hole.getAttribute('data-group');
+        if (lockedGroup === gId && lockedHoleEl === hole) {
+          lockedGroup = null;
+          lockedHoleEl = null;
+          highlightGroup(null, null);
+        } else {
+          lockedGroup = gId;
+          lockedHoleEl = hole;
+          highlightGroup(gId, hole);
+        }
+      });
+
+      toggleAllStripsBtn.addEventListener('click', () => {
+        showAllStrips = !showAllStrips;
+        toggleAllStripsText.textContent = showAllStrips ? 'ซ่อนแถบโลหะทั้งหมด' : 'แสดงแถบโลหะทั้งหมด';
+        toggleAllStripsBtn.className = showAllStrips
+          ? 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-amber-500 hover:bg-amber-600 text-white shadow-sm transition active:scale-95 cursor-pointer'
+          : 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition active:scale-95 cursor-pointer';
+        highlightGroup(lockedGroup, lockedHoleEl);
+      });
+
+      clearSelectionBtn.addEventListener('click', () => {
+        lockedGroup = null;
+        lockedHoleEl = null;
+        showAllStrips = false;
+        toggleAllStripsText.textContent = 'แสดงแถบโลหะทั้งหมด';
+        toggleAllStripsBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition active:scale-95 cursor-pointer';
+        highlightGroup(null, null);
+      });
+    })();
+  </script>
+
+  <!-- Embed Mode Handler & Navigation Key Forwarder -->
+  <style>
+    html.is-embedded header > div:first-child { display: none !important; }
+  </style>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('embed') === '1') {
+        document.documentElement.classList.add('is-embedded');
+        const hideBadge = function () {
+          const header = document.querySelector('header');
+          if (header) {
+            const leftBadge = header.querySelector('div:first-child');
+            if (leftBadge) {
+              leftBadge.style.display = 'none';
+            }
+            const remainingControls = header.querySelector('button, a');
+            if (!remainingControls) {
+              header.style.display = 'none';
+            } else {
+              header.style.justifyContent = 'flex-end';
+              header.classList.remove('justify-between');
+            }
+          }
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', hideBadge);
+        } else {
+          hideBadge();
+        }
+      }
+
+
+    })();
+  </script>
+
+<script type="module" src="../scripts/breadboard-quiz/app.js"></script><script src="../scripts/slide-support.js"></script></body>
+</html>

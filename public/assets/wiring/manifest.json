@@ -1,0 +1,71 @@
+{
+  "generatedFrom": "public/scripts/pinout/{data,diagrams}.js",
+  "thumbnailWidth": 600,
+  "downloadWidth": 1200,
+  "images": [
+    {
+      "id": "servo",
+      "bytes": 16234
+    },
+    {
+      "id": "dac",
+      "bytes": 18200
+    },
+    {
+      "id": "i2s",
+      "bytes": 18510
+    },
+    {
+      "id": "dc",
+      "bytes": 20292
+    },
+    {
+      "id": "esc",
+      "bytes": 18502
+    },
+    {
+      "id": "active",
+      "bytes": 18084
+    },
+    {
+      "id": "passive",
+      "bytes": 18098
+    },
+    {
+      "id": "button",
+      "bytes": 14728
+    },
+    {
+      "id": "pot",
+      "bytes": 15228
+    },
+    {
+      "id": "ldr",
+      "bytes": 15150
+    },
+    {
+      "id": "dht",
+      "bytes": 15848
+    },
+    {
+      "id": "ultrasonic",
+      "bytes": 17538
+    },
+    {
+      "id": "i2c",
+      "bytes": 15504
+    },
+    {
+      "id": "spi",
+      "bytes": 17148
+    },
+    {
+      "id": "ds18",
+      "bytes": 15590
+    },
+    {
+      "id": "uart",
+      "bytes": 18204
+    }
+  ]
+}

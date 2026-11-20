@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สไลด์ 4: กฎเหล็กเรื่องไฟฟ้าสำหรับมือใหม่ — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
+  <link rel="stylesheet" href="../styles/classroom.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Prompt', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #fffbeb 0%, #f0f9ff 50%, #fef2f2 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Gentle CSS Shake for Short Circuit */
+    @keyframes boardShake {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      15% { transform: translate(-5px, 2px) rotate(-0.8deg); }
+      30% { transform: translate(5px, -3px) rotate(0.8deg); }
+      45% { transform: translate(-4px, -2px) rotate(-0.5deg); }
+      60% { transform: translate(4px, 3px) rotate(0.5deg); }
+      75% { transform: translate(-3px, 1px) rotate(-0.3deg); }
+    }
+    .is-shaking {
+      animation: boardShake 0.45s ease-in-out 3;
+    }
+
+    /* Smoke rising from chip */
+    @keyframes smokeRise {
+      0%   { transform: translateY(0) scale(0.7); opacity: 0; }
+      20%  { opacity: 0.78; }
+      80%  { opacity: 0.45; }
+      100% { transform: translateY(-65px) scale(1.65); opacity: 0; }
+    }
+    .smoke-puff { opacity: 0; transform-box: fill-box; transform-origin: center; }
+    .is-short .smoke-puff-1 { animation: smokeRise 1.6s ease-out infinite; }
+    .is-short .smoke-puff-2 { animation: smokeRise 1.6s ease-out 0.5s infinite; }
+    .is-short .smoke-puff-3 { animation: smokeRise 1.6s ease-out 1.0s infinite; }
+
+    /* Sparks flashing */
+    @keyframes sparkFlash {
+      0%, 100% { opacity: 0; transform: scale(0.6) rotate(0deg); }
+      35% { opacity: 1; transform: scale(1.15) rotate(12deg); }
+      70% { opacity: 0.2; transform: scale(0.85) rotate(-10deg); }
+    }
+    .spark-fx { opacity: 0; transform-box: fill-box; transform-origin: center; }
+    .is-short .spark-fx-1 { animation: sparkFlash 0.55s ease-in-out infinite; }
+    .is-short .spark-fx-2 { animation: sparkFlash 0.55s ease-in-out 0.25s infinite; }
+
+    /* LED Yellow Glow in Normal Mode */
+    @keyframes ledShine {
+      0%, 100% { filter: drop-shadow(0 0 10px #facc15); }
+      50% { filter: drop-shadow(0 0 22px #fde047); }
+    }
+    .led-glow-circle {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .is-normal .led-glow-circle {
+      opacity: 1;
+    }
+    .is-normal .led-dome {
+      fill: #fef08a;
+      animation: ledShine 1.4s ease-in-out infinite;
+    }
+
+    /* Short circuit red wire animation */
+    @keyframes shortPulse {
+      0%, 100% { stroke-opacity: 1; }
+      50% { stroke-opacity: 0.45; }
+    }
+    .short-wire-group {
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .is-short .short-wire-group {
+      opacity: 1;
+    }
+    .is-short .short-arc {
+      animation: shortPulse 0.4s linear infinite;
+    }
+
+    .safety-badges {
+      --stagger-dur: 420ms;
+      --stagger-distance: 8px;
+      --stagger-stagger: 75ms;
+      --stagger-ease: cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: .55rem;
+      margin: 0;
+      padding: .85rem 0 1.25rem;
+      list-style: none;
+    }
+
+    .safety-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .45rem .75rem;
+      border: 1px solid var(--badge-border);
+      border-radius: 999px;
+      background: var(--badge-background);
+      color: var(--badge-ink);
+      font-size: .78rem;
+      font-weight: 700;
+    }
+
+    .safety-badge svg { width: 1rem; height: 1rem; flex: none; }
+    .safety-badge--voltage { --badge-background: #f0f9ff; --badge-border: #bae6fd; --badge-ink: #075985; }
+    .safety-badge--warning { --badge-background: #fff1f2; --badge-border: #fecdd3; --badge-ink: #9f1239; }
+    .safety-badge--usb { --badge-background: #fffbeb; --badge-border: #fde68a; --badge-ink: #92400e; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .safety-badges.is-shown .safety-badge {
+        animation: safety-badge-reveal var(--stagger-dur) var(--stagger-ease) backwards;
+      }
+      .safety-badges.is-shown .safety-badge:nth-child(2) { animation-delay: var(--stagger-stagger); }
+      .safety-badges.is-shown .safety-badge:nth-child(3) { animation-delay: calc(var(--stagger-stagger) * 2); }
+    }
+
+    @keyframes safety-badge-reveal {
+      from { opacity: 0; transform: translateY(var(--stagger-distance)); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .button-demo {
+      margin-block-end: 1.25rem;
+      padding: clamp(.85rem, 2.6vw, 1.5rem);
+      border: 1px solid #bae6fd;
+      border-radius: 1.5rem;
+      background: linear-gradient(135deg, #fff 20%, #f0f9ff 62%, #fffbeb);
+      box-shadow: 0 9px 22px #33415512;
+      text-align: center;
+    }
+    .button-demo h2 {
+      color: #0c4a6e;
+      font-size: clamp(1.14rem, 3vw, 1.52rem);
+      font-weight: 800;
+    }
+    .button-demo-instruction, .button-demo-note {
+      color: #475569;
+      font-size: .82rem;
+    }
+    .button-demo-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) clamp(.85rem, 5vw, 3.2rem) minmax(0, 1fr) clamp(.85rem, 5vw, 3.2rem) minmax(0, 1fr);
+      align-items: center;
+      gap: clamp(.15rem, 1vw, .55rem);
+      max-inline-size: 41rem;
+      margin: .85rem auto .7rem;
+    }
+    .button-demo-node {
+      display: grid;
+      justify-items: center;
+      align-content: start;
+      gap: .2rem;
+      min-inline-size: 0;
+      padding: .42rem 0;
+    }
+    .button-demo-node > svg {
+      display: block;
+      inline-size: min(100%, 6.4rem);
+      block-size: auto;
+      overflow: visible;
+    }
+    .button-demo-node strong { color: #1e3a5f; font-weight: 800; font-size: clamp(.85rem, 2vw, 1rem); }
+    .button-demo-state { color: #475569; font-size: clamp(.7rem, 1.65vw, .85rem); }
+    .button-demo-toggle {
+      color: #075985;
+      background: #f0f9ff;
+      border: 2px solid #7dd3fc;
+      border-radius: 1rem;
+      cursor: pointer;
+      inline-size: 100%;
+    }
+    .button-demo-toggle:hover { background: #e0f2fe; border-color: #0284c7; }
+    .button-demo-toggle:focus-visible { outline: 3px solid #0369a1; outline-offset: 3px; }
+    .button-demo-toggle[aria-pressed="true"] { background: #e0f2fe; border-color: #0284c7; }
+    .button-demo-cap { fill: #38bdf8; }
+    .button-demo[data-on="true"] .button-demo-cap { transform: translateY(6px); fill: #0284c7; }
+    .button-demo-arrow { display: block; inline-size: 100%; overflow: visible; fill: none; stroke: #64748b; }
+    .button-demo-arrow .button-demo-packet { stroke: #0284c7; stroke-dasharray: 1 36; stroke-dashoffset: 1; opacity: 0; }
+    .button-demo-indicator { fill: #cbd5e1; }
+    .button-demo[data-on="true"] .button-demo-indicator { fill: #4ade80; }
+    .button-demo-lens { fill: #e2e8f0; }
+    .button-demo-rays { opacity: 0; }
+    .button-demo[data-on="true"] .button-demo-lens { fill: #fbbf24; }
+    .button-demo[data-on="true"] .button-demo-rays { opacity: 1; }
+    .button-demo[data-on="true"] #demo-led-state { color: #92400e; font-weight: 700; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .button-demo-cap { transition: transform 130ms ease-out, fill 130ms ease-out; }
+      .button-demo-indicator { transition: fill 120ms ease-out 160ms; }
+      .button-demo-lens { transition: fill 160ms ease-out 380ms; }
+      .button-demo-rays { transition: opacity 160ms ease-out 380ms; }
+      .button-demo[data-on="true"] .button-demo-packet { animation: button-demo-send 200ms ease-in-out; }
+      .button-demo[data-on="true"] .button-demo-arrow--output .button-demo-packet { animation-delay: 220ms; }
+    }
+
+    @keyframes button-demo-send {
+      0% { opacity: 0; stroke-dashoffset: 1; }
+      20%, 80% { opacity: 1; }
+      100% { opacity: 0; stroke-dashoffset: -35; }
+    }
+    .button-demo-wiring { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr); align-items: center; gap: .8rem; max-inline-size: 53rem; margin: .65rem auto; padding: .55rem; text-align: start; background: #f5fbff; border: 1px solid #cfe4f4; border-radius: .8rem; }
+    .button-demo-wiring svg { display: block; inline-size: 100%; block-size: auto; min-inline-size: 0; }
+    .button-demo-wiring p { margin: .25rem .2rem; color: #405568; font-size: .83rem; line-height: 1.65; }
+    .button-wire-label { fill: #345675; font-size: 15px; font-weight: 700; }
+    .button-wire-closed, [data-on="true"] .button-wire-open { opacity: 0; }
+    [data-on="true"] .button-wire-closed { opacity: 1; }
+    @media (max-width: 40rem) { .button-demo-wiring { grid-template-columns: minmax(0,1fr); } }
+  </style>
+<link rel="stylesheet" href="../styles/slide-support.css"></head>
+<body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
+
+  <!-- Top Progress Bar -->
+  <header class="w-full max-w-6xl mx-auto px-4 pt-3 pb-1 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2.5">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500 text-white text-xs sm:text-sm font-bold shadow-sm">
+        ESP32 ม.4 • คาบที่ 1
+      </span>
+      <span class="text-xs sm:text-sm font-semibold text-slate-600 bg-white/80 backdrop-blur px-3 py-1 rounded-full border border-slate-200">
+        สไลด์ที่ 4 / 17
+      </span>
+    </div>
+  </header>
+
+  <main class="w-full max-w-6xl mx-auto px-4 py-2 flex-1 flex flex-col justify-center">
+    <!-- Slide Header -->
+    <section class="text-center mb-3">
+      <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 mb-1.5">
+        <span class="bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 bg-clip-text text-transparent">
+          กฎเหล็กเรื่องไฟฟ้า (จำแค่ 2 ข้อ)
+        </span>
+      </h1>
+    </section>
+
+    <!-- 2 Golden Rules Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
+      <div id="rule1Card" class="bg-white/95 rounded-2xl p-3.5 sm:p-4 border-2 border-sky-300 shadow-sm transition-all duration-300">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-sky-100 text-sky-800">ข้อที่ 1 • วงจรต้องครบ</span>
+        </div>
+        <p class="text-sm sm:text-base font-bold text-slate-800 leading-snug">
+          ไฟต้องวิ่งออกจาก <span class="text-rose-600">ขั้วบวก (3.3V)</span> ผ่านอุปกรณ์ แล้วไหลกลับเข้า <span class="text-slate-700">ขั้วลบ (GND)</span> เสมอ
+        </p>
+      </div>
+
+      <div id="rule2Card" class="bg-white/95 rounded-2xl p-3.5 sm:p-4 border-2 border-rose-300 shadow-sm transition-all duration-300">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800">ข้อที่ 2 • ห้ามต่อช็อต!</span>
+        </div>
+        <p class="text-sm sm:text-base font-bold text-slate-800 leading-snug">
+          ห้ามเอาสายไฟ <span class="text-rose-600">3.3V</span> จิ้มเข้า <span class="text-slate-800">GND</span> โดยตรงเด็ดขาด จะเกิดการลัดวงจร กระแสสูง และเสี่ยงทำให้บอร์ดเสียหาย
+        </p>
+      </div>
+    </section>
+
+    <!-- Interactive Circuit Simulator -->
+    <section id="simContainer" class="is-normal bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-xl border-2 border-slate-200 transition-colors">
+      <!-- Mode Switcher Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <div class="flex flex-wrap items-center gap-2" role="group" aria-label="สลับโหมดวงจร">
+          <button id="modeNormalBtn" type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-emerald-600 text-white shadow-md transition active:scale-95 cursor-pointer">
+            <span>✅</span>
+            <span>โหมด 1: ต่อครบวงจร (ปกติ)</span>
+          </button>
+          <button id="modeShortBtn" type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-rose-50 text-rose-700 border-2 border-rose-300 hover:bg-rose-100 transition active:scale-95 cursor-pointer">
+            <span>⚡</span>
+            <span>โหมด 2: เผลอต่อ 3.3V ชน GND (ลัดวงจร)</span>
+          </button>
+        </div>
+
+        <!-- Warning Banner (only visible in short circuit mode) -->
+        <div id="shortWarningBanner" class="hidden items-center gap-2 px-4 py-1.5 rounded-xl bg-red-600 text-white font-extrabold text-xs sm:text-sm shadow-md animate-pulse">
+          <span>🚨</span>
+          <span>SHORT CIRCUIT! เสี่ยงบอร์ดเสียหาย</span>
+        </div>
+      </div>
+
+      <!-- SVG Circuit Stage -->
+      <div class="w-full overflow-hidden rounded-2xl bg-gradient-to-b from-slate-50 to-slate-100 border border-slate-200 relative">
+        <svg id="safetyCircuit" viewBox="0 0 780 320" class="w-full h-auto" role="img" aria-labelledby="safetyCircuitTitle safetyCircuitDesc">
+          <title id="safetyCircuitTitle">ESP32 DevKit V1 / ESP32-WROOM-32: วงจร LED และการลัดวงจร</title>
+          <desc id="safetyCircuitDesc">ขา 3V3 ของ ESP32 ต่อผ่านตัวต้านทาน 330 โอห์มและ LED กลับเข้า GND ห้ามต่อ 3V3 กับ GND โดยตรง</desc>
+          <defs>
+            <radialGradient id="ledHaloGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95" />
+              <stop offset="60%" stop-color="#fde047" stop-opacity="0.4" />
+              <stop offset="100%" stop-color="#fde047" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+
+          <!-- ESP32_SAFETY_BOARD_START -->
+          <g id="esp32SafetyBoard">
+            <g transform="translate(95 20) scale(0.525)"><rect width="210" height="480" rx="18" fill="#12685c" stroke="#0c443e" stroke-width="3"/>
+ <rect x="42" y="16" width="126" height="100" rx="4" fill="#164339"/>
+ <path d="M50 75V30h15v40h15V30h15v40h15V30h15v40h15V30h20v45" fill="none" stroke="#d8c187" stroke-width="4"/>
+ <rect x="38" y="124" width="134" height="127" rx="7" fill="#b8c9c8" stroke="#edf6f4" stroke-width="2"/>
+ <text x="105" y="164" text-anchor="middle" font-size="23" fill="#21433f" font-weight="bold">ESP32</text><text x="105" y="190" text-anchor="middle" font-size="14" fill="#21433f">WROOM-32</text><text x="105" y="215" text-anchor="middle" font-size="10" fill="#21433f">2.4 GHz · Wi-Fi / BT</text>
+ <rect x="77" y="299" width="56" height="61" rx="4" fill="#23343e"/><path d="M70 307h-8m8 12h-8m8 12h-8m8 12h-8m78-36h8m-8 12h8m-8 12h8m-8 12h8" stroke="#b7c8bd" stroke-width="3"/>
+ <circle cx="44" cy="400" r="10" fill="#d0d7da"/><circle cx="166" cy="400" r="10" fill="#d0d7da"/><text x="44" y="422" text-anchor="middle" font-size="10" fill="white">EN</text><text x="166" y="422" text-anchor="middle" font-size="10" fill="white">BOOT</text>
+ <rect x="76" y="445" width="58" height="40" rx="5" fill="#bac6cc" stroke="#536470" stroke-width="3"/><rect x="86" y="453" width="38" height="17" rx="3" fill="#334152"/>
+ <g  class="pin " opacity="1"><rect x="-27" y="12" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="18" width="20" height="14" rx="3" fill="#f29a9a" stroke="#263d43" stroke-width="1"/><text x="16" y="29" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">EN</text></g><g  class="pin " opacity="1"><rect x="-27" y="41" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="47" width="20" height="14" rx="3" fill="#a4d6f0" stroke="#263d43" stroke-width="1"/><text x="16" y="58" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">VP · 36</text></g><g  class="pin " opacity="1"><rect x="-27" y="70" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="76" width="20" height="14" rx="3" fill="#a4d6f0" stroke="#263d43" stroke-width="1"/><text x="16" y="87" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">VN · 39</text></g><g  class="pin " opacity="1"><rect x="-27" y="99" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="105" width="20" height="14" rx="3" fill="#a4d6f0" stroke="#263d43" stroke-width="1"/><text x="16" y="116" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">34</text></g><g  class="pin " opacity="1"><rect x="-27" y="128" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="134" width="20" height="14" rx="3" fill="#a4d6f0" stroke="#263d43" stroke-width="1"/><text x="16" y="145" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">35</text></g><g  class="pin " opacity="1"><rect x="-27" y="157" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="163" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="16" y="174" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">32</text></g><g  class="pin " opacity="1"><rect x="-27" y="186" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="192" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="16" y="203" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">33</text></g><g  class="pin " opacity="1"><rect x="-27" y="215" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="221" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="16" y="232" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">25</text></g><g  class="pin " opacity="1"><rect x="-27" y="244" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="250" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="16" y="261" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">26</text></g><g  class="pin " opacity="1"><rect x="-27" y="273" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="279" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="16" y="290" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">27</text></g><g  class="pin " opacity="1"><rect x="-27" y="302" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="308" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="16" y="319" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">14</text></g><g  class="pin " opacity="1"><rect x="-27" y="331" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="337" width="20" height="14" rx="3" fill="#e9b884" stroke="#263d43" stroke-width="1"/><text x="16" y="348" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">12</text></g><g  class="pin " opacity="1"><rect x="-27" y="360" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="366" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="16" y="377" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">13</text></g><g  class="pin chosen" opacity="1"><rect x="-27" y="389" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="395" width="20" height="14" rx="3" fill="#ffe074" stroke="#8c5814" stroke-width="3"/><text x="16" y="406" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">GND</text></g><g  class="pin " opacity="1"><rect x="-27" y="418" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="-10" y="424" width="20" height="14" rx="3" fill="#f29a9a" stroke="#263d43" stroke-width="1"/><text x="16" y="435" text-anchor="start" font-size="11" font-weight="bold" fill="#fff">VIN</text></g><g  class="pin " opacity="1"><rect x="183" y="12" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="18" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="194" y="29" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">23</text></g><g  class="pin " opacity="1"><rect x="183" y="41" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="47" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="194" y="58" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">22</text></g><g  class="pin " opacity="1"><rect x="183" y="70" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="76" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="194" y="87" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">TX0 · 1</text></g><g  class="pin " opacity="1"><rect x="183" y="99" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="105" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="194" y="116" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">RX0 · 3</text></g><g  class="pin " opacity="1"><rect x="183" y="128" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="134" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="194" y="145" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">21</text></g><g  class="pin " opacity="1"><rect x="183" y="157" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="163" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="194" y="174" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">19</text></g><g  class="pin " opacity="1"><rect x="183" y="186" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="192" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="194" y="203" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">18</text></g><g  class="pin " opacity="1"><rect x="183" y="215" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="221" width="20" height="14" rx="3" fill="#e9b884" stroke="#263d43" stroke-width="1"/><text x="194" y="232" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">5</text></g><g  class="pin " opacity="1"><rect x="183" y="244" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="250" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="194" y="261" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">TX2 · 17</text></g><g  class="pin " opacity="1"><rect x="183" y="273" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="279" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="194" y="290" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">RX2 · 16</text></g><g  class="pin " opacity="1"><rect x="183" y="302" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="308" width="20" height="14" rx="3" fill="#bbd8c9" stroke="#263d43" stroke-width="1"/><text x="194" y="319" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">4</text></g><g  class="pin " opacity="1"><rect x="183" y="331" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="337" width="20" height="14" rx="3" fill="#e9b884" stroke="#263d43" stroke-width="1"/><text x="194" y="348" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">2</text></g><g  class="pin " opacity="1"><rect x="183" y="360" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="366" width="20" height="14" rx="3" fill="#e9b884" stroke="#263d43" stroke-width="1"/><text x="194" y="377" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">15</text></g><g  class="pin chosen" opacity="1"><rect x="183" y="389" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="395" width="20" height="14" rx="3" fill="#ffe074" stroke="#8c5814" stroke-width="3"/><text x="194" y="406" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">GND</text></g><g  class="pin chosen" opacity="1"><rect x="183" y="418" width="54" height="26" fill="transparent"/><rect class="pin-pad" x="200" y="424" width="20" height="14" rx="3" fill="#ffe074" stroke="#8c5814" stroke-width="3"/><text x="194" y="435" text-anchor="end" font-size="11" font-weight="bold" fill="#fff">3V3</text></g>
+ </g>
+            <text x="150" y="14" text-anchor="middle" font-size="12" font-weight="800" fill="#115e59">ESP32 DevKit V1</text>
+            <path d="M205.25 246.275 H235 V152 H268" fill="none" stroke="#ef4444" stroke-width="5" stroke-linejoin="round" />
+            <text x="211" y="266" font-size="12" font-weight="800" fill="#b91c1c">3V3</text>
+            <path d="M95 231.05 H65 V290 H255 V204 H268" fill="none" stroke="#1e293b" stroke-width="5" stroke-linejoin="round" />
+            <text x="56" y="218" text-anchor="middle" font-size="12" font-weight="800" fill="#334155">GND</text>
+            <g transform="translate(150, 96)" aria-hidden="true">
+              <circle cx="-10" cy="0" r="14" fill="#64748b" class="smoke-puff smoke-puff-1" />
+              <circle cx="8" cy="-4" r="18" fill="#475569" class="smoke-puff smoke-puff-2" />
+              <circle cx="0" cy="-8" r="16" fill="#94a3b8" class="smoke-puff smoke-puff-3" />
+              <polygon points="-24,-4 -10,-14 -14,-2 0,-12 -8,4 -20,2" fill="#facc15" stroke="#ef4444" stroke-width="1.5" class="spark-fx spark-fx-1" />
+              <polygon points="10,-6 24,-14 18,0 30,-4 16,8 12,2" fill="#fde047" stroke="#f97316" stroke-width="1.5" class="spark-fx spark-fx-2" />
+            </g>
+          </g>
+          <!-- ESP32_SAFETY_BOARD_END -->
+
+          <!-- NORMAL LOOP PATH (for electron motion: 3.3V -> Resistor -> LED -> GND) -->
+          <!-- Coordinates: 3.3V(268, 152) -> (420, 152) -> Resistor -> LED(620, 152..204) -> (268, 204) -->
+          <path id="normalLoopPath"
+            d="M205.25 246.275 H235 V152 H385 H455 H605 V204 H255 V290 H65 V231.05 H95"
+            fill="none" stroke="none" />
+
+          <!-- Visible Normal Wires -->
+          <!-- Red 3.3V Wire -->
+          <path d="M 268 152 L 385 152" stroke="#ef4444" stroke-width="6" stroke-linecap="round" fill="none" />
+          <path d="M 455 152 L 605 152" stroke="#ef4444" stroke-width="6" stroke-linecap="round" fill="none" />
+          <!-- Black GND Wire -->
+          <path d="M 605 204 L 268 204" stroke="#1e293b" stroke-width="6" stroke-linecap="round" fill="none" />
+
+          <!-- Resistor Component -->
+          <g transform="translate(385, 138)">
+            <line x1="0" y1="14" x2="10" y2="14" stroke="#94a3b8" stroke-width="4" />
+            <line x1="60" y1="14" x2="70" y2="14" stroke="#94a3b8" stroke-width="4" />
+            <rect x="10" y="5" width="50" height="18" rx="5" fill="#fde68a" stroke="#b45309" stroke-width="2" />
+            <rect x="18" y="5" width="5" height="18" fill="#f97316" />
+            <rect x="28" y="5" width="5" height="18" fill="#f97316" />
+            <rect x="38" y="5" width="5" height="18" fill="#78350f" />
+            <rect x="49" y="5" width="4" height="18" fill="#eab308" />
+            <text x="35" y="-4" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">ตัวต้านทาน (330Ω)</text>
+          </g>
+
+          <!-- LED Component -->
+          <g transform="translate(575, 108)">
+            <circle cx="45" cy="36" r="46" fill="url(#ledHaloGrad)" class="led-glow-circle" />
+            <!-- LED Legs -->
+            <line x1="30" y1="44" x2="30" y2="62" stroke="#64748b" stroke-width="4" stroke-linecap="round" />
+            <line x1="30" y1="62" x2="30" y2="96" stroke="#1e293b" stroke-width="4" stroke-linecap="round" opacity="0" />
+            <path d="M 30 44 L 30 44" stroke="#64748b" stroke-width="4" />
+            <!-- Anode (+) & Cathode (-) -->
+            <line x1="30" y1="44" x2="30" y2="44" />
+            <line x1="35" y1="42" x2="35" y2="96" stroke="#64748b" stroke-width="3.5" stroke-linecap="round" />
+            <line x1="55" y1="42" x2="55" y2="44" stroke="#64748b" stroke-width="3.5" stroke-linecap="round" />
+            <!-- Connect legs neatly to (605, 152) and (605, 204) -->
+            <path d="M 30 44 L 30 44" />
+            <!-- Dome -->
+            <path d="M 28 42 L 28 24 A 17 17 0 0 1 62 24 L 62 42 Z" fill="#cbd5e1" stroke="#b45309" stroke-width="2.5" class="led-dome" />
+            <rect x="23" y="40" width="44" height="7" rx="3" fill="#f59e0b" />
+            <text x="45" y="114" text-anchor="middle" font-size="12" font-weight="800" fill="#854d0e">หลอดไฟ LED</text>
+          </g>
+
+          <!-- Electron Beads (moved by JS along normalLoopPath) -->
+          <g id="electronGroup">
+            <circle r="6" fill="#0ea5e9" stroke="#ffffff" stroke-width="2" class="electron-bead" />
+            <circle r="6" fill="#0ea5e9" stroke="#ffffff" stroke-width="2" class="electron-bead" />
+            <circle r="6" fill="#0ea5e9" stroke="#ffffff" stroke-width="2" class="electron-bead" />
+            <circle r="6" fill="#0ea5e9" stroke="#ffffff" stroke-width="2" class="electron-bead" />
+            <circle r="6" fill="#0ea5e9" stroke="#ffffff" stroke-width="2" class="electron-bead" />
+            <circle r="6" fill="#0ea5e9" stroke="#ffffff" stroke-width="2" class="electron-bead" />
+          </g>
+
+          <!-- SHORT CIRCUIT WIRE & SPARKS (Mode 2) -->
+          <g class="short-wire-group">
+            <!-- Direct 3.3V to GND jumper wire -->
+            <path d="M 268 152 C 325 152, 325 204, 268 204" stroke="#dc2626" stroke-width="8" stroke-linecap="round" fill="none" class="short-arc" />
+            <!-- Big Spark at Short Junction -->
+            <g transform="translate(312, 178)">
+              <polygon points="-16,-8 -4,-22 0,-6 14,-18 6,0 20,6 4,10 10,24 -4,12 -18,20 -10,4 -24,-2"
+                fill="#fef08a" stroke="#dc2626" stroke-width="2.5" class="spark-fx spark-fx-1" />
+            </g>
+            <!-- Red Warning Badge inside SVG -->
+            <g transform="translate(360, 232)">
+              <rect x="0" y="0" width="235" height="44" rx="12" fill="#dc2626" stroke="#991b1b" stroke-width="2.5" />
+              <text x="117.5" y="19" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">⚡ 3.3V ชน GND โดยตรง!</text>
+              <text x="117.5" y="35" text-anchor="middle" font-size="11" font-weight="700" fill="#fecaca">กระแสสูง เสี่ยงทำให้บอร์ดเสียหาย</text>
+            </g>
+          </g>
+
+          <!-- Flow Direction Labels -->
+          <text x="330" y="138" text-anchor="middle" font-size="11" font-weight="700" fill="#dc2626">3.3V ไหลออก ➔</text>
+          <text x="440" y="224" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">⬅ ไหลกลับเข้า GND</text>
+        </svg>
+      </div>
+    </section>
+    <ul id="safetyBadges" class="safety-badges" aria-label="ข้อควรระวังในการต่อ ESP32">
+      <li class="safety-badge safety-badge--voltage">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 2-9 12h7l-1 8 10-12h-7z"/></svg>
+        <span>GPIO ใช้ลอจิก 3.3 V</span>
+      </li>
+      <li class="safety-badge safety-badge--warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10.3 4-8 14a2 2 0 0 0 1.7 3h16a2 2 0 0 0 1.7-3l-8-14a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4m0 4h.01"/></svg>
+        <span>ห้ามต่อ VIN/5 V เข้า GPIO โดยตรง</span>
+      </li>
+      <li class="safety-badge safety-badge--usb">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v4m6-4v4M7 7h10v4a5 5 0 0 1-10 0V7Zm5 9v5"/></svg>
+        <span>ถอด USB ก่อนเปลี่ยนสาย</span>
+      </li>
+    </ul>
+    <section class="button-demo" id="button-demo" aria-labelledby="button-demo-title" data-on="false">
+      <h2 id="button-demo-title">ปุ่ม “ถึงมื้อ” ส่งเลขอะไรให้ ESP32?</h2>
+      <p id="button-demo-instruction" class="button-demo-instruction">กดปุ่มหนึ่งครั้งเพื่อปิดหน้าสัมผัส แล้วกดอีกครั้งเพื่อปล่อย</p>
+
+      <div class="button-demo-grid">
+        <button type="button" class="button-demo-node button-demo-toggle" id="button-demo-toggle" aria-pressed="false" aria-labelledby="demo-button-label" aria-describedby="button-demo-instruction">
+          <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
+            <ellipse cx="56" cy="72" rx="38" ry="5" fill="#e0f2fe"/>
+            <path d="M28 52v15h-9m65-15v15h9" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+            <rect x="21" y="35" width="70" height="25" rx="8" fill="#dbeafe" stroke="#155e75" stroke-width="2.5"/>
+            <g class="button-demo-cap">
+              <rect x="35" y="20" width="42" height="23" rx="9" stroke="#155e75" stroke-width="2.5"/>
+              <path d="M45 27h22" stroke="#fff" stroke-opacity=".65" stroke-width="2.5" stroke-linecap="round"/>
+            </g>
+          </svg>
+          <strong id="demo-button-label">ปุ่มถึงมื้อ</strong>
+          <span class="button-demo-state" id="demo-button-state" aria-hidden="true">ปล่อยอยู่</span>
+        </button>
+
+        <svg class="button-demo-arrow" viewBox="0 0 46 20" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10h35m-5-5 5 5-5 5" stroke-width="2.5"/>
+          <path class="button-demo-packet" d="M3 10h35" stroke-width="5"/>
+        </svg>
+
+        <div class="button-demo-node">
+          <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
+            <rect x="16" y="15" width="80" height="52" rx="9" fill="#145b6a" stroke="#084451" stroke-width="2.5"/>
+            <path d="M27 21h58m-58 40h58" stroke="#fbbf24" stroke-width="3.5" stroke-dasharray="2 6"/>
+            <rect x="32" y="29" width="35" height="24" rx="4" fill="#cedce5"/>
+            <path d="M39 35h18m-18 5h13" stroke="#7898aa" stroke-width="2" stroke-linecap="round"/>
+            <path d="M75 30h11v9H75v8h11" stroke="#a5f3fc" stroke-width="2"/>
+            <path d="M12 33h11v16H12z" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+            <circle class="button-demo-indicator" cx="80" cy="53" r="3.6"/>
+          </svg>
+          <strong>ESP32</strong>
+          <span class="button-demo-state" id="demo-board-state">HIGH (1) · ปล่อย</span>
+        </div>
+
+        <svg class="button-demo-arrow button-demo-arrow--output" viewBox="0 0 46 20" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10h35m-5-5 5 5-5 5" stroke-width="2.5"/>
+          <path class="button-demo-packet" d="M3 10h35" stroke-width="5"/>
+        </svg>
+
+        <div class="button-demo-node">
+          <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
+            <path d="M48 51v23m16-23v17" stroke="#64748b" stroke-width="3.5" stroke-linecap="round"/>
+            <path class="button-demo-lens" d="M39 51V36a17 17 0 0 1 34 0v15z" stroke="#475569" stroke-width="2.5"/>
+            <path d="M37 51h38" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+            <path class="button-demo-rays" d="M56 7v5m24 3-4 5m16 17h-7m-53-22 4 5m-16 17h7" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <strong>LED</strong>
+          <span class="button-demo-state" id="demo-led-state">ไฟดับ</span>
+        </div>
+      </div>
+
+      <div class="button-demo-wiring">
+        <svg viewBox="0 0 560 178" role="img" aria-labelledby="ff-button-title ff-button-desc">
+          <title id="ff-button-title">วงจรปุ่มถึงมื้อที่ GPIO19</title>
+          <desc id="ff-button-desc">ตัวต้านทานภายใน ESP32 ดึงขา GPIO19 ไปที่ 3V3 เมื่อปล่อยปุ่ม เมื่อกด ปุ่มต่อ GPIO19 เข้ากับ GND</desc>
+          <rect x="19" y="12" width="293" height="150" rx="15" fill="#fff" stroke="#bfdbeb" stroke-width="2"/>
+          <text x="34" y="40" class="button-wire-label">ภายใน ESP32</text>
+          <text x="34" y="77" class="button-wire-label">3V3</text>
+          <path d="M77 71h35l6-9 9 18 9-18 9 18 9-18 9 18 6-9h114v29H375" fill="none" stroke="#0e7490" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="107" y="111" class="button-wire-label">ตัวต้านทาน Pull-up</text>
+          <text x="257" y="128" class="button-wire-label">GPIO19</text>
+          <circle cx="283" cy="100" r="5" fill="#0e7490"/>
+          <circle cx="375" cy="100" r="5" fill="#0e7490"/>
+          <circle cx="441" cy="100" r="5" fill="#0e7490"/>
+          <path class="button-wire-open" d="M375 100l63-27" stroke="#b45309" stroke-width="4" stroke-linecap="round"/>
+          <path class="button-wire-closed" d="M375 100h66" stroke="#0e7490" stroke-width="4" stroke-linecap="round"/>
+          <path d="M441 100h62v18m-16 0h32m-25 7h18m-13 7h8" fill="none" stroke="#3c4d62" stroke-width="3" stroke-linecap="round"/>
+          <text x="384" y="54" class="button-wire-label">ปุ่มถึงมื้อ</text>
+          <text x="485" y="157" class="button-wire-label">GND</text>
+        </svg>
+        <div><p><code>INPUT_PULLUP</code> ดึง GPIO19 ขึ้นไปที่ 3.3 V ตอนปล่อย ผลคือ <strong>HIGH (1)</strong></p><p>พอกดปุ่ม ขานี้ต่อถึง GND ผลคือ <strong>LOW (0)</strong></p></div>
+      </div>
+      <p class="button-demo-note">ไฟในภาพติดเพื่อให้เห็นผลจากการกดปุ่ม ตอนรวมเครื่อง GPIO23 จะสั่งไฟแดงเมื่อเครื่องงดจ่ายอาหาร</p>
+      <p class="sr-only" id="button-demo-status" role="status"></p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const simContainer = document.getElementById('simContainer');
+      const modeNormalBtn = document.getElementById('modeNormalBtn');
+      const modeShortBtn = document.getElementById('modeShortBtn');
+      const shortWarningBanner = document.getElementById('shortWarningBanner');
+      const rule1Card = document.getElementById('rule1Card');
+      const rule2Card = document.getElementById('rule2Card');
+      const normalLoopPath = document.getElementById('normalLoopPath');
+      const electronGroup = document.getElementById('electronGroup');
+      const beads = Array.from(document.querySelectorAll('.electron-bead'));
+
+      let mode = 'normal';
+      let rafId = null;
+      let offset = 0;
+      const totalLen = normalLoopPath.getTotalLength();
+
+      function animateElectrons() {
+        if (mode !== 'normal') return;
+        offset = (offset + 1.8) % totalLen;
+        const count = beads.length;
+        beads.forEach((bead, idx) => {
+          const dist = (offset + (idx * totalLen) / count) % totalLen;
+          const pt = normalLoopPath.getPointAtLength(dist);
+          bead.setAttribute('cx', String(pt.x));
+          bead.setAttribute('cy', String(pt.y));
+        });
+        rafId = requestAnimationFrame(animateElectrons);
+      }
+
+      function setMode(nextMode) {
+        mode = nextMode;
+        modeNormalBtn.setAttribute('aria-pressed', String(mode === 'normal'));
+        modeShortBtn.setAttribute('aria-pressed', String(mode === 'short'));
+        document.getElementById('safetyCircuitDesc').textContent = mode === 'normal'
+          ? 'ESP32-WROOM-32: ขา 3V3 ต่อผ่านตัวต้านทาน 330 โอห์มและ LED กลับเข้า GND วงจรปกติ'
+          : 'ESP32-WROOM-32: สายต่อขา 3V3 กับ GND โดยตรง เกิดลัดวงจรและเสี่ยงเสียหาย เป็นภาพจำลอง ห้ามทดลองลัดวงจรจริง';
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+
+        if (mode === 'normal') {
+          simContainer.classList.remove('is-short', 'is-shaking', 'border-red-400', 'bg-red-50/40');
+          simContainer.classList.add('is-normal', 'border-slate-200');
+          shortWarningBanner.classList.add('hidden');
+          shortWarningBanner.classList.remove('inline-flex');
+          electronGroup.style.display = 'block';
+
+          modeNormalBtn.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-emerald-600 text-white shadow-md transition active:scale-95 cursor-pointer';
+          modeShortBtn.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-rose-50 text-rose-700 border-2 border-rose-300 hover:bg-rose-100 transition active:scale-95 cursor-pointer';
+
+          rule1Card.classList.add('ring-4', 'ring-sky-200');
+          rule2Card.classList.remove('ring-4', 'ring-rose-300');
+          animateElectrons();
+        } else {
+          simContainer.classList.remove('is-normal', 'border-slate-200');
+          simContainer.classList.add('is-short', 'border-red-400');
+          // Trigger shake reliably
+          simContainer.classList.remove('is-shaking');
+          void simContainer.offsetWidth;
+          simContainer.classList.add('is-shaking');
+
+          shortWarningBanner.classList.remove('hidden');
+          shortWarningBanner.classList.add('inline-flex');
+          electronGroup.style.display = 'none';
+
+          modeNormalBtn.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-slate-100 text-slate-600 border-2 border-slate-200 hover:bg-emerald-50 transition active:scale-95 cursor-pointer';
+          modeShortBtn.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-red-600 text-white shadow-md transition active:scale-95 cursor-pointer';
+
+          rule1Card.classList.remove('ring-4', 'ring-sky-200');
+          rule2Card.classList.add('ring-4', 'ring-rose-300');
+        }
+      }
+
+      modeNormalBtn.addEventListener('click', () => setMode('normal'));
+      modeShortBtn.addEventListener('click', () => setMode('short'));
+      setMode('normal');
+
+      const badges = document.getElementById('safetyBadges');
+      if ('IntersectionObserver' in window && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        const observer = new IntersectionObserver(([entry], targetObserver) => {
+          if (entry.intersectionRatio < .15) return;
+          entry.target.classList.add('is-shown');
+          targetObserver.disconnect();
+        }, { threshold: .15 });
+        observer.observe(badges);
+      }
+    })();
+
+    (() => {
+      const demo = document.getElementById('button-demo');
+      const button = document.getElementById('button-demo-toggle');
+      const inputState = document.getElementById('demo-button-state');
+      const boardState = document.getElementById('demo-board-state');
+      const ledState = document.getElementById('demo-led-state');
+      const status = document.getElementById('button-demo-status');
+
+      button.addEventListener('click', () => {
+        const pressed = button.getAttribute('aria-pressed') === 'false';
+        button.setAttribute('aria-pressed', String(pressed));
+        demo.dataset.on = String(pressed);
+        inputState.textContent = pressed ? 'กดอยู่' : 'ปล่อยอยู่';
+        boardState.textContent = pressed ? 'LOW (0) · กด' : 'HIGH (1) · ปล่อย';
+        ledState.textContent = pressed ? 'ไฟติด' : 'ไฟดับ';
+        status.textContent = `ESP32 ${boardState.textContent} · LED ${ledState.textContent}`;
+      });
+    })();
+  </script>
+
+  <!-- Embed Mode Handler & Navigation Key Forwarder -->
+  <style>
+    html.is-embedded header > div:first-child { display: none !important; }
+  </style>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('embed') === '1') {
+        document.documentElement.classList.add('is-embedded');
+        const hideBadge = function () {
+          const header = document.querySelector('header');
+          if (header) {
+            const leftBadge = header.querySelector('div:first-child');
+            if (leftBadge) {
+              leftBadge.style.display = 'none';
+            }
+            const remainingControls = header.querySelector('button, a');
+            if (!remainingControls) {
+              header.style.display = 'none';
+            } else {
+              header.style.justifyContent = 'flex-end';
+              header.classList.remove('justify-between');
+            }
+          }
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', hideBadge);
+        } else {
+          hideBadge();
+        }
+      }
+
+
+    })();
+  </script>
+
+<script src="../scripts/slide-support.js"></script></body>
+</html>

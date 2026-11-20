@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สไลด์ 7: สัญญาณ Digital และ Analog ในเครื่องให้อาหาร — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
+  <link rel="stylesheet" href="../styles/classroom.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Prompt', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 50%, #fffbeb 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    input[type="range"].analog-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #e2e8f0 0%, #a855f7 100%);
+      outline: none;
+    }
+    input[type="range"].analog-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #7c3aed;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.45);
+      cursor: pointer;
+    }
+
+    input[type="range"].pwm-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #e2e8f0 0%, #f59e0b 100%);
+      outline: none;
+    }
+    input[type="range"].pwm-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #d97706;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(217, 119, 6, 0.45);
+      cursor: pointer;
+    }
+  </style>
+<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/signal-lab.css"><link rel="stylesheet" href="../styles/adc-tutorial.css"><link rel="stylesheet" href="../styles/adc-origin.css"><link rel="stylesheet" href="../styles/feeder-signals.css"></head>
+<body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
+
+  <!-- Top Progress Bar -->
+  <header class="w-full max-w-6xl mx-auto px-4 pt-3 pb-1 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2.5">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-600 text-white text-xs sm:text-sm font-bold shadow-sm">
+        ESP32 ม.4 • คาบที่ 1
+      </span>
+      <span class="text-xs sm:text-sm font-semibold text-slate-600 bg-white/80 backdrop-blur px-3 py-1 rounded-full border border-slate-200">
+        สไลด์ที่ 7 / 17
+      </span>
+    </div>
+  </header>
+
+  <main class="w-full max-w-6xl mx-auto px-4 py-2 flex-1 flex flex-col justify-center gap-4">
+    <!-- Slide Header -->
+    <section class="text-center">
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-1">
+        <span class="bg-gradient-to-r from-sky-600 via-violet-600 to-amber-500 bg-clip-text text-transparent">
+          ลำแสงขาด กับเม็ดอาหารกระทบ
+        </span>
+      </h1>
+      <p class="text-xs sm:text-sm font-semibold text-slate-600">
+        บังลำแสง IR แล้วลองเคาะแผ่น Piezo เทียบสิ่งที่ ESP32 อ่านได้จากสองขา
+      </p>
+    </section>
+
+    <section class="feeder-signal-compare" aria-label="ทดลองสัญญาณสองแบบ">
+      <article class="feeder-signal-card feeder-signal-card--ir" data-feeder-ir>
+        <span class="feeder-signal-tag">DIGITAL INPUT · GPIO33</span>
+        <h2>บังลำแสงที่ชาม</h2>
+        <p>ตัวส่ง IR ยิงไปหาตัวรับ เมื่อแมวมาบัง สถานะที่ ESP32 อ่านจะเปลี่ยนจาก 1 เป็น 0</p>
+        <svg class="feeder-sensor-art" viewBox="0 0 320 132" aria-hidden="true">
+          <path d="M24 107h273" stroke="#c0d8e7" stroke-width="2"/>
+          <rect x="29" y="43" width="38" height="52" rx="9" fill="#1e6192"/>
+          <rect x="253" y="43" width="38" height="52" rx="9" fill="#1e6192"/>
+          <path d="M67 61h186" class="feeder-ir-beam" stroke="#0ea5e9" stroke-width="4" stroke-dasharray="5 6"/>
+          <circle cx="62" cy="61" r="5" fill="#a5f3fc"/><circle cx="258" cy="61" r="5" fill="#a5f3fc"/>
+          <g class="feeder-ir-cat">
+            <path d="M147 57l2-22 16 13q8-3 16 0l15-13 1 22q6 11-5 19-12 9-33 4-17-6-12-23Z" fill="#ffc780" stroke="#975719" stroke-width="2"/>
+            <path d="M151 88q-21 10-29 0" fill="none" stroke="#975719" stroke-width="8" stroke-linecap="round"/>
+            <path d="M159 64h2m19 0h2m-13 6h3" stroke="#81411a" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <path d="M119 91h81l-9 16h-63Z" fill="#99dbed" stroke="#24749d" stroke-width="2"/>
+          <text x="48" y="125" text-anchor="middle">ตัวส่ง</text><text x="272" y="125" text-anchor="middle">ตัวรับ</text>
+        </svg>
+        <div class="feeder-signal-action">
+          <button type="button" class="feeder-action" id="feeder-ir-toggle" aria-pressed="false">บังลำแสง IR</button>
+          <output id="feeder-ir-value" aria-live="polite">1 / HIGH · ลำแสงถึงตัวรับ</output>
+        </div>
+        <figure class="feeder-wave">
+          <figcaption>สถานะที่ขา GPIO33 · การเปลี่ยนครั้งล่าสุด</figcaption>
+          <svg viewBox="0 0 300 88" role="img" aria-label="กราฟระดับ Digital 0 และ 1 ก่อนและหลังบังลำแสง">
+            <path d="M29 16h256M29 66h256" class="feeder-wave-grid"/>
+            <text x="8" y="20">1</text><text x="8" y="69">0</text>
+            <text x="284" y="83" text-anchor="end">เวลา →</text>
+            <path id="feeder-ir-wave" d="M29 16H285" class="feeder-wave-trace"/>
+          </svg>
+        </figure>
+        <p class="feeder-signal-guide">ลองบังแล้วปล่อย เทียบขั้นที่กราฟเปลี่ยน ลำแสงขาดบอกว่ามีตัวอยู่หน้าชาม ปุ่ม “ถึงมื้อ” ใช้เริ่มจ่ายอาหาร</p>
+      </article>
+      <article class="feeder-signal-card feeder-signal-card--piezo" data-feeder-piezo>
+        <span class="feeder-signal-tag">ANALOG INPUT · ADC1 / GPIO34</span>
+        <h2>เม็ดอาหารกระทบแผ่น Piezo</h2>
+        <p>แรงกระแทกทำให้แผ่นสั่น วงจรปรับสัญญาณส่งแรงดันที่เปลี่ยนตามการสั่นเข้า ADC</p>
+        <svg class="feeder-sensor-art" viewBox="0 0 320 132" aria-hidden="true">
+          <path d="M19 31l112 41 10-14L29 16Z" fill="#dcd4f9" stroke="#7a4eb0" stroke-width="2"/>
+          <path d="M120 96l79 16 4-15-79-17Z" fill="#f3c975" stroke="#93672f" stroke-width="2"/>
+          <path d="M179 104h46v-42h19" fill="none" stroke="#9866c3" stroke-width="3"/>
+          <rect x="243" y="47" width="54" height="29" rx="6" fill="#825ac0"/>
+          <text x="270" y="66" text-anchor="middle" style="fill:white">ADC1</text>
+          <circle class="feeder-piezo-pellet" cx="100" cy="48" r="8" fill="#b46b2c" stroke="#7c491d" stroke-width="2"/>
+          <path d="M146 76l-6-8m20 7 4-9m5 16 12-3" fill="none" stroke="#b5652c" stroke-width="2" stroke-linecap="round"/>
+          <text x="161" y="129" text-anchor="middle">แผ่นรับแรงกระแทก</text>
+        </svg>
+        <div class="feeder-signal-action">
+          <button type="button" class="feeder-action" data-piezo-strike="soft">เคาะเบา</button>
+          <button type="button" class="feeder-action" data-piezo-strike="hard">เคาะแรง</button>
+        </div>
+        <figure class="feeder-wave">
+          <figcaption>รูปคลื่นหลังปรับสัญญาณ · เส้นประคือเกณฑ์ตรวจจับ</figcaption>
+          <svg viewBox="0 0 300 88" role="img" aria-label="แรงดันหลังปรับสัญญาณ Piezo เทียบกับเวลา">
+            <path d="M36 15h249M36 39h249M36 66h249" class="feeder-wave-grid"/>
+            <path id="feeder-piezo-threshold" d="M36 29H285" class="feeder-wave-limit"/>
+            <text x="3" y="19">3.3 V</text><text x="11" y="70">0 V</text>
+            <text x="284" y="83" text-anchor="end">40 ms</text>
+            <path id="feeder-piezo-wave" d="M36 40.5H285" class="feeder-wave-trace"/>
+          </svg>
+        </figure>
+        <label class="feeder-signal-slider" for="feeder-piezo-limit">เกณฑ์นับในแบบจำลอง <output id="feeder-piezo-limit-value">2.4 V</output>
+          <input id="feeder-piezo-limit" type="range" min="1.7" max="3.1" value="2.4" step=".1">
+        </label>
+        <p class="feeder-signal-guide" id="feeder-piezo-result" role="status">ลองเคาะเบากับเคาะแรง แล้วดูว่าการสั่นแบบไหนข้ามเกณฑ์</p>
+      </article>
+    </section>
+    <p class="feeder-signal-footer">รูปคลื่น Piezo เป็นแบบจำลองหลังปรับสัญญาณแล้ว การต่อจริงต้องมีวงจรปรับระดับและป้องกันแรงดันที่อินพุต <a href="https://www.ti.com/lit/an/sloa033a/sloa033a.pdf" target="_blank" rel="noopener">วงจรปรับสัญญาณ · TI</a></p>
+
+    <details id="feeder-signal-extras" class="feeder-optional">
+      <summary>ทดลองเพิ่ม: สวิตช์ LED, ลูกบิด และ PWM</summary>
+    <!-- Top 2-Column Comparison: Digital & Analog -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+
+      <!-- LEFT COLUMN: DIGITAL -->
+      <article class="bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-lg border-2 border-sky-300 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <span class="px-3 py-0.5 rounded-full text-xs font-extrabold bg-sky-100 text-sky-800">DIGITAL (ดิจิทัล)</span>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">มีแค่ 2 ค่า: 0 กับ 1</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-700 font-medium mb-3">
+            เหมือน <strong class="text-sky-700">สวิตช์ไฟบ้าน</strong> มีแค่ <strong>"ปิด" (0 / LOW)</strong> กับ <strong class="text-sky-700">"เปิด" (1 / HIGH)</strong>
+          </p>
+
+          <div class="bg-sky-50/70 rounded-2xl p-3 border border-sky-200 flex items-center justify-around gap-3 mb-3">
+            <svg viewBox="0 0 110 120" class="w-20 h-20 shrink-0">
+              <defs>
+                <radialGradient id="digGlowGrad" cx="50%" cy="45%" r="50%">
+                  <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95" />
+                  <stop offset="100%" stop-color="#fde047" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <circle id="digBulbGlow" cx="55" cy="48" r="46" fill="url(#digGlowGrad)" opacity="0" />
+              <path id="digBulbGlass" d="M35 55 C35 30 75 30 75 55 C75 68 66 74 66 84 L44 84 C44 74 35 68 35 55 Z"
+                fill="#e2e8f0" stroke="#64748b" stroke-width="2.5" />
+              <rect x="44" y="84" width="22" height="14" rx="3" fill="#94a3b8" stroke="#475569" stroke-width="2" />
+              <path d="M47 98 L63 98 L59 104 L51 104 Z" fill="#475569" />
+              <path d="M48 68 L52 52 L58 52 L62 68" stroke="#94a3b8" stroke-width="2" fill="none" />
+            </svg>
+
+            <div class="flex flex-col items-center gap-1.5">
+              <button id="digitalToggleBtn" type="button" aria-pressed="false"
+                class="w-32 py-2.5 px-3 rounded-2xl font-extrabold text-sm sm:text-base bg-slate-700 hover:bg-slate-800 text-white shadow-md transition active:scale-95 cursor-pointer flex items-center justify-center gap-2">
+                <span id="digitalBtnDot" class="w-3 h-3 rounded-full bg-slate-400"></span>
+                <span id="digitalBtnText">OFF (0)</span>
+              </button>
+              <span id="digitalStateLabel" class="text-[11px] font-bold text-slate-500">สถานะ: LOW (ดับสนิท)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl p-2.5 border border-slate-700">
+          <div class="flex items-center justify-between text-[11px] font-bold mb-1">
+            <span class="text-sky-300">กราฟขั้นบันได (Square Wave)</span>
+            <span id="digitalGraphReadout" class="text-white font-mono">ค่า: 0 (LOW)</span>
+          </div>
+          <svg viewBox="0 0 360 80" class="w-full h-16">
+            <line x1="0" y1="14" x2="360" y2="14" stroke="#334155" stroke-dasharray="4 4" stroke-width="1" />
+            <line x1="0" y1="66" x2="360" y2="66" stroke="#334155" stroke-dasharray="4 4" stroke-width="1" />
+            <text x="6" y="12" font-size="8.5" font-weight="700" fill="#38bdf8">1</text>
+            <text x="6" y="76" font-size="8.5" font-weight="700" fill="#94a3b8">0</text>
+            <polyline id="digitalWaveLine" points="" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linejoin="miter" />
+          </svg>
+        </div>
+      </article>
+
+      <!-- RIGHT COLUMN: ANALOG -->
+      <article class="bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-lg border-2 border-violet-300 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <span class="px-3 py-0.5 rounded-full text-xs font-extrabold bg-violet-100 text-violet-800">ANALOG (แอนะล็อก)</span>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-violet-50 text-violet-700">แรงดันต่อเนื่อง → ADC อ่านเป็นเลข</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-700 font-medium mb-3">
+            เหมือน <strong class="text-violet-700">ปุ่มหมุนเร่งเสียง</strong> ค่อยๆ ปรับระดับความแรงได้ละเอียด
+          </p>
+
+          <div class="bg-violet-50/70 rounded-2xl p-3 border border-violet-200 flex items-center gap-3 mb-3">
+            <svg viewBox="0 0 110 120" class="w-20 h-20 shrink-0">
+              <defs>
+                <radialGradient id="anaGlowGrad" cx="50%" cy="45%" r="50%">
+                  <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95" />
+                  <stop offset="100%" stop-color="#fde047" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <circle id="anaBulbGlow" cx="55" cy="48" r="46" fill="url(#anaGlowGrad)" opacity="0.5" />
+              <path id="anaBulbGlass" d="M35 55 C35 30 75 30 75 55 C75 68 66 74 66 84 L44 84 C44 74 35 68 35 55 Z"
+                fill="#fef08a" stroke="#b45309" stroke-width="2.5" />
+              <rect x="44" y="84" width="22" height="14" rx="3" fill="#94a3b8" stroke="#475569" stroke-width="2" />
+              <path d="M47 98 L63 98 L59 104 L51 104 Z" fill="#475569" />
+              <path d="M48 68 L52 52 L58 52 L62 68" stroke="#b45309" stroke-width="2" fill="none" />
+            </svg>
+
+            <div class="flex-1 flex flex-col gap-1.5">
+              <div class="flex items-baseline justify-between">
+                <label for="analogSlider" class="text-xs font-bold text-violet-800">เลื่อนปรับค่า:</label>
+                <span id="analogValueBadge" class="text-lg sm:text-xl font-extrabold text-violet-700 font-mono">2048</span>
+              </div>
+              <input id="analogSlider" type="range" min="0" max="4095" value="2048" class="analog-slider w-full cursor-pointer" /><button type="button" commandfor="adc-dialog" command="show-modal" aria-haspopup="dialog" aria-controls="adc-dialog" class="adc-inline-open signal-secondary">ดูวงจร ADC: แรงดัน → 0–4095 ↗</button>
+              <div class="flex justify-between text-[11px] font-bold text-slate-500">
+                <span>0</span>
+                <span id="analogPercentLabel" class="text-violet-700">50%</span>
+                <span>4095</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl p-2.5 border border-slate-700">
+          <div class="flex items-center justify-between text-[11px] font-bold mb-1">
+            <span class="text-violet-300">กราฟค่าที่อ่านผ่าน ADC ตามเวลา</span>
+            <span id="analogGraphReadout" class="text-white font-mono">ค่า: 2048 / 4095</span>
+          </div>
+          <svg viewBox="0 0 360 80" class="w-full h-16">
+            <line x1="0" y1="14" x2="360" y2="14" stroke="#334155" stroke-dasharray="4 4" stroke-width="1" />
+            <line x1="0" y1="40" x2="360" y2="40" stroke="#334155" stroke-dasharray="4 4" stroke-width="1" />
+            <line x1="0" y1="66" x2="360" y2="66" stroke="#334155" stroke-dasharray="4 4" stroke-width="1" />
+            <text x="6" y="12" font-size="8.5" font-weight="700" fill="#c084fc">4095</text>
+            <text x="6" y="76" font-size="8.5" font-weight="700" fill="#94a3b8">0</text>
+            <polyline id="analogWaveLine" points="" fill="none" stroke="#c084fc" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- PWM switches a digital output; it is not a DAC. -->
+    <section class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-xl border-2 border-amber-300">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900">
+            ✨ เทคนิคพิเศษ: PWM (~) ปรับเวลาเปิดของ Digital
+          </span>
+          <span class="text-xs sm:text-sm font-semibold text-slate-700">
+            ขา Digital สลับระดับ <strong class="text-sky-700">0 กับ 1</strong> แต่ใช้วิธี <strong>“กะพริบเปิด-ปิดเร็วมาก”</strong> จนตาเรามองเห็นว่าไฟหรี่ได้!
+          </span>
+        </div>
+        <span id="pwmCodeBadge" class="px-3 py-1 rounded-xl bg-slate-900 text-amber-300 font-mono text-xs font-bold">
+          ledcWrite(23, 128); // 50%
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+        <!-- PWM Controls & Bulb -->
+        <div class="lg:col-span-5 bg-amber-50/70 rounded-2xl p-3.5 border border-amber-200 flex items-center gap-3">
+          <svg viewBox="0 0 110 120" class="w-20 h-20 shrink-0">
+            <defs>
+              <radialGradient id="pwmGlowGrad" cx="50%" cy="45%" r="50%">
+                <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95" />
+                <stop offset="100%" stop-color="#fde047" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+            <circle id="pwmBulbGlow" cx="55" cy="48" r="46" fill="url(#pwmGlowGrad)" opacity="0.5" />
+            <path id="pwmBulbGlass" d="M35 55 C35 30 75 30 75 55 C75 68 66 74 66 84 L44 84 C44 74 35 68 35 55 Z"
+              fill="#fef08a" stroke="#b45309" stroke-width="2.5" />
+            <rect x="44" y="84" width="22" height="14" rx="3" fill="#94a3b8" stroke="#475569" stroke-width="2" />
+            <path d="M47 98 L63 98 L59 104 L51 104 Z" fill="#475569" />
+            <path d="M48 68 L52 52 L58 52 L62 68" stroke="#b45309" stroke-width="2" fill="none" />
+          </svg>
+
+          <div class="flex-1 flex flex-col gap-2">
+            <div class="flex items-baseline justify-between">
+              <label for="pwmSlider" class="text-xs font-bold text-amber-900">ความกว้างคลื่น (Duty Cycle):</label>
+              <span id="pwmPercentBadge" class="text-lg font-extrabold text-amber-700 font-mono">50%</span>
+            </div>
+            <input id="pwmSlider" type="range" min="0" max="100" value="50" class="pwm-slider w-full cursor-pointer" />
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" data-pwm="0" class="pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-white border border-amber-300 hover:bg-amber-100 cursor-pointer">0%</button>
+              <button type="button" data-pwm="25" class="pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-white border border-amber-300 hover:bg-amber-100 cursor-pointer">25%</button>
+              <button type="button" data-pwm="50" class="pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-amber-500 text-white border border-amber-500 cursor-pointer">50%</button>
+              <button type="button" data-pwm="75" class="pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-white border border-amber-300 hover:bg-amber-100 cursor-pointer">75%</button>
+              <button type="button" data-pwm="100" class="pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-white border border-amber-300 hover:bg-amber-100 cursor-pointer">100%</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PWM Pulse Width Graph -->
+        <div class="lg:col-span-7 bg-slate-900 rounded-2xl p-3 border border-slate-700">
+          <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold mb-1">
+            <span class="text-amber-300">คลื่นสี่เหลี่ยม PWM (ยิ่งช่วง 1 กว้าง → ไฟยิ่งสว่าง!)</span>
+            <span id="pwmDutyDesc" class="text-slate-300 font-mono">เปิด 50% / ปิด 50%</span>
+          </div>
+          <svg viewBox="0 0 500 84" class="w-full h-20">
+            <line x1="0" y1="16" x2="500" y2="16" stroke="#334155" stroke-dasharray="4 4" stroke-width="1" />
+            <line x1="0" y1="68" x2="500" y2="68" stroke="#334155" stroke-dasharray="4 4" stroke-width="1" />
+            <text x="6" y="13" font-size="9" font-weight="700" fill="#fbbf24">1 (3.3V)</text>
+            <text x="6" y="79" font-size="9" font-weight="700" fill="#94a3b8">0 (0V)</text>
+            <!-- Average Analog Equivalent Line -->
+            <line id="pwmAvgLine" x1="25" y1="42" x2="490" y2="42" stroke="#c084fc" stroke-width="2" stroke-dasharray="5 4" />
+            <text id="pwmAvgLabel" x="486" y="38" text-anchor="end" font-size="9" font-weight="700" fill="#e9d5ff">ค่าเฉลี่ย ~1.65V</text>
+            <!-- PWM Wave Polyline -->
+            <polyline id="pwmWaveLine" points="" fill="none" stroke="#fbbf24" stroke-width="3.5" stroke-linejoin="miter" />
+          </svg>
+        </div>
+      </div>
+    </section>
+  <p class="mx-auto max-w-5xl px-4 pb-4 text-xs text-slate-700">ESP32 core 3.x: ตั้งค่าใน setup() ด้วย ledcAttach(23, 5000, 8); แล้วใช้ ledcWrite(23, duty); · ADC เริ่มต้น 12 บิต 0–4095 เป็นค่าดิบ ขึ้นกับ attenuation / calibration · PWM ยังเป็น 0/3.3V ไม่ใช่แรงดัน DC คงที่</p></details>
+<section class="signal-lab" aria-label="ทดลอง ADC">
+ <div class="adc-entry"><div><span class="signal-kicker">ย้อนมาดูฝั่ง ANALOG</span><h3>แรงดัน กลายเป็นเลข 0–4095 ได้อย่างไร?</h3><p>ขา ADC รับแรงดันได้ แต่วงจร ADC ต้องแปลงเป็นตัวเลขก่อนที่ CPU จะนำไปใช้</p></div><button id="open-adc-dialog" type="button" commandfor="adc-dialog" command="show-modal" aria-haspopup="dialog" aria-controls="adc-dialog" class="signal-button">ลองแรงดันเป็นตัวเลข ↗</button></div>
+ <p class="signal-reference">อ้างอิง: <a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/adc.html" target="_blank" rel="noopener">Espressif · ADC</a></p>
+</section>
+<dialog id="adc-dialog" aria-labelledby="adc-title" class="adc-dialog">
+ <div class="adc-head"><div><span class="signal-kicker">ลองด้วยตัวเอง · ADC</span><h2 id="adc-title">แรงดันเข้าขาเดียว ทำไมอ่านได้ 4096 ค่า?</h2></div><button type="button" commandfor="adc-dialog" command="close" class="adc-close" aria-label="ปิดหน้าต่าง ADC" autofocus>✕</button></div>
+ <div class="adc-content adc-tutorial">
+<section class="adc-origin" aria-labelledby="adc-origin-title">
+ <div class="adc-origin-heading"><span class="signal-kicker">เริ่มจากอุปกรณ์ที่ต่อจริง</span><h3 id="adc-origin-title">หมุนปุ่ม → แรงดันเปลี่ยน → ADC ในชิปอ่านเป็นเลข</h3><p>ตัวอย่างนี้ใช้ <strong>ตัวต้านทานปรับค่าได้ (Potentiometer) 10 kΩ</strong> เป็นแหล่งแรงดันทดลอง เซนเซอร์แอนะล็อก เช่น โมดูลวัดแสง ก็ส่งแรงดันเข้าขา ADC ในลักษณะเดียวกัน</p></div>
+ <div class="adc-origin-grid">
+  <div class="adc-wiring-card"><svg id="adc-source-circuit" viewBox="0 0 520 290" role="img" aria-label="ปลายตัวต้านทานปรับค่าได้ต่อ3.3VกับGND ขากลางส่งแรงดันไปGPIO34ของESP32"></svg><p class="adc-pot-inside-label">ภายในปุ่ม: ขากลางเลื่อนแตะบนแถบความต้านทาน</p><svg id="adc-pot-track" viewBox="0 0 520 110" role="img" aria-label="ขากลางเลือกจุดแบ่งแรงดันระหว่าง3.3VกับGND"></svg><label for="adc-source-position">ลองหมุนปุ่ม <output id="adc-source-voltage">1.0000 V ที่ขากลาง</output></label><input id="adc-source-position" type="range" min="0" max="100" step="0.1" value="30.3" aria-describedby="adc-wiring-description"><ol id="adc-wiring-description"><li><b>ขาปลาย 1</b> ต่อ 3.3 V จากบอร์ด</li><li><b>ขากลาง 2</b> เป็นจุดแบ่งแรงดัน ส่งไป <b>GPIO34</b></li><li><b>ขาปลาย 3</b> ต่อ GND ร่วมกับบอร์ด</li></ol><p>แรงดันที่อ่านคือความต่างระหว่างขากลางกับ GND ปุ่มหมุนเปลี่ยนสัดส่วนการแบ่งแรงดัน จึงเปลี่ยนค่าที่ ADC รับ</p></div>
+  <div class="adc-inside-card"><span class="signal-kicker">ขยายดูภายในชิป ESP32</span><h4>ADC เป็นวงจรอยู่ในชิปแล้ว</h4><p class="adc-inside-path"><b>GPIO34</b> → <b>วงจรปรับช่วงรับ</b> → <b>SAR ADC</b> → <b>CPU</b></p><p class="adc-read-code"><code>int value = analogRead(34);</code><span>สั่ง ADC อ่านแรงดันที่ GPIO34 แล้วคืนเลขให้โปรแกรม</span></p><div class="adc-real-parts"><div><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 15h15m0-7v30m8-30v30m0-23h15M24 38v7"/></svg><p><strong>ตัวเก็บประจุ + สวิตช์</strong><span>เก็บแรงดันตัวอย่างไว้ชั่วครู่ระหว่างแปลง</span></p></div><div><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 12h8V7h23v31H13v-5H5m31-9h9M7 23h6"/><text x="16" y="28">DAC</text></svg><p><strong>DAC ภายใน ADC</strong><span>สร้างแรงดันลองเทียบ โดยใช้แรงดันอ้างอิงภายใน</span></p></div><div><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M12 5v38l28-19ZM1 14h11M1 34h11m29-10h6"/><text x="15" y="20">+</text><text x="15" y="33">−</text></svg><p><strong>วงจรเปรียบเทียบ (Comparator)</strong><span>ตอบว่าแรงดันตัวอย่างสูงกว่าหรือต่ำกว่าค่าที่ลองเทียบ</span></p></div><div><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="8" width="34" height="31" rx="4"/><text x="12" y="29">010</text></svg><p><strong>วงจรตัดสินบิต (SAR)</strong><span>ใช้ผลเทียบเลือก 0 หรือ 1 ทีละบิต แล้วส่งเลขให้ CPU</span></p></div></div><p class="adc-reference-note">แรงดันอ้างอิงเป็นมาตรฐานสำหรับเทียบ ไม่ใช่สาย 3.3 V ที่เลี้ยงปุ่มหมุน: ESP32 ดั้งเดิมออกแบบ Vref ภายในประมาณ 1.1 V และใช้วงจรลดทอนสัญญาณ (attenuation) เพื่อวัดช่วงที่สูงขึ้น ภาพคำนวณด้านล่างใช้ช่วงอุดมคติ 0–3.3 V เพื่อเรียนหลักการ</p></div>
+ </div>
+ <div class="adc-range-definition"><strong>แต่ละแถบในภาพแทน <em>ช่วงแรงดันที่อ่านแล้วได้เลขเดียวกัน</em></strong><p>แถบสีเขียวเป็นภาพแทนช่วงแรงดัน ไม่ใช่รูเสียบหรือกล่องเก็บไฟ เราต่อสัญญาณเข้าขา GPIO34 เพียงขาเดียว แต่ ADC อ่านแรงดันบนขานี้ออกมาเป็นเลขได้หลายค่า</p><p><b>ช่วงเหล่านี้มาจากไหน?</b> วงจร ADC ให้ผลได้จำกัดตามจำนวนบิต เช่น 3 บิตมีรหัส 000 ถึง 111 รวม 8 ค่า จึงแบ่งช่วงวัดออกเป็น 8 ช่วง ส่วน 12 บิตให้ได้ 4096 ค่า จึงแบ่งได้ละเอียดขึ้น</p><p>ในตัวอย่าง 8 ระดับนี้ แบ่งช่วง 0–3.3 V เท่า ๆ กัน: 3.3 ÷ 8 = <b>0.4125 V ต่อช่วง</b></p><p id="adc-origin-range" class="adc-origin-range"></p><div id="adc-origin-codes" class="adc-origin-codes" aria-label="รหัส3บิต8ค่าที่ใช้สาธิต"></div><p class="adc-channel-note">ชื่อ ADC1_CH6 ของ GPIO34 หมายถึงทางรับสัญญาณของขานี้ คำว่า CH6 ไม่ใช่หมายเลขช่วงแรงดันหรือค่า ADC ที่อ่านได้</p></div>
+ <details class="adc-sar-details"><summary>ลองให้วงจรเทียบแรงดันทีละบิต: 3 ครั้งได้ 8 ค่าทำอย่างไร?</summary><div class="adc-sar-body"><p>ย่อเป็น ADC 3 บิตสำหรับสาธิต วงจรจะลองค่ากลางก่อน แล้วใช้คำตอบสูงกว่า/ต่ำกว่าเลือกค่าถัดไป ไม่ต้องลองไล่ครบ 8 ค่า</p><div class="adc-sar-readings"><div><span>แรงดันตัวอย่าง</span><strong id="adc-sar-input">1.0000 V</strong></div><div><span>DAC ลองเทียบ</span><strong id="adc-sar-trial">รอเริ่ม</strong></div><div><span>บิตที่ตัดสินแล้ว</span><strong id="adc-sar-bits">_ _ _</strong></div></div><div class="adc-sar-buttons"><button type="button" id="adc-sar-next" class="signal-button">เก็บตัวอย่างและเทียบครั้งที่ 1</button><button type="button" id="adc-sar-reset" class="signal-secondary">เริ่มเทียบใหม่</button></div><ol id="adc-sar-history" aria-label="ผลการเทียบแต่ละครั้ง"></ol><p id="adc-sar-explanation" role="status">กดเริ่มเพื่อให้ DAC สร้างแรงดันลองเทียบ แล้วดู Comparator ตอบสูงกว่า/ต่ำกว่า</p><p class="adc-sar-caveat">นี่คือแบบจำลองหลักการ SAR ที่ลดเหลือ 3 บิตและอ้างช่วง 0–3.3 V; ESP32 จริงมี ADC แบบ SAR ภายในชิป และการวัดขึ้นกับ Vref / attenuation / calibration ไม่ใช่วงจรภายนอกที่ต้องต่อเพิ่ม</p></div></details>
+</section>
+
+  <p class="adc-lead">ต่อไปลองมองแรงดันเป็น “ช่วง” บนภาพไม้บรรทัด เริ่มด้วย 8 ระดับเพื่อดูง่าย แล้วเพิ่มเป็น 4096 ระดับ</p>
+  <fieldset class="adc-resolution"><legend>เลือกความละเอียดของไม้บรรทัด</legend><label><input type="radio" name="adc-resolution" value="3" checked><span><strong>1. สาธิต 8 ระดับ</strong><small>8 ช่วงแรงดัน · จำลอง 3 บิต</small></span></label><label><input type="radio" name="adc-resolution" value="12"><span><strong>2. เพิ่มเป็น ESP32</strong><small>4096 ระดับ · 12 บิต</small></span></label></fieldset>
+  <div class="adc-learning-grid">
+   <div class="adc-input-panel"><div class="adc-voltage-control"><span class="signal-kicker">ปรับแรงดันตัวอย่าง</span><label for="adc-voltage">แรงดันที่ขา ADC <output id="adc-live-v">1.00 V</output></label><input id="adc-voltage" class="adc-range" type="range" min="0" max="3.3" step="0.0001" value="1" aria-describedby="adc-slider-help"><div class="adc-range-ends"><span>0 V</span><span>3.3 V</span></div></div><div class="adc-guided-examples"><p id="adc-slider-help">เลื่อนเอง หรือกดตัวอย่างตามลำดับ</p><div id="adc-examples" class="adc-examples"></div></div><p id="adc-change-note" class="adc-change-note" role="status">ลอง 1.00 V → 1.20 V → 1.30 V แล้วสังเกตเลขที่ได้</p><button id="adc-restart" type="button" class="signal-secondary">เริ่มลอง 8 ระดับใหม่</button></div>
+   <div class="adc-map-panel"><div class="adc-map-top"><h3 id="adc-map-title">แบ่งช่วงวัดเป็น 8 ระดับ</h3><span id="adc-map-badge">เลข 0–7</span></div><div class="adc-map-result"><svg id="adc-map" viewBox="0 0 400 370" role="img" aria-labelledby="adc-map-description"></svg><div class="adc-live-result"><span>เลขที่ ADC จะส่ง</span><strong id="adc-live-code">2</strong><p id="adc-code-meaning">ช่วงที่ให้เลข 2</p><span class="adc-result-arrow" aria-hidden="true">↑</span><p>เลขนี้เป็นผลแปลงของ ADC<br>ไม่ใช่ค่าโวลต์</p></div></div><p id="adc-map-description" class="adc-map-description">1.00 V อยู่ในช่วงที่ให้เลข 2 → ADC ส่งเลข 2</p></div>
+  </div>
+  <div id="adc-selected-range" class="adc-selected-range"></div>
+  <div class="adc-core-idea"><strong>อยู่ในช่วงแรงดันเดิม → ได้เลขเดิม</strong><p>แรงดันขยับได้ละเอียดกว่าเลขที่ ADC บอก เมื่อข้ามขอบช่วง เลขจึงเปลี่ยน การแบ่งช่วงแบบนี้เรียกว่า Quantization</p></div>
+  <div id="adc-resolution-bridge" class="adc-resolution-bridge"><div><strong>เข้าใจ 8 ระดับแล้ว ลองเพิ่มความละเอียด</strong><p>ESP32 แบบ 12 บิตแบ่งช่วงวัดเดิมเป็น 4096 ระดับ จึงแยกแรงดันที่อยู่ใกล้กันได้ละเอียดขึ้น</p></div><button id="adc-use-esp32" type="button" class="signal-button">ใช้แรงดันเดิมกับ ESP32 →</button></div>
+  <section id="adc-esp32-section" class="adc-esp32-section" hidden aria-labelledby="adc-why-title"><h3 id="adc-why-title">มี 4096 ค่า ทำไมเลขสุดท้ายเป็น 4095?</h3><p>เพราะเริ่มนับรหัสจาก <strong>0</strong> เหมือนที่ 8 ค่าใช้เลข <strong>0–7</strong> ดังนั้น 4096 ค่าจึงใช้เลข <strong>0–4095</strong></p><div class="adc-count-cards"><div><span>ตัวอย่าง 3 บิต</span><strong>8 ค่า</strong><small>เลข 0, 1, 2, …, 7</small></div><span aria-hidden="true">→</span><div><span>ESP32 · 12 บิต</span><strong>4096 ค่า</strong><small>เลข 0, 1, 2, …, 4095</small></div></div><div class="adc-read-row"><div><strong>ลองให้ CPU อ่านค่า 1 ครั้ง</strong><p>ค่าที่อ่านไว้จะค้างอยู่ แม้เลื่อนแรงดันต่อ</p></div><button id="adc-read" type="button" class="signal-button">อ่านและเก็บค่าตอนนี้</button></div><div id="adc-snapshot" class="adc-snapshot" hidden><div><span>CPU เก็บตัวอย่างนี้ไว้</span><strong id="adc-snapshot-code">1241</strong><p id="adc-snapshot-note"></p></div><button id="adc-apply" type="button" class="signal-button">ใช้เลขนี้ในตัวอย่างลูกบิด ✓</button></div></section>
+  <details class="adc-extra"><summary>อยากรู้เพิ่ม: บิต สูตรคำนวณ และข้อจำกัดของจริง</summary><p id="adc-binary-note"></p><p>ภาพนี้ใช้แบบจำลองแบ่งช่วง 0–3.3 V เท่า ๆ กัน เลือกช่วงด้วย floor(แรงดัน ÷ ความกว้างช่วง) และจำกัดที่รหัสสุดท้าย เป็นภาพอธิบายการแบ่งระดับ ไม่ใช่การเดินขึ้นบันไดทีละระดับภายในชิป</p><p>ESP32 จริงมี ADC รับแรงดันก่อนส่งเลขให้ CPU ช่วงวัดและความแม่นยำขึ้นกับรุ่นชิป attenuation และ calibration; ESP32 ดั้งเดิมที่ 11 dB ระบุช่วงประมาณ 0.15–3.10 V ห้ามป้อน 5 V เข้าขา ADC</p></details>
+  <p class="adc-sources">แหล่งข้อมูล: <a href="https://learn.adafruit.com/choosing-an-adc/adc-architectures" target="_blank" rel="noopener">Adafruit · Comparator / DAC / SAR</a> · <a href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/adc/index.html" target="_blank" rel="noopener">Espressif · Vref และ attenuation</a> ·  <a href="https://makecode.adafruit.com/learnsystem/pins-tutorial/analog-input/analog-to-digital" target="_blank" rel="noopener">Adafruit · เริ่มทดลองด้วย ADC 3 บิต</a> · <a href="https://developerhelp.microchip.com/xwiki/bin/view/products/data-converters/adc-specs/adc-ac-specifications/quantization-error/" target="_blank" rel="noopener">Microchip · แบ่งแรงดันเป็นช่วง</a> · <a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/adc.html" target="_blank" rel="noopener">Espressif · ข้อมูล ADC จริง</a></p>
+ </div>
+</dialog>
+
+</main>
+
+  <script>
+    (function () {
+      // Digital elements
+      const digitalToggleBtn = document.getElementById('digitalToggleBtn');
+      const digitalBtnDot = document.getElementById('digitalBtnDot');
+      const digitalBtnText = document.getElementById('digitalBtnText');
+      const digitalStateLabel = document.getElementById('digitalStateLabel');
+      const digitalGraphReadout = document.getElementById('digitalGraphReadout');
+      const digBulbGlow = document.getElementById('digBulbGlow');
+      const digBulbGlass = document.getElementById('digBulbGlass');
+      const digitalWaveLine = document.getElementById('digitalWaveLine');
+
+      // Analog elements
+      const analogSlider = document.getElementById('analogSlider');
+      const analogValueBadge = document.getElementById('analogValueBadge');
+      const analogPercentLabel = document.getElementById('analogPercentLabel');
+      const analogGraphReadout = document.getElementById('analogGraphReadout');
+      const anaBulbGlow = document.getElementById('anaBulbGlow');
+      const anaBulbGlass = document.getElementById('anaBulbGlass');
+      const analogWaveLine = document.getElementById('analogWaveLine');
+
+      // PWM elements
+      const pwmSlider = document.getElementById('pwmSlider');
+      const pwmPercentBadge = document.getElementById('pwmPercentBadge');
+      const pwmCodeBadge = document.getElementById('pwmCodeBadge');
+      const pwmDutyDesc = document.getElementById('pwmDutyDesc');
+      const pwmBulbGlow = document.getElementById('pwmBulbGlow');
+      const pwmBulbGlass = document.getElementById('pwmBulbGlass');
+      const pwmWaveLine = document.getElementById('pwmWaveLine');
+      const pwmAvgLine = document.getElementById('pwmAvgLine');
+      const pwmAvgLabel = document.getElementById('pwmAvgLabel');
+      const pwmPresets = Array.from(document.querySelectorAll('.pwm-preset'));
+
+      let digitalState = 0;
+      let analogValue = 2048;
+      let pwmDuty = 50; // 0 to 100
+
+      const maxPoints = 45;
+      const digHistory = new Array(maxPoints).fill(0);
+      const anaHistory = new Array(maxPoints).fill(2048);
+
+      function renderDigitalUI() {
+        const isOn = digitalState === 1;
+        digitalToggleBtn.setAttribute('aria-pressed', String(isOn));
+        if (isOn) {
+          digitalToggleBtn.className = 'w-32 py-2.5 px-3 rounded-2xl font-extrabold text-sm sm:text-base bg-sky-600 hover:bg-sky-700 text-white shadow-md transition active:scale-95 cursor-pointer flex items-center justify-center gap-2';
+          digitalBtnDot.className = 'w-3 h-3 rounded-full bg-yellow-300 shadow-[0_0_8px_#fde047]';
+          digitalBtnText.textContent = 'ON (1)';
+          digitalStateLabel.textContent = 'สถานะ: HIGH (ไฟติดสว่าง!)';
+          digitalStateLabel.className = 'text-[11px] font-bold text-sky-700';
+          digitalGraphReadout.textContent = 'ค่า: 1 (HIGH)';
+          digBulbGlow.setAttribute('opacity', '1');
+          digBulbGlass.setAttribute('fill', '#fef08a');
+          digBulbGlass.setAttribute('stroke', '#b45309');
+        } else {
+          digitalToggleBtn.className = 'w-32 py-2.5 px-3 rounded-2xl font-extrabold text-sm sm:text-base bg-slate-700 hover:bg-slate-800 text-white shadow-md transition active:scale-95 cursor-pointer flex items-center justify-center gap-2';
+          digitalBtnDot.className = 'w-3 h-3 rounded-full bg-slate-400';
+          digitalBtnText.textContent = 'OFF (0)';
+          digitalStateLabel.textContent = 'สถานะ: LOW (ดับสนิท)';
+          digitalStateLabel.className = 'text-[11px] font-bold text-slate-500';
+          digitalGraphReadout.textContent = 'ค่า: 0 (LOW)';
+          digBulbGlow.setAttribute('opacity', '0');
+          digBulbGlass.setAttribute('fill', '#e2e8f0');
+          digBulbGlass.setAttribute('stroke', '#64748b');
+        }
+      }
+
+      function setBulbBrightness(glowEl, glassEl, ratio) {
+        glowEl.setAttribute('opacity', ratio.toFixed(2));
+        const r = Math.round(226 + (254 - 226) * ratio);
+        const g = Math.round(232 + (240 - 232) * ratio);
+        const b = Math.round(240 + (138 - 240) * ratio);
+        glassEl.setAttribute('fill', `rgb(${r}, ${g}, ${b})`);
+        glassEl.setAttribute('stroke', ratio > 0.15 ? '#b45309' : '#64748b');
+      }
+
+      function renderAnalogUI() {
+        const ratio = analogValue / 4095;
+        analogValueBadge.textContent = String(analogValue);
+        analogPercentLabel.textContent = `${Math.round(ratio * 100)}%`;
+        analogGraphReadout.textContent = `ค่า: ${analogValue} / 4095`;
+        setBulbBrightness(anaBulbGlow, anaBulbGlass, ratio);
+      }
+
+      function renderPwmUI() {
+        const ratio = pwmDuty / 100;
+        const val255 = Math.round(ratio * 255);
+        const volt = (3.3 * ratio).toFixed(2);
+
+        pwmPercentBadge.textContent = `${pwmDuty}%`;
+        pwmCodeBadge.textContent = `ledcWrite(23, ${val255}); // ${pwmDuty}%`;
+        pwmDutyDesc.textContent = `เปิด ${pwmDuty}% / ปิด ${100 - pwmDuty}%`;
+        setBulbBrightness(pwmBulbGlow, pwmBulbGlass, ratio);
+
+        pwmPresets.forEach((btn) => {
+          const active = Number(btn.dataset.pwm) === pwmDuty;
+          btn.className = active
+            ? 'pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-amber-500 text-white border border-amber-500 cursor-pointer'
+            : 'pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-white border border-amber-300 hover:bg-amber-100 cursor-pointer';
+        });
+
+        // Average voltage dashed line
+        const avgY = (68 - ratio * 52).toFixed(1);
+        pwmAvgLine.setAttribute('y1', avgY);
+        pwmAvgLine.setAttribute('y2', avgY);
+        pwmAvgLabel.setAttribute('y', String(Math.max(12, Number(avgY) - 5)));
+        pwmAvgLabel.textContent = `ค่าเฉลี่ย ~${volt}V`;
+
+        // Draw 5 crisp PWM cycles from x=28 to x=488 (92px per cycle)
+        const startX = 28;
+        const cycleW = 92;
+        const yHigh = 16;
+        const yLow = 68;
+        const pts = [];
+
+        if (pwmDuty === 0) {
+          pts.push(`${startX},${yLow}`, `${startX + cycleW * 5},${yLow}`);
+        } else if (pwmDuty === 100) {
+          pts.push(`${startX},${yHigh}`, `${startX + cycleW * 5},${yHigh}`);
+        } else {
+          const onW = cycleW * ratio;
+          for (let i = 0; i < 5; i++) {
+            const cx = startX + i * cycleW;
+            pts.push(`${cx.toFixed(1)},${yLow}`);
+            pts.push(`${cx.toFixed(1)},${yHigh}`);
+            pts.push(`${(cx + onW).toFixed(1)},${yHigh}`);
+            pts.push(`${(cx + onW).toFixed(1)},${yLow}`);
+          }
+          pts.push(`${startX + cycleW * 5},${yLow}`);
+        }
+        pwmWaveLine.setAttribute('points', pts.join(' '));
+      }
+
+      function renderGraphs() {
+        const width = 360;
+        const stepX = width / (maxPoints - 1);
+
+        let digPts = [];
+        for (let i = 0; i < digHistory.length; i++) {
+          const x = (i * stepX).toFixed(1);
+          const y = digHistory[i] === 1 ? 14 : 66;
+          if (i > 0 && digHistory[i] !== digHistory[i - 1]) {
+            const prevY = digHistory[i - 1] === 1 ? 14 : 66;
+            digPts.push(`${x},${prevY}`);
+          }
+          digPts.push(`${x},${y}`);
+        }
+        digitalWaveLine.setAttribute('points', digPts.join(' '));
+
+        const anaPts = anaHistory.map((val, i) => {
+          const x = (i * stepX).toFixed(1);
+          const y = (66 - (val / 4095) * 52).toFixed(1);
+          return `${x},${y}`;
+        });
+        analogWaveLine.setAttribute('points', anaPts.join(' '));
+      }
+
+      digitalToggleBtn.addEventListener('click', () => {
+        digitalState = digitalState === 0 ? 1 : 0;
+        digHistory.shift();
+        digHistory.push(digitalState);
+        renderDigitalUI();
+        renderGraphs();
+      });
+
+      analogSlider.addEventListener('input', (e) => {
+        analogValue = Number(e.target.value);
+        anaHistory.shift();
+        anaHistory.push(analogValue);
+        renderAnalogUI();
+        renderGraphs();
+      });
+
+      pwmSlider.addEventListener('input', (e) => {
+        pwmDuty = Number(e.target.value);
+        renderPwmUI();
+      });
+
+      pwmPresets.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          pwmDuty = Number(btn.dataset.pwm);
+          pwmSlider.value = String(pwmDuty);
+          renderPwmUI();
+        });
+      });
+
+      const optionalExamples = document.getElementById('feeder-signal-extras');
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      setInterval(() => {
+        if (window.esp32PauseGraphs || document.hidden || reducedMotion.matches || !optionalExamples.open) return;
+        digHistory.shift();
+        digHistory.push(digitalState);
+        anaHistory.shift();
+        anaHistory.push(analogValue);
+        renderGraphs();
+      }, 130);
+
+      renderDigitalUI();
+      renderAnalogUI();
+      renderPwmUI();
+      renderGraphs();
+    })();
+  </script>
+
+  <!-- Embed Mode Handler & Navigation Key Forwarder -->
+  <style>
+    html.is-embedded header > div:first-child { display: none !important; }
+  </style>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('embed') === '1') {
+        document.documentElement.classList.add('is-embedded');
+        const hideBadge = function () {
+          const header = document.querySelector('header');
+          if (header) {
+            const leftBadge = header.querySelector('div:first-child');
+            if (leftBadge) {
+              leftBadge.style.display = 'none';
+            }
+            const remainingControls = header.querySelector('button, a');
+            if (!remainingControls) {
+              header.style.display = 'none';
+            } else {
+              header.style.justifyContent = 'flex-end';
+              header.classList.remove('justify-between');
+            }
+          }
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', hideBadge);
+        } else {
+          hideBadge();
+        }
+      }
+
+
+    })();
+  </script>
+
+<script src="../scripts/slide-support.js"></script><script type="module" src="../scripts/signal-lab/app.js"></script><script type="module" src="../scripts/signal-lab/feeder-signal-lab.js"></script>
+</body>
+</html>

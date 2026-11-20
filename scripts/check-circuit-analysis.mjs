@@ -1,0 +1,37 @@
+import assert from 'node:assert/strict';
+import {analyzeCircuit,circuitModel} from '../public/scripts/breadboard-quiz/analysis.js';
+import {flowSVG} from '../public/scripts/breadboard-quiz/current-view.js';
+const ws=tuples=>tuples.map(([from,to],i)=>({id:`wire-${i}`,from,to}));
+const near=(a,b,tolerance=1e-6)=>assert(Math.abs(a-b)<tolerance,`${a} != ${b}`);
+const one=[['R1.1','P2'],['R1.2','A3'],['L1.A','C3'],['L1.K','N2']];
+const open=analyzeCircuit([],1);assert.equal(open.totalCurrent,0);assert.equal(open.copper.length,0);assert.equal(open.shortCircuit,false);
+const closed=analyzeCircuit(ws(one),1);
+const expected=(3.3-2)/(330+10+4*.1+.5);
+near(closed.totalCurrent,expected);near(closed.leds[0].current,expected);near(closed.resistors[0].current,expected);
+near(closed.resistors[0].voltage,expected*330);near(closed.leds[0].voltage,2+expected*10);near(closed.railVoltage,3.3-.5*expected);
+assert.equal(closed.mode,'CV');assert.equal(closed.shortCircuit,false);assert(closed.copper.length>0);
+assert(closed.copper.some(c=>c.net==='upper.3'&&c.current>0),'current travels through A–E copper strip');
+assert(closed.copper.some(c=>c.net==='rail.N'&&c.current<0),'ground rail flows back toward feed');
+assert.equal(analyzeCircuit(ws(one.slice(0,3)),1).totalCurrent,0,'open return has no visible current');
+const reversed=one.map(([a,b])=>[a==='L1.A'?'L1.K':a==='L1.K'?'L1.A':a,b]);
+assert.equal(analyzeCircuit(ws(reversed),1).leds[0].current,0,'reverse-biased LED blocks');
+assert.equal(analyzeCircuit(ws(one.map(([a,b])=>[a,b==='C3'?'F3':b])),1).totalCurrent,0,'center trench is isolated');
+const short=analyzeCircuit(ws([['P2','N2']]),1);
+assert(short.shortCircuit,'detect short without requiring all component legs');assert.equal(short.mode,'CC');near(short.totalCurrent,.1);near(short.railVoltage,.01);assert.deepEqual(short.shortWireIds,['wire-0']);assert.equal(short.leds[0].current,0);
+const longShort=analyzeCircuit(ws([['P3','A6'],['B6','F6'],['J6','N3']]),3);
+assert(longShort.shortCircuit);assert.equal(longShort.shortWireIds.length,3);near(longShort.railVoltage,.03);near(longShort.totalCurrent,.1);
+const parallel=analyzeCircuit(ws([['P2','N2'],['P3','N3']]),1);
+near(parallel.wires[0].current,.05);near(parallel.wires[1].current,.05);near(parallel.totalCurrent,.1);
+const after=analyzeCircuit(ws([['L1.A','P9'],['L1.K','J12'],['R1.2','I12'],['R1.1','N10']]),1);near(after.totalCurrent,expected);
+const three=analyzeCircuit(ws([...one,['R2.1','P3'],['R2.2','A6'],['L2.A','E6'],['L2.K','N3'],['R3.1','P4'],['R3.2','F10'],['L3.A','J10'],['L3.K','N4']]),3);
+const each=(3.3-2)/(330+10+.4+3*.5);for(const l of three.leds)near(l.current,each);near(three.totalCurrent,3*each);
+const direct=analyzeCircuit(ws([['L1.A','P2'],['L1.K','N2']]),1);assert.equal(direct.shortCircuit,false);assert.equal(direct.mode,'CC');assert.deepEqual(direct.overcurrent,['L1']);near(direct.leds[0].current,.1);
+const rOnly=analyzeCircuit(ws([['R1.1','P2'],['R1.2','N2']]),1);near(rOnly.totalCurrent,3.3/(330+.2+.5));assert.equal(rOnly.leds[0].current,0);
+const bridged=analyzeCircuit(ws([['P2','BP2'],['N2','BN2'],['R1.1','BP3'],['R1.2','F8'],['L1.A','H8'],['L1.K','BN3']]),1);near(bridged.totalCurrent,(3.3-2)/(330+10+.6+.5));
+assert(flowSVG(closed,1).includes('q-current-motion'));assert(flowSVG(short,1).includes('q-arrow-fault'));assert(!flowSVG(open,1).includes('class="q-current-path"'));
+// Kirchhoff current balance across distinct parallel circuits and reversed wires.
+for(const report of [closed,three,after,parallel,longShort,bridged,rOnly]){
+ assert(Number.isFinite(report.totalCurrent)&&Number.isFinite(report.railVoltage));assert(report.totalCurrent<=circuitModel.currentLimit+1e-6);
+ for(const l of report.leds)assert(l.current>=-1e-7);
+}
+console.log('DC analysis passed: Ohm/Kirchhoff, real wire directions, open/reversed LED, 1/3 branches, CC short limits, parallel faults, resistor load, rail bridges and flow rendering.');

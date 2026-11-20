@@ -1,0 +1,10 @@
+/* Shared Dracula token palette. Highlight.js generates all syntax classes. */
+.hljs{color:#f8f8f2;background:transparent}
+.hljs-keyword,.hljs-selector-tag,.hljs-literal,.hljs-section,.hljs-link{color:#ff79c6}
+.hljs-type,.hljs-built_in,.hljs-title.class_,.hljs-title.class_.inherited__{color:#8be9fd}
+.hljs-number,.hljs-symbol,.hljs-bullet{color:#bd93f9}
+.hljs-string,.hljs-regexp,.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string{color:#f1fa8c}
+.hljs-title,.hljs-title.function_,.hljs-name,.hljs-selector-id,.hljs-selector-class{color:#50fa7b}
+.hljs-comment,.hljs-quote,.hljs-deletion{color:#a4acc4}
+.hljs-meta,.hljs-doctag{color:#ffb86c}
+.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}

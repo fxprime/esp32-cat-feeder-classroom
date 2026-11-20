@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>หน้าปฏิบัติการ Wokwi (Lab 1–3) — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
+  <link rel="stylesheet" href="../styles/classroom.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Prompt', sans-serif; }
+    .code-font, .code-font * { font-family: 'JetBrains Mono', monospace; }
+
+    body {
+      background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 50%, #fefce8 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .code-scroll::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    .code-scroll::-webkit-scrollbar-track {
+      background: #0f172a;
+      border-radius: 8px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 8px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+<link rel="stylesheet" href="../styles/slide-support.css">
+<link rel="stylesheet" href="../styles/feeder-capstone.css"></head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Top Header -->
+  <header class="w-full max-w-6xl mx-auto px-4 pt-4 pb-2 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex flex-wrap items-center gap-2.5">
+      <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cyan-600 text-white text-xs sm:text-sm font-bold shadow-sm">
+        ESP32 ม.4 • คาบที่ 1
+      </span>
+      <span class="text-xs sm:text-sm font-bold text-slate-700 bg-white/90 backdrop-blur px-3.5 py-1.5 rounded-full border border-slate-200 shadow-sm">
+        หน้าปฏิบัติการ Wokwi (Lab 1 – 3)
+      </span>
+    </div>
+
+    <a href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs sm:text-sm font-extrabold shadow-md transition transform active:scale-95">
+      <span>🚀 เปิดหน้า Wokwi เปล่า (ESP32)</span>
+    </a>
+  </header>
+
+  <main class="w-full max-w-6xl mx-auto px-4 py-3 flex-1 flex flex-col gap-4">
+
+    <!-- Collapsible 3-Step Guide -->
+    <section class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-md border-2 border-sky-200">
+      <button id="guideToggleBtn" type="button" aria-expanded="true"
+        class="w-full flex items-center justify-between gap-3 text-left cursor-pointer">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center text-base font-extrabold">📖</span>
+          <h2 class="text-base sm:text-lg font-extrabold text-slate-800">
+            วิธีเอาโค้ดไปเล่นบน Wokwi ใน 3 ขั้นตอน
+          </h2>
+        </div>
+        <span id="guideChevron" class="px-3 py-1 rounded-full bg-sky-50 text-sky-700 text-xs font-bold border border-sky-200 transition">
+          ▲ ซ่อนคู่มือ
+        </span>
+      </button>
+
+      <div id="guideContent" class="mt-3.5 grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="rounded-2xl p-3.5 bg-sky-50/80 border border-sky-200">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-sky-600 text-white mb-1.5">ขั้นที่ 1</span>
+          <p class="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed">
+            กดปุ่ม <strong>“เปิดหน้า Wokwi เปล่า (ESP32)”</strong> ด้านบน (ไม่ต้องล็อกอินก็เล่นได้)
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-3.5 bg-violet-50/80 border border-violet-200">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-violet-600 text-white mb-1.5">ขั้นที่ 2</span>
+          <p class="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed">
+            กดปุ่ม <strong>คัดลอกโค้ด (sketch.ino)</strong> ไปวางทับทั้งหมดในแท็บ <code class="px-1 rounded bg-white border code-font text-xs">sketch.ino</code> ฝั่งซ้าย
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-3.5 bg-emerald-50/80 border border-emerald-200">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-600 text-white mb-1.5">ขั้นที่ 3</span>
+          <p class="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed">
+            กดปุ่ม <strong>คัดลอกวงจร (diagram.json)</strong> ไปวางทับในแท็บ <code class="px-1 rounded bg-white border code-font text-xs">diagram.json</code> (และเพิ่ม Library ถ้ามี) แล้วกด <strong>Play สีเขียว</strong> ได้เลย!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lab Tabs -->
+    <nav class="flex flex-wrap items-center gap-2.5" aria-label="เลือก Lab ปฏิบัติการ">
+      <button type="button" data-lab="lab1"
+        class="lab-tab px-5 py-3 rounded-2xl text-sm sm:text-base font-extrabold shadow-sm transition active:scale-95 cursor-pointer bg-cyan-600 text-white">
+        Lab 1: สั่งฝาและเสียง
+      </button>
+      <button type="button" data-lab="lab2"
+        class="lab-tab px-5 py-3 rounded-2xl text-sm sm:text-base font-extrabold shadow-sm transition active:scale-95 cursor-pointer bg-white text-slate-700 border-2 border-slate-200 hover:border-cyan-400">
+        Lab 2: อ่านเซนเซอร์
+      </button>
+      <button type="button" data-lab="lab3"
+        class="lab-tab px-5 py-3 rounded-2xl text-sm sm:text-base font-extrabold shadow-sm transition active:scale-95 cursor-pointer bg-white text-slate-700 border-2 border-slate-200 hover:border-cyan-400">
+        Lab 3: รวมเครื่องให้อาหารแมว
+      </button>
+    </nav>
+
+    <section id="feeder-final" class="feeder-final" aria-labelledby="feeder-final-title" hidden>
+      <div>
+        <h2 id="feeder-final-title">ลองทดสอบเครื่องให้อาหารทั้งระบบ</h2>
+        <p>เลือกสภาพถังแล้วกดถึงมื้อ ดูว่าฝาเปิดหรือระบบงดจ่าย จากนั้นลองบัง IR ตอนฝาปิดเพื่อบันทึกการมาที่ชาม</p>
+      </div>
+      <div class="final-grid">
+        <div class="final-controls">
+          <div class="final-option-row" role="group" aria-label="เลือกสภาพถัง">
+            <button type="button" data-final-case="normal" aria-pressed="true">ถังปกติ</button>
+            <button type="button" data-final-case="humid" aria-pressed="false">ถังชื้น</button>
+            <button type="button" data-final-case="empty" aria-pressed="false">อาหารหมด</button>
+            <button type="button" data-final-case="failure" aria-pressed="false">อ่าน RH ไม่ได้</button>
+          </div>
+          <label for="final-rh"><span>ความชื้นอากาศในถัง <output id="final-rh-value">55% RH</output></span>
+            <input id="final-rh" type="range" min="20" max="100" step="1" value="55"></label>
+          <label for="final-distance"><span>ระยะถึงผิวอาหาร <output id="final-distance-value">10 ซม.</output></span>
+            <input id="final-distance" type="range" min="6" max="24" step=".5" value="10"></label>
+          <p>อาหารคงเหลือ <output id="final-stock"></output> · 70% RH เป็นเกณฑ์งดจ่ายในแบบฝึก</p>
+          <label><input type="checkbox" id="final-beam"> บังลำแสง IR ที่ชาม</label>
+          <label><input type="checkbox" id="final-wifi" checked> เครือข่ายออนไลน์ในแบบจำลอง</label>
+          <div class="final-option-row">
+            <button type="button" class="final-action" id="final-meal">ถึงมื้อ</button>
+            <button type="button" id="final-duplicate" disabled>ส่งมื้อเดิมซ้ำ</button>
+            <button type="button" id="final-reset">เริ่มใหม่</button>
+          </div>
+        </div>
+        <div class="final-stage">
+          <svg viewBox="0 0 300 215" role="img" aria-label="ถังอาหารมีฝา Servo ด้านล่าง ไฟแดงและ buzzer ด้านขวา และชามใต้ราง">
+            <rect x="19" y="10" width="262" height="192" rx="20" fill="#eaf4ff"/>
+            <rect x="87" y="20" width="122" height="97" rx="17" fill="#e2e8f0" stroke="#29496a" stroke-width="3"/>
+            <defs><clipPath id="final-food-clip"><rect data-final-food-fill x="90" y="68" width="116" height="62"/></clipPath></defs>
+            <path d="M92 54h112v49l-37 27h-35l-40-27z" fill="#fcfdff" stroke="#29496a" stroke-width="2"/>
+            <g clip-path="url(#final-food-clip)">
+              <path d="M94 55h108v47l-36 26h-33l-39-26z" fill="#ffedc4"/>
+              <g fill="#b96838"><circle cx="102" cy="75" r="5"/><circle cx="123" cy="95" r="5"/><circle cx="141" cy="75" r="6"/><circle cx="147" cy="108" r="6"/><circle cx="163" cy="116" r="4"/><circle cx="165" cy="92" r="6"/><circle cx="186" cy="75" r="5"/><circle cx="193" cy="96" r="5"/></g>
+            </g>
+            <path d="M96 37h104" stroke="#6b8ab0" stroke-width="4" stroke-linecap="round"/><circle class="final-led" cx="224" cy="43" r="8" stroke="#7e929f" stroke-width="2"/>
+            <g class="final-flap"><rect x="130" y="124" width="37" height="10" rx="4" fill="#3b63b4" stroke="#233f70" stroke-width="2"/></g>
+            <circle cx="160" cy="129" r="4" fill="#143668"/>
+            <g class="final-grains" fill="#b96838"><circle cx="145" cy="143" r="4"/><circle cx="151" cy="155" r="4"/><circle cx="142" cy="165" r="3"/></g>
+            <g class="final-beep" fill="none" stroke="#c77017" stroke-width="3" stroke-linecap="round"><path d="M218 67q13 8 0 15m8-22q24 14 0 30"/><circle cx="207" cy="75" r="4" fill="#c77017"/></g>
+            <path d="M102 174h98l-13 19h-72z" fill="#79caca" stroke="#29496a" stroke-width="3"/><ellipse cx="151" cy="172" rx="50" ry="7" fill="#d0f4f1" stroke="#29496a" stroke-width="2"/>
+            <path class="final-beam-clear" d="M58 158h194" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 5"/><path class="final-beam-block" d="M58 158h153" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 5"/><rect x="51" y="150" width="11" height="16" rx="3" fill="#5275ae"/><rect x="248" y="150" width="11" height="16" rx="3" fill="#5275ae"/>
+            <g class="final-cat" fill="#64799c" stroke="#344b73" stroke-width="2"><path d="M220 175q-12-2-12-13l-5-17 13 7 12-1 14-7-4 18q2 13-18 13z"/><circle cx="218" cy="163" r="1" fill="#fff"/><circle cx="230" cy="162" r="1" fill="#fff"/></g>
+          </svg>
+          <p class="final-status" id="final-status" role="status">รอถึงมื้อ · ฝาปิด</p>
+          <p id="final-count"></p>
+          <span id="final-clock" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="final-log">
+        <h3>บันทึกของแต่ละมื้อ</h3>
+        <ol id="final-events"></ol>
+        <p id="final-note" role="status"></p>
+      </div>
+      <details class="final-piezo">
+        <summary>โจทย์เพิ่ม · นับอาหาร 10 เม็ดด้วย Piezo</summary>
+        <p>ปรับเกณฑ์จับยอดและช่วงพักหลังนับ ลองเปิด “เม็ดลงติดกัน” แล้วดูว่าปรับให้ได้นับครบทุกครั้งหรือไม่</p>
+        <svg id="piezo-scope" viewBox="0 0 620 142" role="img" aria-label="กราฟแรงดัน Piezo จำลองหลังปรับระดับ และจุดที่โปรแกรมนับ">
+          <path d="M22 14v108h578 M22 86h578 M22 50h578" stroke="#536f99" fill="none"/>
+          <text x="26" y="14" fill="#cce4ff" font-size="11">3.3 V</text>
+          <text x="22" y="137" fill="#cce4ff" font-size="11">0 ms</text><text x="550" y="137" fill="#cce4ff" font-size="11">2000 ms</text>
+          <line data-threshold x1="22" x2="600" stroke="#fbbf24" stroke-dasharray="5 5"/>
+          <text data-threshold-label x="550" fill="#fcd34d" font-size="11"></text>
+          <polyline data-samples fill="none" stroke="#7dd3fc" stroke-width="2"/>
+          <g data-events fill="#fbbf24" stroke="#0f203b"/>
+        </svg>
+        <div class="piezo-options">
+          <label for="piezo-threshold"><span>เกณฑ์ <output id="piezo-threshold-value"></output></span><input id="piezo-threshold" type="range" min=".2" max="2.2" step=".1" value=".8"></label>
+          <label for="piezo-quiet"><span>พัก <output id="piezo-quiet-value"></output></span><input id="piezo-quiet" type="range" min="0" max="120" step="5" value="60"></label>
+        </div>
+        <label><input type="checkbox" id="piezo-overlap"> เม็ดลงติดกัน</label>
+        <p id="piezo-result" role="status"></p>
+        <p>บนโต๊ะทดลองจริง ติด Piezo ที่แผ่นรับแรงกระแทก ใช้ชุดปรับสัญญาณ 0–3.3 V ก่อนเข้า ADC1 GPIO34 แล้วเริ่มปล่อยทีละเม็ด</p>
+      </details>
+      <details class="final-teacher">
+        <summary>สำหรับครู · ให้ ESP32 ส่ง Telegram จริง</summary>
+        <p>สาธิตบนบอร์ดจริงและใช้เครือข่าย 2.4 GHz ที่เตรียมไว้ โค้ด Lab 3 ส่งผ่าน Telegram เมื่อมีไฟล์ตั้งค่าส่วนตัวข้างสเก็ตช์ ใน Wokwi มื้อที่งดจ่ายจะแสดงเหตุการณ์จำลองใน Serial Monitor</p>
+        <ol class="list-decimal pl-5 space-y-1">
+          <li>สร้างบอตผ่าน BotFather ให้แชตสาธิตเริ่มคุยกับบอต และเตรียม chat ID ตาม <a href="https://core.telegram.org/bots/tutorial" target="_blank" rel="noopener">คู่มือ Telegram</a></li>
+          <li>ดาวน์โหลด <a href="../labs/teacher/teacher-secrets.example.h" download>แม่แบบการตั้งค่าครู</a> แล้วบันทึกชื่อ <code>teacher-secrets.h</code> ข้างสเก็ตช์ Lab 3 บนเครื่องครู ใส่ข้อมูล Wi‑Fi, bot token, chat ID และ root CA ที่ใช้ตรวจ TLS สำหรับ api.telegram.org</li>
+          <li>ทดสอบมื้อชื้นหนึ่งครั้ง ดู <code>TELEGRAM_SENT</code> ใน Serial แล้วเช็กข้อความเข้าแชต ค่าลับอยู่ในไฟล์บนเครื่องครู</li>
+        </ol>
+      </details>
+    </section>
+
+    <!-- Active Lab Content Panel -->
+    <section class="flex flex-col gap-4">
+
+      <!-- Part A: Summary, Wiring Table & Library Box -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+        <!-- Goal + Wiring Table -->
+        <div class="lg:col-span-7 bg-white/95 backdrop-blur-md rounded-3xl p-5 shadow-md border-2 border-slate-200 flex flex-col justify-between gap-3">
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h1 id="labTitle" class="text-xl sm:text-2xl font-extrabold text-slate-900"></h1>
+              <span id="labBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-cyan-100 text-cyan-800"></span>
+            </div>
+            <p id="labGoal" class="text-sm text-slate-700 font-medium leading-relaxed mb-3"></p>
+          </div>
+
+          <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200">
+            <h3 class="text-xs font-extrabold text-slate-500 uppercase tracking-wide mb-2">🔌 ตารางการต่อสายขา Pin</h3>
+            <div id="wiringList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm"></div>
+          </div>
+        </div>
+
+        <!-- Library Alert Box -->
+        <div id="libraryBox" class="lg:col-span-5 rounded-3xl p-5 shadow-md border-2 flex flex-col justify-between gap-3">
+        </div>
+      </div>
+
+      <!-- Part B: Parallel Code & Circuit Boxes -->
+      <div class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-lg border-2 border-slate-200 flex flex-col gap-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900">💻 ไฟล์โค้ดและวงจรสำหรับวางใน Wokwi</h2>
+            <p class="text-xs text-slate-500 font-medium">กดปุ่มคัดลอกมุมขวาบนของแต่ละกล่อง หรือดาวน์โหลดไฟล์ไปอัปโหลดเข้า Wokwi ได้ทันที</p>
+          </div>
+          <button id="downloadLabBtn" type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold shadow-sm transition active:scale-95 cursor-pointer">
+            <span>📥 ดาวน์โหลดไฟล์ Lab นี้ (.ino + .json)</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Left: sketch.ino -->
+          <div class="bg-slate-900 rounded-3xl border-2 border-slate-700 overflow-hidden flex flex-col">
+            <div class="px-4 py-3 bg-slate-800/90 border-b border-slate-700 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                <span class="ml-1 text-xs sm:text-sm font-bold text-amber-300 code-font">sketch.ino</span>
+              </div>
+              <button id="copyInoBtn" type="button"
+                class="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer">
+                📋 คัดลอกโค้ด (sketch.ino)
+              </button>
+            </div>
+            <pre tabindex="0" id="codeInoPre" class="code-font code-scroll p-4 text-xs leading-relaxed text-emerald-300 overflow-auto max-h-[430px] whitespace-pre"></pre>
+          </div>
+
+          <!-- Right: diagram.json -->
+          <div class="bg-slate-900 rounded-3xl border-2 border-slate-700 overflow-hidden flex flex-col">
+            <div class="px-4 py-3 bg-slate-800/90 border-b border-slate-700 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                <span class="ml-1 text-xs sm:text-sm font-bold text-sky-300 code-font">diagram.json</span>
+              </div>
+              <button id="copyJsonBtn" type="button"
+                class="px-3 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer">
+                📋 คัดลอกวงจร (diagram.json)
+              </button>
+            </div>
+            <pre tabindex="0" id="codeJsonPre" class="code-font code-scroll p-4 text-xs leading-relaxed text-sky-200 overflow-auto max-h-[430px] whitespace-pre"></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part C: Interactive 3-Mission Checklist -->
+      <div class="bg-white/95 backdrop-blur-md rounded-3xl p-5 shadow-md border-2 border-emerald-200">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h2 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <span>🎯</span>
+            <span>ด่านท้าทายท้าย Lab (คลิกติ๊กถูกเมื่อทำสำเร็จ!)</span>
+          </h2>
+          <span id="missionProgressBadge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800">
+            สำเร็จ 0 / 3 มิชชัน
+          </span>
+        </div>
+        <div id="missionList" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+      </div>
+
+    </section>
+  <p class="mx-auto max-w-6xl px-4 pb-5 text-xs text-slate-700">ESP32 DevKit V1 (WROOM-32) · GPIO 3.3V · HC-SR04 Echo ต้องผ่านตัวแบ่งแรงดัน 1kΩ / 1.8kΩ · Servo ใช้แหล่งจ่าย 5V ที่เพียงพอและ GND ร่วมกัน · ใช้ Arduino-ESP32 core 3.x และ ESP32Servo รุ่นที่รองรับ (Wokwi ปัจจุบันใช้ core 3.x)</p></main>
+
+  <script>
+    (function () {
+      const labsData = {"lab1":{"title":"Lab 1 · ได้เวลาแล้ว ส่งเสียงและเปิดฝา","badge":"Servo · buzzer · ปุ่ม MEAL","goal":"กดปุ่ม MEAL ให้บอร์ดส่งเสียงก่อน แล้วเปิดฝาหนึ่งรอบตามเวลา ใช้มุม 0° และ 90° เป็นค่าตัวอย่างสำหรับฝาจำลอง","wiring":[{"from":"MEAL · หน้าสัมผัส 1 / 2","to":"GPIO19 / GND · INPUT_PULLUP"},{"from":"Servo · SIG","to":"GPIO18 · 0° ปิด / 90° เปิด"},{"from":"Servo · V+ / GND","to":"VIN ใน Wokwi · บอร์ดจริงใช้แหล่งจ่าย 5 V ที่เหมาะกับ Servo และต่อ GND ร่วม"},{"from":"Passive buzzer · + / −","to":"GPIO25 / GND"}],"ino":"#include <Arduino.h>\n\n#include <ESP32Servo.h>\n\nconstexpr int SERVO_PIN = 18;\nconstexpr int BUZZER_PIN = 25;\nconstexpr int MEAL_PIN = 19;\nconstexpr int BEEP_MS = 600;\nconstexpr int PORTION_MS = 1100;\n\nclass DebouncedInput {\n  uint8_t pin;\n  bool raw = HIGH;\n  bool stable = HIGH;\n  uint32_t changedAt = 0;\npublic:\n  explicit DebouncedInput(uint8_t pinNumber) : pin(pinNumber) {}\n  void begin() {\n    pinMode(pin, INPUT_PULLUP);\n    raw = stable = digitalRead(pin);\n    changedAt = millis();\n  }\n  bool fell(uint32_t now) {\n    const bool reading = digitalRead(pin);\n    if (reading != raw) {\n      raw = reading;\n      changedAt = now;\n    }\n    if (stable == raw || now - changedAt < 30) return false;\n    stable = raw;\n    return stable == LOW;\n  }\n  bool active() const { return stable == LOW; }\n};\n\n\n// Lab 1: เปลี่ยนการกดหนึ่งครั้งให้เป็นเสียงและการเปิดฝาหนึ่งรอบ\nServo flap;\nDebouncedInput mealButton(MEAL_PIN);\n\nenum class Step { Ready, Beep, Open };\nStep step = Step::Ready;\nuint32_t stepAt;\n\nvoid setup() {\n  Serial.begin(115200);\n  mealButton.begin();\n  pinMode(BUZZER_PIN, OUTPUT);\n  flap.setPeriodHertz(50);\n  flap.attach(SERVO_PIN, 1000, 2000);\n  flap.write(0);\n  Serial.println(\"READY - press MEAL\");\n}\n\nvoid loop() {\n  const uint32_t now = millis();\n  const bool pressed = mealButton.fell(now);\n  if (step == Step::Ready && pressed) {\n    tone(BUZZER_PIN, 1800, BEEP_MS);\n    stepAt = now;\n    step = Step::Beep;\n    Serial.println(\"BEEP\");\n  } else if (step == Step::Beep && now - stepAt >= BEEP_MS) {\n    flap.write(90);\n    stepAt = now;\n    step = Step::Open;\n    Serial.println(\"FLAP OPEN\");\n  } else if (step == Step::Open && now - stepAt >= PORTION_MS) {\n    flap.write(0);\n    step = Step::Ready;\n    Serial.println(\"FLAP CLOSED\");\n  }\n}\n","json":"{\n  \"version\": 1,\n  \"author\": \"ESP32 Classroom · Cat Feeder\",\n  \"editor\": \"wokwi\",\n  \"parts\": [\n    {\n      \"type\": \"wokwi-esp32-devkit-v1\",\n      \"id\": \"esp\",\n      \"top\": 100,\n      \"left\": 0,\n      \"attrs\": {}\n    },\n    {\n      \"type\": \"wokwi-servo\",\n      \"id\": \"flap\",\n      \"top\": 120,\n      \"left\": 355,\n      \"attrs\": {}\n    },\n    {\n      \"type\": \"wokwi-buzzer\",\n      \"id\": \"beep\",\n      \"top\": 255,\n      \"left\": 365,\n      \"attrs\": {\n        \"volume\": \"0.15\"\n      }\n    },\n    {\n      \"type\": \"wokwi-pushbutton\",\n      \"id\": \"meal\",\n      \"top\": 290,\n      \"left\": 175,\n      \"attrs\": {\n        \"color\": \"blue\",\n        \"label\": \"MEAL\"\n      }\n    }\n  ],\n  \"connections\": [\n    [\n      \"flap:V+\",\n      \"esp:VIN\",\n      \"red\",\n      []\n    ],\n    [\n      \"flap:GND\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"flap:PWM\",\n      \"esp:D18\",\n      \"orange\",\n      []\n    ],\n    [\n      \"beep:2\",\n      \"esp:D25\",\n      \"violet\",\n      []\n    ],\n    [\n      \"beep:1\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"meal:1.l\",\n      \"esp:D19\",\n      \"blue\",\n      []\n    ],\n    [\n      \"meal:2.l\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ]\n  ],\n  \"dependencies\": {},\n  \"serialMonitor\": {\n    \"display\": \"always\",\n    \"newline\": \"lf\"\n  }\n}\n","missions":[{"title":"ได้ยินเสียงก่อนฝาขยับ","desc":"กด MEAL หนึ่งครั้ง มองฝาในช่วง BEEP แล้วดูให้ Servo ไปที่ 90° หลังเสียงจบ"},{"title":"ปิดฝาได้เอง","desc":"รอประมาณ 1.1 วินาทีหลังฝาเปิด ดูว่ามุมกลับเป็น 0° และ Serial ขึ้น FLAP CLOSED"},{"title":"กดค้างได้เพียงหนึ่งรอบ","desc":"กด MEAL ค้างผ่านช่วงเปิด–ปิด ตรวจว่าไม่เริ่มรอบใหม่จนกว่าจะปล่อยแล้วกดใหม่"}],"libraries":["ESP32Servo"],"libraryRequired":true,"libraryName":"ESP32Servo"},"lab2":{"title":"Lab 2 · เครื่องรู้ได้อย่างไรว่าอาหารพร้อม","badge":"Ultrasonic · DHT22 · IR","goal":"เปิด Serial Monitor ที่ 115200 แล้วเปลี่ยนระยะถึงผิวอาหาร ความชื้นอากาศในถัง และสถานะลำแสงที่ชามทีละอย่าง ค่าเปอร์เซ็นต์อาหารเป็นการประมาณหลังตั้งจุดเต็มและจุดหมด","wiring":[{"from":"HC-SR04 · VCC / GND","to":"VIN 5 V ใน Wokwi / GND"},{"from":"HC-SR04 · TRIG / ECHO","to":"GPIO26 / GPIO27 ผ่านจุดกึ่งกลางตัวแบ่ง 1 kΩ และ 1.8 kΩ ลง GND"},{"from":"DHT22 · DATA (SDA ใน Wokwi)","to":"GPIO32 · pull-up 10 kΩ ไป 3V3, VCC ไป 3V3, GND ร่วม"},{"from":"IR · ขา OUT หรือขากลางสวิตช์จำลอง","to":"GPIO33 · INPUT_PULLUP · LOW = ลำแสงถูกบัง · GND ร่วมและสัญญาณ 3.3 V"}],"ino":"#include <Arduino.h>\n#include <DHTesp.h>\n\nconstexpr int TRIG_PIN = 26;\nconstexpr int ECHO_PIN = 27;\nconstexpr int DHT_PIN = 32;\nconstexpr int IR_PIN = 33;\nconstexpr int FULL_CM = 6;\nconstexpr int EMPTY_CM = 24;\n\nclass DebouncedInput {\n  uint8_t pin;\n  bool raw = HIGH;\n  bool stable = HIGH;\n  uint32_t changedAt = 0;\npublic:\n  explicit DebouncedInput(uint8_t pinNumber) : pin(pinNumber) {}\n  void begin() {\n    pinMode(pin, INPUT_PULLUP);\n    raw = stable = digitalRead(pin);\n    changedAt = millis();\n  }\n  bool fell(uint32_t now) {\n    const bool reading = digitalRead(pin);\n    if (reading != raw) {\n      raw = reading;\n      changedAt = now;\n    }\n    if (stable == raw || now - changedAt < 30) return false;\n    stable = raw;\n    return stable == LOW;\n  }\n  bool active() const { return stable == LOW; }\n};\n\n\nDHTesp dht;\nfloat humidity = NAN;\nfloat distanceCm = NAN;\nuint32_t lastHumidity;\nuint32_t lastDistance;\n\nvoid setupSensors() {\n  dht.setup(DHT_PIN, DHTesp::DHT22);\n  pinMode(TRIG_PIN, OUTPUT);\n  pinMode(ECHO_PIN, INPUT);\n  lastHumidity = lastDistance = millis();\n}\n\nfloat readDistanceCm() {\n  digitalWrite(TRIG_PIN, LOW);\n  delayMicroseconds(2);\n  digitalWrite(TRIG_PIN, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(TRIG_PIN, LOW);\n  // Only long enough for a hopper this small. A missing echo returns 0.\n  const uint32_t echo = pulseIn(ECHO_PIN, HIGH, 6000);\n  return echo ? echo / 58.0f : NAN;\n}\n\nint estimateFood(float cm) {\n  if (!isfinite(cm) || cm < 2 || cm > 60) return -1;\n  const float fraction = (EMPTY_CM - cm) / (EMPTY_CM - FULL_CM);\n  return lroundf(constrain(fraction, 0.0f, 1.0f) * 100);\n}\n\nvoid sampleSensors(uint32_t now) {\n  if (now - lastDistance >= 250) {\n    lastDistance = now;\n    distanceCm = readDistanceCm();\n  }\n  if (now - lastHumidity >= 2100) {\n    lastHumidity = now;\n    humidity = dht.getHumidity();\n    if (dht.getStatus() != DHTesp::ERROR_NONE) humidity = NAN;\n  }\n}\n\n\n// Lab 2: ดูค่าดิบและความหมายของเซนเซอร์ใน Serial Monitor\nDebouncedInput bowlBeam(IR_PIN);\n\nvoid setup() {\n  Serial.begin(115200);\n  setupSensors();\n  bowlBeam.begin();\n  Serial.println(\"READY - first humidity reading in about 2 seconds\");\n}\n\nvoid loop() {\n  const uint32_t now = millis();\n  sampleSensors(now);\n  if (bowlBeam.fell(now)) Serial.println(\"ARRIVAL: beam blocked\");\n\n  static uint32_t lastPrint = 0;\n  if (now - lastPrint >= 2100) {\n    lastPrint = now;\n    Serial.printf(\"RH: %.1f %% | distance: %.1f cm | food: %d%% | IR: %s\\n\",\n      humidity, distanceCm, estimateFood(distanceCm), bowlBeam.active() ? \"LOW\" : \"HIGH\");\n    if (!isfinite(humidity) || estimateFood(distanceCm) < 0) Serial.println(\"SENSOR_READING_INVALID\");\n  }\n}\n","json":"{\n  \"version\": 1,\n  \"author\": \"ESP32 Classroom · Cat Feeder\",\n  \"editor\": \"wokwi\",\n  \"parts\": [\n    {\n      \"type\": \"wokwi-esp32-devkit-v1\",\n      \"id\": \"esp\",\n      \"top\": 100,\n      \"left\": 0,\n      \"attrs\": {}\n    },\n    {\n      \"type\": \"wokwi-hc-sr04\",\n      \"id\": \"stock\",\n      \"top\": -68,\n      \"left\": 245,\n      \"attrs\": {\n        \"distance\": \"10\"\n      }\n    },\n    {\n      \"type\": \"wokwi-resistor\",\n      \"id\": \"echoTop\",\n      \"top\": 8,\n      \"left\": 305,\n      \"attrs\": {\n        \"value\": \"1000\"\n      }\n    },\n    {\n      \"type\": \"wokwi-resistor\",\n      \"id\": \"echoBottom\",\n      \"top\": 10,\n      \"left\": 417,\n      \"attrs\": {\n        \"value\": \"1800\"\n      },\n      \"rotate\": 90\n    },\n    {\n      \"type\": \"wokwi-dht22\",\n      \"id\": \"air\",\n      \"top\": -44,\n      \"left\": -200,\n      \"attrs\": {\n        \"humidity\": \"55\"\n      }\n    },\n    {\n      \"type\": \"wokwi-resistor\",\n      \"id\": \"dhtPull\",\n      \"top\": 30,\n      \"left\": -152,\n      \"attrs\": {\n        \"value\": \"10000\"\n      }\n    },\n    {\n      \"type\": \"wokwi-slide-switch\",\n      \"id\": \"beam\",\n      \"top\": 220,\n      \"left\": -164,\n      \"attrs\": {\n        \"value\": \"1\",\n        \"bounce\": \"0\"\n      }\n    },\n    {\n      \"type\": \"wokwi-text\",\n      \"id\": \"beamLabel\",\n      \"top\": 174,\n      \"left\": -160,\n      \"attrs\": {\n        \"text\": \"IR: left = cat at bowl\"\n      }\n    }\n  ],\n  \"connections\": [\n    [\n      \"stock:VCC\",\n      \"esp:VIN\",\n      \"red\",\n      []\n    ],\n    [\n      \"stock:GND\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"stock:TRIG\",\n      \"esp:D26\",\n      \"blue\",\n      []\n    ],\n    [\n      \"stock:ECHO\",\n      \"echoTop:1\",\n      \"green\",\n      []\n    ],\n    [\n      \"echoTop:2\",\n      \"echoBottom:1\",\n      \"green\",\n      []\n    ],\n    [\n      \"echoTop:2\",\n      \"esp:D27\",\n      \"green\",\n      []\n    ],\n    [\n      \"echoBottom:2\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"air:VCC\",\n      \"esp:3V3\",\n      \"red\",\n      []\n    ],\n    [\n      \"air:GND\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"air:SDA\",\n      \"esp:D32\",\n      \"cyan\",\n      []\n    ],\n    [\n      \"dhtPull:1\",\n      \"air:SDA\",\n      \"cyan\",\n      []\n    ],\n    [\n      \"dhtPull:2\",\n      \"esp:3V3\",\n      \"red\",\n      []\n    ],\n    [\n      \"beam:2\",\n      \"esp:D33\",\n      \"blue\",\n      []\n    ],\n    [\n      \"beam:1\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ]\n  ],\n  \"dependencies\": {},\n  \"serialMonitor\": {\n    \"display\": \"always\",\n    \"newline\": \"lf\"\n  }\n}\n","missions":[{"title":"เทียบถังเต็มกับถังหมด","desc":"คลิก HC-SR04 ลองระยะ 6 ซม. แล้วเปลี่ยนเป็น 24 ซม. ดูค่าประมาณ 100% และ 0%"},{"title":"ถังชื้น","desc":"กด DHT22 แล้วเลื่อนจาก 55% ไป 78% RH รอรอบอ่านถัดไปประมาณสองวินาที ค่าที่เปลี่ยนคือความชื้นอากาศในถัง"},{"title":"มีตัวมาที่ชาม","desc":"เลื่อนสวิตช์ IR ไปซ้าย ลองดู Serial ขึ้น ARRIVAL และ LOW เลื่อนไปขวาเพื่อกลับเป็น HIGH"}],"libraries":["DHT sensor library for ESPx"],"libraryRequired":true,"libraryName":"DHT sensor library for ESPx"},"lab3":{"title":"Lab 3 · เครื่องให้อาหารแมวอัตโนมัติ","badge":"รวมวงจร · ทดสอบครบมื้อ","goal":"รวมฝา เสียง เซนเซอร์และไฟแดงด้วยพินเดิม กด MEAL หรือพิมพ์ m เพื่อจำลองมื้อ เมื่อ RH ตั้งแต่ 70% หรืออาหารเหลือประมาณไม่เกิน 5% ให้ฝาปิดและแจ้งเหตุ IR ใช้ตรวจว่ามีตัวมาที่ชามหลังจ่าย","wiring":[{"from":"MEAL · หน้าสัมผัส 1 / 2","to":"GPIO19 / GND · INPUT_PULLUP"},{"from":"Servo · SIG","to":"GPIO18 · 0° ปิด / 90° เปิด"},{"from":"Servo · V+ / GND","to":"VIN ใน Wokwi · บอร์ดจริงใช้แหล่งจ่าย 5 V ที่เหมาะกับ Servo และต่อ GND ร่วม"},{"from":"Passive buzzer · + / −","to":"GPIO25 / GND"},{"from":"HC-SR04 · VCC / GND","to":"VIN 5 V ใน Wokwi / GND"},{"from":"HC-SR04 · TRIG / ECHO","to":"GPIO26 / GPIO27 ผ่านจุดกึ่งกลางตัวแบ่ง 1 kΩ และ 1.8 kΩ ลง GND"},{"from":"DHT22 · DATA (SDA ใน Wokwi)","to":"GPIO32 · pull-up 10 kΩ ไป 3V3, VCC ไป 3V3, GND ร่วม"},{"from":"IR · ขา OUT หรือขากลางสวิตช์จำลอง","to":"GPIO33 · INPUT_PULLUP · LOW = ลำแสงถูกบัง · GND ร่วมและสัญญาณ 3.3 V"},{"from":"LED แดง · A / K","to":"GPIO23 ผ่าน 330 Ω / GND"}],"ino":"#include <Arduino.h>\n#include <DHTesp.h>\n\n#include <ESP32Servo.h>\n\nconstexpr int RED_LED_PIN = 23;\nconstexpr int SERVO_PIN = 18;\nconstexpr int BUZZER_PIN = 25;\nconstexpr int MEAL_PIN = 19;\nconstexpr int BEEP_MS = 600;\nconstexpr int PORTION_MS = 1100;\nconstexpr int TRIG_PIN = 26;\nconstexpr int ECHO_PIN = 27;\nconstexpr int DHT_PIN = 32;\nconstexpr int IR_PIN = 33;\nconstexpr int FULL_CM = 6;\nconstexpr int EMPTY_CM = 24;\nconstexpr int MAX_RH = 70;\nconstexpr int EMPTY_PERCENT = 5;\nconstexpr int LOW_PERCENT = 20;\nconstexpr int WATCH_MS = 8000;\n\nclass DebouncedInput {\n  uint8_t pin;\n  bool raw = HIGH;\n  bool stable = HIGH;\n  uint32_t changedAt = 0;\npublic:\n  explicit DebouncedInput(uint8_t pinNumber) : pin(pinNumber) {}\n  void begin() {\n    pinMode(pin, INPUT_PULLUP);\n    raw = stable = digitalRead(pin);\n    changedAt = millis();\n  }\n  bool fell(uint32_t now) {\n    const bool reading = digitalRead(pin);\n    if (reading != raw) {\n      raw = reading;\n      changedAt = now;\n    }\n    if (stable == raw || now - changedAt < 30) return false;\n    stable = raw;\n    return stable == LOW;\n  }\n  bool active() const { return stable == LOW; }\n};\n\n\nDHTesp dht;\nfloat humidity = NAN;\nfloat distanceCm = NAN;\nuint32_t lastHumidity;\nuint32_t lastDistance;\n\nvoid setupSensors() {\n  dht.setup(DHT_PIN, DHTesp::DHT22);\n  pinMode(TRIG_PIN, OUTPUT);\n  pinMode(ECHO_PIN, INPUT);\n  lastHumidity = lastDistance = millis();\n}\n\nfloat readDistanceCm() {\n  digitalWrite(TRIG_PIN, LOW);\n  delayMicroseconds(2);\n  digitalWrite(TRIG_PIN, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(TRIG_PIN, LOW);\n  // Only long enough for a hopper this small. A missing echo returns 0.\n  const uint32_t echo = pulseIn(ECHO_PIN, HIGH, 6000);\n  return echo ? echo / 58.0f : NAN;\n}\n\nint estimateFood(float cm) {\n  if (!isfinite(cm) || cm < 2 || cm > 60) return -1;\n  const float fraction = (EMPTY_CM - cm) / (EMPTY_CM - FULL_CM);\n  return lroundf(constrain(fraction, 0.0f, 1.0f) * 100);\n}\n\nvoid sampleSensors(uint32_t now) {\n  if (now - lastDistance >= 250) {\n    lastDistance = now;\n    distanceCm = readDistanceCm();\n  }\n  if (now - lastHumidity >= 2100) {\n    lastHumidity = now;\n    humidity = dht.getHumidity();\n    if (dht.getStatus() != DHTesp::ERROR_NONE) humidity = NAN;\n  }\n}\n\n\n// Optional teacher demo. Keep teacher-secrets.h private and off Wokwi.\n#if __has_include(\"teacher-secrets.h\")\n#include \"teacher-secrets.h\"\n#include <WiFi.h>\n#include <WiFiClientSecure.h>\n#include <HTTPClient.h>\n#include <time.h>\n\nQueueHandle_t alertQueue = nullptr;\n\nbool sendAlert(const char *event) {\n  WiFiClientSecure tls;\n  tls.setCACert(TELEGRAM_ROOT_CA);\n  tls.setTimeout(3500);\n\n  HTTPClient request;\n  request.setConnectTimeout(3500);\n  request.setTimeout(3500);\n  String url = String(\"https://api.telegram.org/bot\") + TELEGRAM_TOKEN + \"/sendMessage\";\n  if (!request.begin(tls, url)) return false;\n\n  request.addHeader(\"Content-Type\", \"application/json\");\n  const char *message = \"เครื่องให้อาหารแมวอ่านเซนเซอร์ไม่ได้ · งดจ่ายมื้อนี้\";\n  if (!strcmp(event, \"BLOCK_HUMIDITY\")) message = \"ในถังชื้นเกินเกณฑ์ · งดจ่ายมื้อนี้\";\n  if (!strcmp(event, \"BLOCK_EMPTY\")) message = \"อาหารในถังหมด · งดจ่ายมื้อนี้\";\n  if (!strcmp(event, \"LOW_STOCK\")) message = \"อาหารในถังใกล้หมด\";\n  const String body = String(\"{\\\"chat_id\\\":\\\"\") + TELEGRAM_CHAT_ID + \"\\\",\\\"text\\\":\\\"\" + message + \"\\\"}\";\n  const int status = request.POST(body);\n  request.end();\n  return status == 200;\n}\n\nvoid telegramWorker(void *) {\n  WiFi.mode(WIFI_STA);\n  WiFi.begin(FEEDER_WIFI_SSID, FEEDER_WIFI_PASSWORD);\n  configTime(0, 0, \"time.cloudflare.com\", \"pool.ntp.org\");\n  const char *event = nullptr;\n  for (;;) {\n    if (xQueueReceive(alertQueue, &event, portMAX_DELAY) != pdPASS) continue;\n    while (WiFi.status() != WL_CONNECTED || time(nullptr) < 1700000000) {\n      vTaskDelay(pdMS_TO_TICKS(2000));\n    }\n    // One attempt per event. Server response may be lost after a successful send.\n    Serial.println(sendAlert(event) ? \"TELEGRAM_SENT\" : \"TELEGRAM_SEND_FAILED\");\n  }\n}\n\nvoid startTelegram() {\n  alertQueue = xQueueCreate(8, sizeof(const char *));\n  if (!alertQueue) return;\n  if (xTaskCreate(telegramWorker, \"teacher-alerts\", 8192, nullptr, 1, nullptr) != pdPASS) {\n    vQueueDelete(alertQueue);\n    alertQueue = nullptr;\n  }\n}\n\nvoid queueTelegramAlert(const char *event) {\n  if (!alertQueue || xQueueSend(alertQueue, &event, 0) != pdPASS) {\n    Serial.println(\"TELEGRAM_QUEUE_UNAVAILABLE\");\n  } else {\n    Serial.println(\"TELEGRAM_QUEUED\");\n  }\n}\n#else\nvoid startTelegram() {}\nvoid queueTelegramAlert(const char *) {\n  Serial.println(\"TELEGRAM_SIMULATED (no message sent)\");\n}\n#endif\n\n\n// Lab 3: กด MEAL หรือพิมพ์ m ทาง Serial เพื่อจำลองถึงมื้อ\n// ส่ง r จะลองส่งหมายเลขมื้อเดิมซ้ำโดยไม่เปิดฝาอีกครั้ง\nServo flap;\nDebouncedInput mealButton(MEAL_PIN);\nDebouncedInput bowlBeam(IR_PIN);\nenum class Phase { Idle, Beep, Dispense, Watch, Blocked };\nPhase phase = Phase::Idle;\nuint32_t phaseAt = 0;\nuint32_t lastMealId = 0;\n\nvoid report(const char *event, bool notify = false) {\n  Serial.printf(\"MEAL %lu | %s\\n\", (unsigned long)lastMealId, event);\n  if (notify) queueTelegramAlert(event);\n}\n\nvoid blockMeal(const char *reason) {\n  flap.write(0);\n  noTone(BUZZER_PIN);\n  digitalWrite(RED_LED_PIN, HIGH);\n  phase = Phase::Blocked;\n  report(reason, true);\n}\n\nconst char *checkFoodAndHumidity() {\n  const int percent = estimateFood(distanceCm);\n  if (!isfinite(humidity) || humidity < 0 || humidity > 100 || percent < 0) {\n    return \"BLOCK_SENSOR_READ\";\n  }\n  if (humidity >= MAX_RH) return \"BLOCK_HUMIDITY\";\n  if (percent <= EMPTY_PERCENT) return \"BLOCK_EMPTY\";\n  return nullptr;\n}\n\nvoid requestMeal(uint32_t id, uint32_t now) {\n  if (id == 0 || id <= lastMealId) {\n    report(\"DUPLICATE_IGNORED\");\n    return;\n  }\n  if (phase == Phase::Beep || phase == Phase::Dispense) {\n    report(\"BUSY_IGNORED\");\n    return;\n  }\n  lastMealId = id;\n  Serial.printf(\"CHECK | RH %.1f%% | food %d%%\\n\", humidity, estimateFood(distanceCm));\n  if (const char *reason = checkFoodAndHumidity()) {\n    blockMeal(reason);\n    return;\n  }\n  digitalWrite(RED_LED_PIN, LOW);\n  if (estimateFood(distanceCm) <= LOW_PERCENT) report(\"LOW_STOCK\", true);\n  tone(BUZZER_PIN, 1800, BEEP_MS);\n  phase = Phase::Beep;\n  phaseAt = now;\n  report(\"BEEP\");\n}\n\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(RED_LED_PIN, OUTPUT);\n  pinMode(BUZZER_PIN, OUTPUT);\n  mealButton.begin();\n  bowlBeam.begin();\n  setupSensors();\n  flap.setPeriodHertz(50);\n  flap.attach(SERVO_PIN, 1000, 2000);\n  flap.write(0);\n  startTelegram();\n  Serial.println(\"READY - wait 2.1 seconds for DHT22; MEAL or m, duplicate test r\");\n}\n\nvoid loop() {\n  const uint32_t now = millis();\n  sampleSensors(now);\n  if (bowlBeam.fell(now) && phase != Phase::Watch) report(\"BOWL_BEAM_BLOCKED\");\n  const int command = Serial.available() ? Serial.read() : -1;\n  const bool pressed = mealButton.fell(now);\n  if (pressed || command == 'm') requestMeal(lastMealId + 1, now);\n  if (command == 'r') requestMeal(lastMealId, now);\n\n  switch (phase) {\n    case Phase::Beep:\n      if (now - phaseAt >= BEEP_MS) {\n        if (const char *reason = checkFoodAndHumidity()) {\n          blockMeal(reason);\n          break;\n        }\n        flap.write(90);\n        phase = Phase::Dispense;\n        phaseAt = now;\n        report(\"FLAP_OPEN\");\n      }\n      break;\n    case Phase::Dispense:\n      if (now - phaseAt >= PORTION_MS) {\n        flap.write(0);\n        phase = Phase::Watch;\n        phaseAt = now;\n        report(\"DISPENSED\");\n      }\n      break;\n    case Phase::Watch:\n      if (bowlBeam.active()) {\n        report(\"CAT_AT_BOWL\");\n        phase = Phase::Idle;\n      } else if (now - phaseAt >= WATCH_MS) {\n        report(\"NO_ARRIVAL\");\n        phase = Phase::Idle;\n      }\n      break;\n    default:\n      break;\n  }\n}\n","json":"{\n  \"version\": 1,\n  \"author\": \"ESP32 Classroom · Cat Feeder\",\n  \"editor\": \"wokwi\",\n  \"parts\": [\n    {\n      \"type\": \"wokwi-esp32-devkit-v1\",\n      \"id\": \"esp\",\n      \"top\": 100,\n      \"left\": 0,\n      \"attrs\": {}\n    },\n    {\n      \"type\": \"wokwi-servo\",\n      \"id\": \"flap\",\n      \"top\": 120,\n      \"left\": 355,\n      \"attrs\": {}\n    },\n    {\n      \"type\": \"wokwi-buzzer\",\n      \"id\": \"beep\",\n      \"top\": 255,\n      \"left\": 365,\n      \"attrs\": {\n        \"volume\": \"0.15\"\n      }\n    },\n    {\n      \"type\": \"wokwi-pushbutton\",\n      \"id\": \"meal\",\n      \"top\": 290,\n      \"left\": 175,\n      \"attrs\": {\n        \"color\": \"blue\",\n        \"label\": \"MEAL\"\n      }\n    },\n    {\n      \"type\": \"wokwi-hc-sr04\",\n      \"id\": \"stock\",\n      \"top\": -68,\n      \"left\": 245,\n      \"attrs\": {\n        \"distance\": \"10\"\n      }\n    },\n    {\n      \"type\": \"wokwi-resistor\",\n      \"id\": \"echoTop\",\n      \"top\": 8,\n      \"left\": 305,\n      \"attrs\": {\n        \"value\": \"1000\"\n      }\n    },\n    {\n      \"type\": \"wokwi-resistor\",\n      \"id\": \"echoBottom\",\n      \"top\": 10,\n      \"left\": 417,\n      \"attrs\": {\n        \"value\": \"1800\"\n      },\n      \"rotate\": 90\n    },\n    {\n      \"type\": \"wokwi-dht22\",\n      \"id\": \"air\",\n      \"top\": -44,\n      \"left\": -200,\n      \"attrs\": {\n        \"humidity\": \"55\"\n      }\n    },\n    {\n      \"type\": \"wokwi-resistor\",\n      \"id\": \"dhtPull\",\n      \"top\": 30,\n      \"left\": -152,\n      \"attrs\": {\n        \"value\": \"10000\"\n      }\n    },\n    {\n      \"type\": \"wokwi-slide-switch\",\n      \"id\": \"beam\",\n      \"top\": 220,\n      \"left\": -164,\n      \"attrs\": {\n        \"value\": \"1\",\n        \"bounce\": \"0\"\n      }\n    },\n    {\n      \"type\": \"wokwi-text\",\n      \"id\": \"beamLabel\",\n      \"top\": 174,\n      \"left\": -160,\n      \"attrs\": {\n        \"text\": \"IR: left = cat at bowl\"\n      }\n    },\n    {\n      \"type\": \"wokwi-led\",\n      \"id\": \"fault\",\n      \"top\": 168,\n      \"left\": 216,\n      \"attrs\": {\n        \"color\": \"red\"\n      }\n    },\n    {\n      \"type\": \"wokwi-resistor\",\n      \"id\": \"ledR\",\n      \"top\": 211,\n      \"left\": 217,\n      \"attrs\": {\n        \"value\": \"330\"\n      }\n    }\n  ],\n  \"connections\": [\n    [\n      \"flap:V+\",\n      \"esp:VIN\",\n      \"red\",\n      []\n    ],\n    [\n      \"flap:GND\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"flap:PWM\",\n      \"esp:D18\",\n      \"orange\",\n      []\n    ],\n    [\n      \"beep:2\",\n      \"esp:D25\",\n      \"violet\",\n      []\n    ],\n    [\n      \"beep:1\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"meal:1.l\",\n      \"esp:D19\",\n      \"blue\",\n      []\n    ],\n    [\n      \"meal:2.l\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"stock:VCC\",\n      \"esp:VIN\",\n      \"red\",\n      []\n    ],\n    [\n      \"stock:GND\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"stock:TRIG\",\n      \"esp:D26\",\n      \"blue\",\n      []\n    ],\n    [\n      \"stock:ECHO\",\n      \"echoTop:1\",\n      \"green\",\n      []\n    ],\n    [\n      \"echoTop:2\",\n      \"echoBottom:1\",\n      \"green\",\n      []\n    ],\n    [\n      \"echoTop:2\",\n      \"esp:D27\",\n      \"green\",\n      []\n    ],\n    [\n      \"echoBottom:2\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"air:VCC\",\n      \"esp:3V3\",\n      \"red\",\n      []\n    ],\n    [\n      \"air:GND\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"air:SDA\",\n      \"esp:D32\",\n      \"cyan\",\n      []\n    ],\n    [\n      \"dhtPull:1\",\n      \"air:SDA\",\n      \"cyan\",\n      []\n    ],\n    [\n      \"dhtPull:2\",\n      \"esp:3V3\",\n      \"red\",\n      []\n    ],\n    [\n      \"beam:2\",\n      \"esp:D33\",\n      \"blue\",\n      []\n    ],\n    [\n      \"beam:1\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ],\n    [\n      \"esp:D23\",\n      \"ledR:1\",\n      \"purple\",\n      []\n    ],\n    [\n      \"ledR:2\",\n      \"fault:A\",\n      \"purple\",\n      []\n    ],\n    [\n      \"fault:C\",\n      \"esp:GND.1\",\n      \"black\",\n      []\n    ]\n  ],\n  \"dependencies\": {},\n  \"serialMonitor\": {\n    \"display\": \"always\",\n    \"newline\": \"lf\"\n  }\n}\n","missions":[{"title":"มื้อปกติจ่ายหนึ่งรอบ","desc":"รอ DHT22 อ่านได้ ตั้ง 55% RH กับระยะ 10 ซม. กด MEAL ดู BEEP → FLAP_OPEN → DISPENSED พิมพ์ r ใน Serial เพื่อลองส่งมื้อเดิมซ้ำ"},{"title":"ชื้นหรืออาหารหมดให้หยุด","desc":"ตั้ง RH 78% รอรอบอ่าน แล้วกด MEAL ไฟแดงต้องติด ฝาต้องปิด และ Serial ขึ้น BLOCK_HUMIDITY ลองซ้ำที่ 55% กับระยะ 24 ซม. เพื่อหา BLOCK_EMPTY"},{"title":"มาถึงชามแล้ว","desc":"กลับไปที่ 55% และ 10 ซม. จ่ายหนึ่งรอบ หลังฝาปิดเลื่อน IR ไปซ้ายใน 8 วินาที ต้องเห็น CAT_AT_BOWL โดย Servo ยังปิด"}],"libraries":["ESP32Servo","DHT sensor library for ESPx"],"libraryRequired":true,"libraryName":"ESP32Servo\nDHT sensor library for ESPx"}};
+
+      const guideToggleBtn = document.getElementById('guideToggleBtn');
+      const guideChevron = document.getElementById('guideChevron');
+      const guideContent = document.getElementById('guideContent');
+      const labTabs = Array.from(document.querySelectorAll('.lab-tab'));
+      const labTitle = document.getElementById('labTitle');
+      const labBadge = document.getElementById('labBadge');
+      const labGoal = document.getElementById('labGoal');
+      const wiringList = document.getElementById('wiringList');
+      const libraryBox = document.getElementById('libraryBox');
+      const codeInoPre = document.getElementById('codeInoPre');
+      const codeJsonPre = document.getElementById('codeJsonPre');
+      const copyInoBtn = document.getElementById('copyInoBtn');
+      const copyJsonBtn = document.getElementById('copyJsonBtn');
+      const downloadLabBtn = document.getElementById('downloadLabBtn');
+      const missionList = document.getElementById('missionList');
+      const missionProgressBadge = document.getElementById('missionProgressBadge');
+
+      let activeLab = 'lab1';
+      let isGuideOpen = true;
+      const missionDone = {
+        lab1: [false, false, false],
+        lab2: [false, false, false],
+        lab3: [false, false, false]
+      };
+
+      try {
+        const saved = localStorage.getItem('esp32_classroom_wokwi_missions');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          ['lab1', 'lab2', 'lab3'].forEach((k) => {
+            if (Array.isArray(parsed[k]) && parsed[k].length === 3) {
+              missionDone[k] = parsed[k];
+            }
+          });
+        }
+      } catch (_) {}
+
+      function saveMissions() {
+        try {
+          localStorage.setItem('esp32_classroom_wokwi_missions', JSON.stringify(missionDone));
+        } catch (_) {}
+      }
+
+      async function copyTextWithFallback(text, btnEl, defaultLabel, defaultBgClass) {
+        let copied = false;
+        if (navigator.clipboard && window.isSecureContext) {
+          try {
+            await navigator.clipboard.writeText(text);
+            copied = true;
+          } catch (_) {}
+        }
+        if (!copied) {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            copied = document.execCommand('copy');
+          } catch (_) {}
+          document.body.removeChild(ta);
+        }
+
+        if (copied && btnEl) {
+          btnEl.textContent = '✅ คัดลอกเรียบร้อย!';
+          btnEl.className = 'px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-sm transition cursor-pointer';
+          setTimeout(() => {
+            btnEl.textContent = defaultLabel;
+            btnEl.className = defaultBgClass;
+          }, 2000);
+        }
+      }
+
+      function triggerDownload(filename, content) {
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      function renderMissions() {
+        const lab = labsData[activeLab];
+        const doneArr = missionDone[activeLab];
+        const doneCount = doneArr.filter(Boolean).length;
+
+        missionProgressBadge.textContent = `สำเร็จ ${doneCount} / 3 มิชชัน`;
+        missionProgressBadge.className = doneCount === 3
+          ? 'px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-600 text-white'
+          : 'px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800';
+
+        missionList.innerHTML = '';
+        lab.missions.forEach((m, idx) => {
+          const checked = doneArr[idx];
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.setAttribute('aria-pressed', String(checked));
+          card.className = checked
+            ? 'text-left rounded-2xl p-4 border-2 border-emerald-500 bg-emerald-50 shadow-sm transition cursor-pointer flex items-start gap-3'
+            : 'text-left rounded-2xl p-4 border-2 border-slate-200 bg-slate-50 hover:border-emerald-300 hover:bg-white shadow-sm transition cursor-pointer flex items-start gap-3';
+
+          const box = document.createElement('span');
+          box.className = checked
+            ? 'w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-extrabold shrink-0 mt-0.5'
+            : 'w-6 h-6 rounded-lg bg-white border-2 border-slate-300 text-transparent flex items-center justify-center text-xs font-extrabold shrink-0 mt-0.5';
+          box.textContent = '✓';
+
+          const body = document.createElement('div');
+          const title = document.createElement('p');
+          title.className = checked ? 'text-sm font-extrabold text-emerald-900' : 'text-sm font-extrabold text-slate-800';
+          title.textContent = m.title;
+
+          const desc = document.createElement('p');
+          desc.className = 'text-xs text-slate-600 mt-1 leading-relaxed';
+          desc.textContent = m.desc;
+
+          body.appendChild(title);
+          body.appendChild(desc);
+          card.appendChild(box);
+          card.appendChild(body);
+
+          card.addEventListener('click', () => {
+            missionDone[activeLab][idx] = !missionDone[activeLab][idx];
+            saveMissions();
+            renderMissions();
+          });
+
+          missionList.appendChild(card);
+        });
+      }
+
+      function renderLab() {
+        const lab = labsData[activeLab];
+
+        labTabs.forEach((tab) => {
+          const isCurrent = tab.dataset.lab === activeLab;
+          tab.setAttribute('aria-pressed', String(isCurrent));
+          tab.className = isCurrent
+            ? 'lab-tab px-5 py-3 rounded-2xl text-sm sm:text-base font-extrabold shadow-sm transition active:scale-95 cursor-pointer bg-cyan-600 text-white'
+            : 'lab-tab px-5 py-3 rounded-2xl text-sm sm:text-base font-extrabold shadow-sm transition active:scale-95 cursor-pointer bg-white text-slate-700 border-2 border-slate-200 hover:border-cyan-400';
+        });
+
+        document.getElementById('feeder-final').hidden = activeLab !== 'lab3';
+        labTitle.textContent = lab.title;
+        labBadge.textContent = lab.badge;
+        labGoal.textContent = lab.goal;
+
+        wiringList.innerHTML = '';
+        lab.wiring.forEach((w) => {
+          const item = document.createElement('div');
+          item.className = 'bg-white rounded-xl px-3 py-2 border border-slate-200 flex items-center justify-between gap-2';
+          item.innerHTML = `<span class="font-bold text-slate-700">${w.from}</span><span class="font-extrabold text-cyan-700 code-font text-xs">➔ ${w.to}</span>`;
+          wiringList.appendChild(item);
+        });
+
+        libraryBox.innerHTML = '';
+        if (lab.libraryRequired) {
+          libraryBox.className = 'lg:col-span-5 rounded-3xl p-5 shadow-md border-2 border-amber-300 bg-amber-50/90 flex flex-col justify-between gap-3';
+          libraryBox.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-200 text-amber-950">
+                  📦 ต้องเพิ่ม Library: <code class="code-font">${lab.libraries.join(" · ")}</code>
+                </span>
+                <button id="copyLibBtn" type="button"
+                  class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer">
+                  📋 คัดลอกชื่อ Library
+                </button>
+              </div>
+              <p class="text-xs sm:text-sm font-bold text-amber-950 mb-2">วิธีเพิ่ม Library ใน Wokwi (เลือกทำ 1 วิธี):</p>
+              <ul class="text-xs text-amber-900 space-y-1.5 leading-relaxed">
+                <li><strong>วิธีที่ 1:</strong> กดแท็บ <code class="px-1 bg-white rounded border code-font">Library Manager</code> → กดปุ่ม <strong>+</strong> → ค้นหาไลบรารีตามรายชื่อด้านบนทีละตัว</li>
+                <li><strong>วิธีที่ 2:</strong> สร้างไฟล์ <code class="px-1 bg-white rounded border code-font">libraries.txt</code> แล้ววางรายชื่อจากปุ่มคัดลอก บรรทัดละหนึ่งชื่อ</li>
+              </ul>
+            </div>
+          `;
+          const copyLibBtn = document.getElementById('copyLibBtn');
+          copyLibBtn.addEventListener('click', () => {
+            copyTextWithFallback(
+              lab.libraryName,
+              copyLibBtn,
+              '📋 คัดลอกชื่อ Library',
+              'px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer'
+            );
+          });
+        } else {
+          libraryBox.className = 'lg:col-span-5 rounded-3xl p-5 shadow-md border-2 border-emerald-300 bg-emerald-50/90 flex flex-col justify-center gap-2';
+          libraryBox.innerHTML = `
+            <span class="inline-flex w-fit px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-200 text-emerald-950">
+              ✅ ไม่ต้องเพิ่ม Library
+            </span>
+            <p class="text-sm font-bold text-emerald-900 leading-relaxed">
+              Lab นี้ใช้คำสั่งพื้นฐานในตัวบอร์ด ESP32 ได้เลย ไม่ต้องติดตั้ง Library เพิ่มเติมครับ
+            </p>
+            <p class="text-xs text-emerald-800">
+              💡 <strong>ทิป:</strong> กดปุ่ม Play สีเขียวแล้ว <strong>คลิกที่ตัวเซนเซอร์ Ultrasonic</strong> เพื่อเลื่อนสไลเดอร์จำลองระยะวัตถุได้ทันที
+            </p>
+          `;
+        }
+
+        codeInoPre.textContent = lab.ino;
+        codeJsonPre.textContent = lab.json;
+        renderMissions();
+      }
+
+      guideToggleBtn.addEventListener('click', () => {
+        isGuideOpen = !isGuideOpen;
+        guideContent.classList.toggle('hidden', !isGuideOpen);
+        guideToggleBtn.setAttribute('aria-expanded', String(isGuideOpen));
+        guideChevron.textContent = isGuideOpen ? '▲ ซ่อนคู่มือ' : '▼ ดูคู่มือ 3 ขั้นตอน';
+      });
+
+      labTabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          activeLab = tab.dataset.lab;
+          renderLab();
+        });
+      });
+
+      copyInoBtn.addEventListener('click', () => {
+        copyTextWithFallback(
+          labsData[activeLab].ino,
+          copyInoBtn,
+          '📋 คัดลอกโค้ด (sketch.ino)',
+          'px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer'
+        );
+      });
+
+      copyJsonBtn.addEventListener('click', () => {
+        copyTextWithFallback(
+          labsData[activeLab].json,
+          copyJsonBtn,
+          '📋 คัดลอกวงจร (diagram.json)',
+          'px-3 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer'
+        );
+      });
+
+      downloadLabBtn.addEventListener('click', () => {
+        const lab = labsData[activeLab];
+        triggerDownload(`${activeLab}_sketch.ino`, lab.ino);
+        setTimeout(() => triggerDownload(`${activeLab}_diagram.json`, lab.json), 220);
+        if (lab.libraryRequired) {
+          setTimeout(() => triggerDownload(`${activeLab}_libraries.txt`, lab.libraryName + '\n'), 440);
+        }
+      });
+
+      renderLab();
+    })();
+  </script>
+
+  <!-- Embed Mode Handler & Navigation Key Forwarder -->
+  <style>
+    html.is-embedded header > div:first-child { display: none !important; }
+  </style>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('embed') === '1') {
+        document.documentElement.classList.add('is-embedded');
+        const hideBadge = function () {
+          const header = document.querySelector('header');
+          if (header) {
+            const leftBadge = header.querySelector('div:first-child');
+            if (leftBadge) {
+              leftBadge.style.display = 'none';
+            }
+            const remainingControls = header.querySelector('button, a');
+            if (!remainingControls) {
+              header.style.display = 'none';
+            } else {
+              header.style.justifyContent = 'flex-end';
+              header.classList.remove('justify-between');
+            }
+          }
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', hideBadge);
+        } else {
+          hideBadge();
+        }
+      }
+
+
+    })();
+  </script>
+
+<script src="../scripts/slide-support.js"></script><script type="module" src="../scripts/feeder/capstone.js"></script>
+</body>
+</html>

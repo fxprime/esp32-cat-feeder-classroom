@@ -1,0 +1,88 @@
+{
+  "source_folder": "/Users/thanabadeebulunseechart/Downloads/web playground",
+  "files": [
+    {
+      "source": "1_arduino_arduino_2.html",
+      "sha256": "be8813ec78288c337ef2bc8255867cb0c9e9de6994b775f68969e710a81b1825",
+      "lesson": 1
+    },
+    {
+      "source": "2_input_process_output_arduino_2.html",
+      "sha256": "4100ea0a1f4edf3083e22d59fe37e3c1ce338c498aed5410200706172f09569b",
+      "lesson": 2
+    },
+    {
+      "source": "3_arduino_uno_arduino_2.html",
+      "sha256": "ab7d091d7587ce1f06136317da251de0fbc6b354cdcca807bd46bd1973eb066d",
+      "lesson": 3
+    },
+    {
+      "source": "4_arduino_2.html",
+      "sha256": "f905cedd2f05da0514e150e9dd25995203ee6ca7c98d4c49154ab3ec36dd643d",
+      "lesson": 4
+    },
+    {
+      "source": "5_breadboard_arduino_2.html",
+      "sha256": "dc207543a5c2ee67ae3fc9ed5e17ba19ae421b451c13a4919f0cd5583e804406",
+      "lesson": 5
+    },
+    {
+      "source": "6_digital_vs_analog_pwm_arduino_2.html",
+      "sha256": "6fd89b716db7e973b56fc8e3437f5cbad0e06ba5a2d1f9dde357aa8e35695a94",
+      "lesson": 6
+    },
+    {
+      "source": "7_arduino_arduino_2.html",
+      "sha256": "d0616687ff6bdaa3ec7eda7df599ef29fbead162eaa53d3db5b7ae056540b224",
+      "lesson": 7
+    },
+    {
+      "source": "8_arduino_playground_arduino_2.html",
+      "sha256": "500a3f3d9674374327498886e8eaae7147620dfbaa33c68280bbfae854affdf1",
+      "lesson": 8
+    },
+    {
+      "source": "wokwi_lab_1_3_arduino_2.html",
+      "sha256": "13379dabb90c750f007bd21ffc47c1d0edda9518532a1dfbb496e7ddb389322b",
+      "lesson": 9
+    }
+  ],
+  "application_files": [
+    {
+      "source": "src/index.css",
+      "sha256": "4033b79cbed5b095443d5da745137cb5a1ab126b0d04c401b1ee2f23fe3c98a3"
+    },
+    {
+      "source": "src/main.jsx",
+      "sha256": "79dd228d9216385682c6fed3de971be133e5dc74f7d94b3cea2ae00c1d73b0ca"
+    },
+    {
+      "source": "src/App.jsx",
+      "sha256": "8a7bffdc4913ef21528579c6dbdfdae7c7909ede09b7980b834cc4e5b130fe1c"
+    },
+    {
+      "source": "src/components/ResetModal.jsx",
+      "sha256": "8aa496fbbb967cbb0d37e2d2a341bfd5cea41862bf169b9e92f38068c8e74259"
+    },
+    {
+      "source": "src/components/SlideViewer.jsx",
+      "sha256": "15b445d0aa302e7a685f7850a077c44f5e5f5c660fd8eb60cca18ae508419d73"
+    },
+    {
+      "source": "src/components/Dashboard.jsx",
+      "sha256": "a30f6ff809ba9800042069584e6ebb98c91a3ec9a408dd069d0c8ef2adb24c93"
+    },
+    {
+      "source": "src/components/Navbar.jsx",
+      "sha256": "e24e69da4832ac1f43ebf1f37c769defbb62c03f169e15b50be3cd9041ddd4c5"
+    },
+    {
+      "source": "src/data/lessons.js",
+      "sha256": "8dbbd2343eca6a1b441757ec14038b43e19cfbe330598603ab67044d30bdba5a"
+    },
+    {
+      "source": "package-lock.json",
+      "sha256": "3312b794f3bccf41436ddc289295b720237aaf15b60666d922dd4f6d317ed930"
+    }
+  ]
+}

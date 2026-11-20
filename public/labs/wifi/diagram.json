@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "author": "ESP32 Lab",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": 30,
+      "left": 0,
+      "attrs": {}
+    }
+  ],
+  "connections": [],
+  "dependencies": {},
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  }
+}

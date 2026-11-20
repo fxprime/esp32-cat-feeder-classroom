@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ให้ AI ช่วยประเมินโปรเจกต์ | ESP32 ม.4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/slide-support.css">
+  <link rel="stylesheet" href="../styles/code-lab.css">
+  <link rel="stylesheet" href="../styles/ai-project.css">
+  <link rel="stylesheet" href="../styles/project-tradeoff.css">
+</head>
+<body>
+  <main class="cl-lesson ap-lesson">
+    <header class="cl-hero">
+      <span class="cl-kicker">โปรเจกต์ ESP32 ม.4</span>
+      <h1>เลือกกรณีทดสอบเครื่องให้อาหารแมว</h1>
+      <p>ตั้งเงื่อนไขหนึ่งอย่าง คิดว่าควรเกิดอะไรขึ้น แล้วขอให้ AI ช่วยเสนอวิธีพิสูจน์ใน Lab</p>
+    </header>
+
+    <section class="cl-panel-inner ap-feeder-test" aria-labelledby="ap-test-heading">
+      <div>
+        <span class="cl-kicker">เตรียมก่อนลง Lab</span>
+        <h2 id="ap-test-heading">ถ้าเปลี่ยนหนึ่งอย่าง เครื่องควรทำอะไร?</h2>
+        <p>เลือกเหตุการณ์เพื่อเติมโจทย์ทดสอบลงในคำถาม ระบบจะต่อยอดจากค่าที่เครื่องอ่านได้จริงใน Lab</p>
+      </div>
+      <div class="ap-feeder-cases" role="group" aria-label="กรณีทดสอบเครื่องให้อาหาร">
+        <button type="button" data-feeder-test="normal" aria-pressed="true">มื้อปกติ</button>
+        <button type="button" data-feeder-test="humid" aria-pressed="false">ถังชื้น</button>
+        <button type="button" data-feeder-test="empty" aria-pressed="false">ถังหมด</button>
+        <button type="button" data-feeder-test="repeat" aria-pressed="false">ส่งมื้อเดิมซ้ำ</button>
+        <button type="button" data-feeder-test="arrival" aria-pressed="false">มีตัวมาที่ชาม</button>
+      </div>
+      <dl class="ap-feeder-expect" aria-live="polite" aria-atomic="true">
+        <div><dt>ตั้งค่า / ทำอะไร</dt><dd id="ap-feeder-input"></dd></div>
+        <div><dt>ถือว่าผ่านเมื่อ</dt><dd id="ap-feeder-pass"></dd></div>
+      </dl>
+    </section>
+    <form class="ap-workspace" id="project-form" aria-labelledby="ap-brief-heading">
+      <section class="cl-panel-inner ap-brief">
+        <header class="cl-example-heading">
+          <h2 id="ap-brief-heading">1. เล่าไอเดียของกลุ่ม</h2>
+          <p>เริ่มจากตัวอย่างแล้วแก้ได้ หรือกดกรอกไอเดียเอง</p>
+        </header>
+        <div class="ap-presets" aria-label="เลือกตัวอย่างโปรเจกต์">
+          <button type="button" data-preset="feeder">เครื่องให้อาหารแมว</button>
+          <button type="button" data-preset="plant">เตือนรดน้ำ</button>
+          <button type="button" data-preset="locker">เตือนตู้เปิดค้าง</button>
+          <button type="button" data-preset="desk">ไฟโต๊ะอัตโนมัติ</button>
+          <button type="button" data-preset="custom">กรอกไอเดียเอง</button>
+        </div>
+        <div class="ap-fields">
+          <div class="ap-field">
+            <label for="ap-idea">อยากทำอะไร <small>จำเป็น</small></label>
+            <input id="ap-idea" name="idea" required maxlength="140" placeholder="เช่น ระบบเตือนรดน้ำต้นไม้">
+          </div>
+          <div class="ap-field">
+            <label for="ap-goal">ตอนสาธิต อยากให้เห็นอะไร</label>
+            <textarea id="ap-goal" name="goal" rows="2" maxlength="350" placeholder="เช่น ดินแห้งแล้วไฟติด ดินชื้นแล้วไฟดับ"></textarea>
+          </div>
+          <div class="ap-field-pair">
+            <div class="ap-field">
+              <label for="ap-budget">งบสูงสุด (บาท)</label>
+              <input id="ap-budget" name="budget" type="number" min="0" step="1" inputmode="numeric">
+            </div>
+            <div class="ap-field">
+              <label for="ap-time">เวลาที่มี</label>
+              <input id="ap-time" name="time" maxlength="100" placeholder="เช่น 2 สัปดาห์">
+            </div>
+          </div>
+          <div class="ap-field">
+              <label for="ap-tools">บอร์ด อุปกรณ์ และเครื่องมือที่มี</label>
+            <textarea id="ap-tools" name="tools" rows="2" maxlength="350" placeholder="เช่น ESP32 DevKit V1, LED, Arduino IDE, Wokwi"></textarea>
+          </div>
+          <div class="ap-field">
+            <label for="ap-limits">ข้อจำกัดของกลุ่ม <small>ถ้ามี</small></label>
+            <input id="ap-limits" name="limits" maxlength="200" placeholder="เช่น เพิ่งหัดเขียนโค้ด ใช้ USB 5 V และยังบัดกรีไม่เป็น">
+          </div>
+        </div>
+      </section>
+
+      <section class="cl-panel-inner ap-prompt" aria-labelledby="ap-prompt-heading">
+        <header class="cl-example-heading">
+          <h2 id="ap-prompt-heading">2. เลือกสิ่งที่อยากถาม AI</h2>
+          <p>เริ่มจากประเมินไอเดีย แล้วใช้คำถามอื่นถามต่อในแชตเดิมได้</p>
+        </header>
+        <fieldset class="ap-modes">
+          <legend class="ap-sr-only">เลือกหัวข้อที่จะถาม</legend>
+          <div><input type="radio" id="ap-assess" name="mode" value="assess" checked><label for="ap-assess">ประเมินไอเดีย</label></div>
+          <div><input type="radio" id="ap-poc" name="mode" value="poc"><label for="ap-poc">วางแผน POC</label></div>
+          <div><input type="radio" id="ap-diagram" name="mode" value="diagram"><label for="ap-diagram">วาดไดอะแกรม</label></div>
+          <div><input type="radio" id="ap-explain" name="mode" value="explain"><label for="ap-explain">อธิบายอีกแบบ</label></div>
+        </fieldset>
+        <div class="ap-field" id="ap-format-field" hidden>
+          <label for="ap-format">อยากให้ AI อธิบายแบบไหน</label>
+          <select id="ap-format" name="format">
+            <option value="analogy">เปรียบเทียบกับของใกล้ตัว</option>
+            <option value="story">เล่าเป็นเหตุการณ์ 3 ฉาก</option>
+            <option value="table">สรุปเป็นตารางสั้น ๆ</option>
+          </select>
+        </div>
+        <div class="pt-prompt-target" id="pt-prompt-target" hidden>
+          <span id="pt-target-text"></span>
+          <button type="button" id="pt-clear">เอาออก</button>
+        </div>
+        <div class="ap-field">
+          <label for="ap-output">คำถามพร้อมคัดลอก</label>
+          <textarea id="ap-output" rows="12" readonly></textarea>
+        </div>
+        <div class="ap-actions">
+          <button type="button" class="ap-primary" id="ap-copy">คัดลอกคำถาม</button>
+          <a class="ap-link-button" href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">เปิด Gemini ↗</a>
+        </div>
+        <p class="ap-status" id="ap-status" role="status"></p>
+        <p class="ap-note">เปิด Gemini แล้ววางคำถามและกดส่ง ใช้แบบฟรีได้ ถ้าบัญชีมี Pro ให้เลือก ก็ลองคำถามเดียวกันแล้วเทียบคำตอบได้</p>
+        <p class="ap-note">ข้อมูลที่กรอกอยู่ในหน้านี้ เลือกเฉพาะข้อมูลโปรเจกต์ที่ต้องการส่งให้ AI</p>
+      </section>
+    </form>
+
+    <section class="cl-panel-inner ap-follow-up" aria-labelledby="ap-follow-up-heading">
+      <header class="cl-example-heading">
+        <h2 id="ap-follow-up-heading">3. เช็กคำตอบก่อนเริ่มลงมือ</h2>
+      </header>
+      <ul class="ap-review">
+        <li><strong>ทำทันไหม</strong> เลือกฟีเจอร์หลักหนึ่งอย่างที่กลุ่มทำทัน ถ้างานใหญ่ไป ให้ถามว่าตัดอะไรออกได้ก่อน</li>
+        <li><strong>ซื้ออะไรจริง</strong> เปิดหน้าร้านเช็กรุ่น จำนวน ราคา และค่าส่ง แล้วรวมกับรายการของที่มีอยู่</li>
+        <li><strong>พิสูจน์อย่างไร</strong> เขียนผลที่ต้องสังเกต เช่น ทดลองดินแห้งและดินชื้นอย่างละ 3 ครั้ง แล้วบันทึกว่า LED ตอบสนองถูกทุกครั้งไหม</li>
+      </ul>
+    </section>
+
+    <section class="cl-panel-inner ap-glossary" aria-labelledby="ap-glossary-heading">
+      <header class="cl-example-heading">
+        <h2 id="ap-glossary-heading">ศัพท์ที่เจอตอนวางแผน</h2>
+      </header>
+      <div class="ap-terms">
+        <details>
+          <summary>Feasibility · ความเป็นไปได้</summary>
+          <p>ดูว่าไอเดียทำได้จริงแค่ไหนในเวลาที่มี ด้วยงบ อุปกรณ์ และทักษะของกลุ่ม เช่น ทำไฟเตือนดินแห้งให้ได้ก่อนเพิ่มระบบรดน้ำเอง</p>
+        </details>
+        <details>
+          <summary>POC · การทดลองพิสูจน์ไอเดีย</summary>
+          <p>Proof of Concept คือการทดลองเล็ก ๆ เพื่อเช็กว่าส่วนสำคัญทำงานได้ไหม เช่น อ่านค่าดินแห้งกับดินชื้น แล้วดูว่าแยกกันได้ก่อนทำกล่องจริง</p>
+        </details>
+        <details>
+          <summary>BOM · รายการอุปกรณ์</summary>
+          <p>Bill of Materials คือรายการของที่ต้องใช้ เขียนรุ่น จำนวน และราคาต่อชิ้น แยกของที่มีแล้วไว้ จะได้รู้ว่าต้องซื้ออะไรเพิ่ม</p>
+        </details>
+        <details>
+          <summary>Block diagram · ภาพรวมการทำงาน</summary>
+          <p>กล่องแทนส่วนประกอบ ลูกศรบอกว่าข้อมูลไหลไปทางไหน ตัวอย่างนี้แสดงว่าบอร์ดรับค่าแล้วสั่งอะไร</p>
+          <div class="ap-block-diagram" role="img" aria-label="เซนเซอร์วัดความชื้นส่งค่าให้ ESP32 เทียบกับค่าเกณฑ์ แล้วสั่งไฟ LED เตือน">
+            <span><small>Input</small>เซนเซอร์วัดดิน</span><b aria-hidden="true">→</b>
+            <span><small>Process</small>ESP32 เทียบค่า</span><b aria-hidden="true">→</b>
+            <span><small>Output</small>ไฟ LED เตือน</span>
+          </div>
+        </details>
+        <details>
+          <summary>Simulator · โปรแกรมจำลอง</summary>
+          <p>ใช้ Wokwi ลองตรรกะของโค้ดได้ เช่น หมุนตัวต้านทานปรับค่าแทนสัญญาณเซนเซอร์ แล้วค่อยใช้เซนเซอร์จริงทดสอบกับดินจริง</p>
+        </details>
+      </div>
+    </section>
+
+    <details class="ap-optional-tradeoff">
+      <summary>ดูเพิ่ม · วางงบและเวลาในอีกหนึ่งตัวอย่าง</summary>
+    <section class="cl-panel-inner pt-panel" id="project-tradeoff" aria-labelledby="pt-heading">
+      <header class="cl-example-heading pt-heading">
+        <h2 id="pt-heading">หน้าสเตตัสโปรเจกต์</h2>
+        <p>ลองเลื่อนงบกับเวลาของเครื่องเตือนดินแห้ง แล้วดูว่าสเตตัสไหนเพิ่มและเพิ่มเพราะอะไร</p>
+      </header>
+      <div class="pt-controls">
+        <div class="pt-control">
+          <label for="pt-budget">งบซื้อของเพิ่ม</label>
+          <output for="pt-budget" id="pt-budget-value" aria-live="off"></output>
+          <input type="range" id="pt-budget" min="0" max="400" step="25" value="50">
+        </div>
+        <div class="pt-control">
+          <label for="pt-time">เวลาลงมือของกลุ่ม</label>
+          <output for="pt-time" id="pt-time-value" aria-live="off"></output>
+          <input type="range" id="pt-time" min="0" max="10" value="3">
+        </div>
+      </div>
+
+      <div class="pt-sheet">
+        <figure class="pt-item" id="pt-item">
+          <figcaption>
+            <h3>เครื่องเตือนดินแห้ง</h3>
+            <span id="pt-stage"></span>
+          </figcaption>
+          <svg class="pt-art" viewBox="0 0 480 250" aria-hidden="true">
+            <defs>
+              <pattern id="pt-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M0 20V0h20" fill="none" stroke="#233759"/></pattern>
+              <pattern id="pt-holes" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.35" fill="#61788f"/></pattern>
+              <linearGradient id="pt-case" x1="0" x2="1" y1="0" y2="1" gradientUnits="objectBoundingBox">
+                <stop stop-color="#264976"/>
+                <stop offset="1" stop-color="#132b4e"/>
+              </linearGradient>
+              <linearGradient id="pt-pot" x1="0" x2="0" y1="0" y2="1" gradientUnits="objectBoundingBox">
+                <stop stop-color="#d89150"/>
+                <stop offset="1" stop-color="#8d4a3c"/>
+              </linearGradient>
+            </defs>
+            <rect width="480" height="250" rx="12" fill="#0b172b"/>
+            <rect width="480" height="250" rx="12" fill="url(#pt-grid)" opacity=".7"/>
+            <path d="M16 27V15h13m422 0h13v12M16 223v12h13m422 0h13v-12" fill="none" stroke="#456693" stroke-width="2"/>
+            <ellipse cx="150" cy="204" rx="112" ry="16" fill="#070e1d" opacity=".5"/>
+            <ellipse cx="377" cy="216" rx="66" ry="11" fill="#070e1d" opacity=".5"/>
+            <g class="pt-monitor" fill="none" stroke="#6ba3ea" stroke-width="2">
+              <rect x="21" y="59" width="250" height="145" rx="12" stroke-dasharray="6 6"/>
+              <path d="M132 206h29v14h26m-55 0h-26"/>
+            </g>
+            <g class="pt-mount">
+              <rect x="24" y="77" width="244" height="126" rx="12" fill="#23466a" stroke="#81a5cf" stroke-width="2"/>
+              <path d="M40 190h211" stroke="#5080b1" stroke-width="2"/>
+              <g fill="#9db2cc" stroke="#0a182d" stroke-width="2">
+                <circle cx="39" cy="91" r="5"/><circle cx="253" cy="91" r="5"/><circle cx="39" cy="189" r="5"/><circle cx="253" cy="189" r="5"/>
+              </g>
+            </g>
+            <g class="pt-open">
+              <rect x="43" y="96" width="206" height="89" rx="8" fill="#c4d4e4"/>
+              <rect x="46" y="92" width="200" height="86" rx="8" fill="#eaf3fc" stroke="#b0c9de" stroke-width="2"/>
+              <rect x="53" y="102" width="184" height="66" rx="4" fill="url(#pt-holes)"/>
+              <path d="M56 134h178" stroke="#a6bad0" stroke-width="3"/>
+              <path d="M58 103h176m-176 63h176" stroke="#ad4862" stroke-width="1.5"/>
+              <g class="pt-wires" fill="none" stroke-linecap="round" stroke-width="3">
+                <path d="M137 113c29-32 61-22 71 8" stroke="#fb923c"/>
+                <path d="M134 151c34 25 57 18 73-7" stroke="#277bb2"/>
+                <path d="M142 125c18-10 28 1 36 8" stroke="#bb5ff3"/>
+              </g>
+              <path d="M185 139h10l3-4h8l4 4h10" fill="none" stroke="#875e41" stroke-width="3"/>
+              <path d="M206 123v10m12-10v10" stroke="#5c7690" stroke-width="2"/>
+              <rect class="pt-indicator" x="203" y="112" width="18" height="13" rx="5" fill="#a3ffbd" stroke="#126345" stroke-width="2"/>
+              <g class="pt-board">
+                <rect x="77" y="109" width="78" height="48" rx="4" fill="#0b745e" stroke="#53d0ad" stroke-width="2"/>
+                <path d="M83 113h62m-62 40h62" stroke="#ffd08b" stroke-width="3" stroke-dasharray="3 3"/>
+                <rect x="96" y="119" width="37" height="27" rx="3" fill="#afcbcc"/>
+                <path d="M137 121h10v5h-8v5h8v6h-8" fill="none" stroke="#eab560" stroke-width="2"/>
+                <rect x="69" y="126" width="14" height="13" rx="2" fill="#a6bad0" stroke="#c6d9e9" stroke-width="2"/>
+                <circle cx="89" cy="141" r="3" fill="#fda4af"/>
+                <text x="114" y="136" fill="#15483f" font-size="9" font-weight="700" text-anchor="middle">ESP32</text>
+              </g>
+            </g>
+            <g class="pt-box">
+              <rect x="33" y="77" width="232" height="128" rx="15" fill="#0c1930" stroke="#16294b" stroke-width="2"/>
+              <rect x="32" y="69" width="232" height="126" rx="15" fill="url(#pt-case)" stroke="#86aeee" stroke-width="2"/>
+              <path d="M34 93h228m-228 78h228" stroke="#456b9e" stroke-width="2"/>
+              <rect x="94" y="109" width="110" height="43" rx="7" fill="#152742" stroke="#668bbd"/>
+              <circle class="pt-indicator" cx="117" cy="130" r="7" fill="#83f6ae"/>
+              <path d="M136 125h50m-50 10h37" stroke="#9eb7db" stroke-width="2" stroke-linecap="round"/>
+              <g fill="#7f9ec0" stroke="#101836" stroke-width="2">
+                <circle cx="51" cy="87" r="5"/><circle cx="245" cy="87" r="5"/><circle cx="51" cy="177" r="5"/><circle cx="245" cy="177" r="5"/>
+              </g>
+              <path d="M253 131h18v17h-18" fill="#7899bb" stroke="#334c76" stroke-width="2"/>
+              <rect class="pt-socket" x="266" y="131" width="12" height="17" rx="3" fill="#8ce7d2" stroke="#093647" stroke-width="2"/>
+            </g>
+            <path class="pt-cable" d="M242 139c47 1 37 39 77 39 34 0 36-50 70-57" fill="none" stroke="#f8a459" stroke-width="3.5" stroke-linecap="round"/>
+            <g class="pt-plant">
+              <path d="M379 146c-6-26 9-58-6-88" fill="none" stroke="#72c48c" stroke-width="4" stroke-linecap="round"/>
+              <path d="M378 109c-30 0-42-18-41-35 24-2 41 12 41 35Z" fill="#3caf84" stroke="#79ddb0" stroke-width="1.5"/>
+              <path d="M379 85c-9-22-2-39 18-46 11 19 1 39-18 46Z" fill="#43bb90" stroke="#8de7b4" stroke-width="1.5"/>
+              <path d="M382 124c23 0 36-12 39-28-22-6-38 10-39 28Z" fill="#389f7e" stroke="#72cc9c" stroke-width="1.5"/>
+              <path d="M326 150h102l-13 57c-2 11-70 11-72 0Z" fill="url(#pt-pot)" stroke="#e3a673" stroke-width="2"/>
+              <ellipse cx="377" cy="150" rx="51" ry="13" fill="#edab74"/>
+              <ellipse cx="377" cy="150" rx="43" ry="9" fill="#50352f"/>
+              <path d="M379 149v-13" stroke="#73c189" stroke-width="4" stroke-linecap="round"/>
+            </g>
+            <g class="pt-probe">
+              <path d="m391 106 14 3-6 41-8 5-5-9Z" fill="#0d6152" stroke="#62d9ac" stroke-width="2"/>
+              <path d="m395 124 7 2m-8 4 7 1m-8 4 7 1" stroke="#a8eec9" stroke-width="1.3"/>
+              <path d="m391 110 13 3" stroke="#ead391" stroke-width="2" stroke-dasharray="2 2"/>
+            </g>
+            <g class="pt-unplug-guide">
+              <path d="M113 112v-10m283 11 9-12" fill="none" stroke="#a8deff" stroke-width="2" stroke-dasharray="4 4"/>
+              <g fill="#cbe9ff" font-size="13" font-weight="700" text-anchor="middle">
+                <text x="111" y="43">บอร์ด ESP32</text>
+                <text x="412" y="60">เซนเซอร์</text>
+              </g>
+            </g>
+          </svg>
+          <p id="pt-item-note" class="pt-item-note"></p>
+          <button type="button" id="pt-detach" aria-controls="pt-item-note">ลองถอดชิ้นส่วน</button>
+          <p class="pt-reuse-tip"><strong>แต้มเด่นของเดโม</strong> Breadboard ใช้หัวเสียบ ถอด ESP32 เซนเซอร์ และสายไปต่อโปรเจกต์อื่นได้</p>
+        </figure>
+
+        <div class="pt-stats" aria-label="สเตตัสของโปรเจกต์">
+          <div class="pt-stat" data-stat="works">
+            <div class="pt-stat-heading"><h3>ทำงานได้</h3><span data-level></span></div>
+            <div class="pt-meter" aria-hidden="true"><i></i><i></i><i></i></div>
+            <p class="pt-stat-milestone" data-milestone></p>
+            <p class="pt-stat-why"><span class="pt-gain" data-gain hidden></span><span data-reason></span></p>
+            <p class="pt-next" data-next hidden></p>
+          </div>
+          <div class="pt-stat" data-stat="durability">
+            <div class="pt-stat-heading"><h3>ความทน</h3><span data-level></span></div>
+            <div class="pt-meter" aria-hidden="true"><i></i><i></i><i></i></div>
+            <p class="pt-stat-milestone" data-milestone></p>
+            <p class="pt-stat-why"><span class="pt-gain" data-gain hidden></span><span data-reason></span></p>
+            <p class="pt-next" data-next hidden></p>
+          </div>
+          <div class="pt-stat" data-stat="evidence">
+            <div class="pt-stat-heading"><h3>ความมั่นใจจากการทดสอบ</h3><span data-level></span></div>
+            <div class="pt-meter" aria-hidden="true"><i></i><i></i><i></i></div>
+            <p class="pt-stat-milestone" data-milestone></p>
+            <p class="pt-stat-why"><span class="pt-gain" data-gain hidden></span><span data-reason></span></p>
+            <p class="pt-next" data-next hidden></p>
+          </div>
+          <div class="pt-stat" data-stat="reuse">
+            <div class="pt-stat-heading"><h3>ถอดใช้ต่อ / ซ่อมง่าย</h3><span data-level></span></div>
+            <div class="pt-meter" aria-hidden="true"><i></i><i></i><i></i></div>
+            <p class="pt-stat-milestone" data-milestone></p>
+            <p class="pt-stat-why"><span class="pt-gain" data-gain hidden></span><span data-reason></span></p>
+            <p class="pt-next" data-next hidden></p>
+          </div>
+        </div>
+      </div>
+      <p class="ap-sr-only" role="status" id="pt-status"></p>
+      <p class="pt-note">แต้มแสดงงานที่มีทรัพยากรพอเริ่มในโจทย์ตัวอย่าง ผลจริงต้องลงมือทดสอบ มีบอร์ดและชุด Breadboard อยู่แล้ว งบยังไม่รวมค่าส่ง</p>
+      <button type="button" id="pt-apply" aria-controls="project-form">ใช้แนวทางนี้ในคำถาม AI ↓</button>
+      <details class="pt-refs">
+        <summary>ที่มาของตัวอย่าง</summary>
+        <ul>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://www.nasa.gov/directorates/somd/space-communications-navigation-program/technology-readiness-levels/">NASA · การทดสอบตามระดับความพร้อม</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://learn.adafruit.com/breadboards-for-beginners/perma-protos">Adafruit · ย้ายวงจร Breadboard ไปแผ่นบัดกรี</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://www.mikroelec.com/product/507/capacitive-soil-moisture-sensor-v1-2">ตัวอย่างราคาเซนเซอร์ดิน</a> และ <a target="_blank" rel="noopener noreferrer" href="https://www.mcucity.com/product/1793/100x60x25mm-diy-abs-plastic-housing-box-case">ตัวอย่างราคากล่องพลาสติก</a></li>
+        </ul>
+      </details>
+    </section>
+
+    </details>
+
+    <footer class="cl-footnotes">
+      <a href="https://support.google.com/gemini/answer/16275805" target="_blank" rel="noopener noreferrer">ความสามารถและขีดจำกัดของ Gemini แต่ละบัญชี</a>
+    </footer>
+  </main>
+  <script type="module" src="../scripts/ai-project.js"></script>
+  <script defer src="../scripts/slide-support.js"></script>
+</body>
+</html>

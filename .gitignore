@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.openai/local/
+*.tar.gz
+
+# Teacher configuration stays next to the local Arduino sketch.
+teacher-secrets.h

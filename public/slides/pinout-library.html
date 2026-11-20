@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESP32 · เลือกพินแล้วต่อโปรเจกต์</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../styles/pinout.css">
+</head>
+<body>
+<main class="studio">
+<header class="intro"><div><span class="eyebrow">ESP32 ม.4 / THE WIRING BENCH</span><h1>เลือกพิน แล้วลองต่อวงจร</h1><p>เริ่มจากสิ่งที่อยากทำ หรือคลิกสำรวจพินบนบอร์ด แล้วค่อยเดินสายทีละเส้น</p></div><span class="board-tag">ESP32-WROOM-32<br><strong>DevKit V1 · 30 pins</strong></span></header>
+<nav class="view-switch" aria-label="เลือกมุมมอง"><button id="show-pinout" aria-pressed="true">01 · สำรวจ Pinout</button><button id="show-projects" aria-pressed="false">02 · ต่อโปรเจกต์ <span>16 วงจร</span></button></nav>
+<section id="pinout-view" aria-label="สำรวจ Pinout">
+<div id="filters" class="chips" role="group" aria-label="กรองตามความสามารถพิน"></div>
+<div class="pinout-layout"><section class="panel board-panel"><div class="section-label">คลิกพินบนบอร์ด · ใช้ Tab / Enter ได้</div><label class="pin-picker">เลือกชื่อพิน <select id="pin-select" aria-label="เลือกพินบนบอร์ด"></select></label><div id="board"></div><div class="legend"><span>สีเหลือง: พินที่เลือก</span><span>สีส้ม: มีผลตอนบูต</span><span>สีฟ้า: รับเข้าเท่านั้น</span></div></section>
+<aside class="panel pin-detail" id="pin-detail" aria-live="polite"></aside></div>
+<div class="basics"><article><b>3.3V คือระดับสัญญาณ</b><p>GPIO รับ 5V ไม่ได้ การเลี้ยงอุปกรณ์ด้วย 5V ไม่ได้แปลว่าต่อสัญญาณ 5V เข้า ESP32 ได้</p></article><article><b>เปลี่ยนหน้าที่ได้ แต่ไม่พร้อมกัน</b><p>I²C / SPI / UART / PWM / I²S ย้ายพินผ่านโค้ดได้ เลือกเฉพาะ GPIO ที่รองรับทิศทางนั้น และหนึ่งพินรับบทเดียวในขณะหนึ่ง</p></article><article><b>บอร์ดหน้าตาคล้าย พินอาจต่าง</b><p>ตัวอย่างยึด WROOM-32 แบบ 30 พิน ไม่ใช้ผัง S3 / C3 / WROVER ปะปน ตรวจสกรีนบอร์ดจริงเสมอ</p></article></div>
+<details class="panel extra-notes"><summary>พินที่ไม่เห็นบนหัวแถว และเรื่องที่ควรรู้เพิ่ม</summary><p>GPIO6–11 ต่อกับ Flash ภายในโมดูล ไม่ใช้ต่อโปรเจกต์ · GPIO0 เป็น boot strapping และต่อกับปุ่ม BOOT แต่ไม่แยกออกหัวแถวในบอร์ด 30 พินนี้ · GPIO37/38 ไม่ได้ออกมาที่ WROOM-32 รุ่นนี้ · GPIO20/24/28–31 ไม่มีเป็น GPIO ใช้งานของ ESP32 รุ่นดั้งเดิม</p><p>Touch ใช้ touchRead เช่น GPIO32/33 ได้ แต่พิน Touch หลายขาเป็น strapping จึงเลือก 32/33 ก่อน · GPIO34–39 รับเข้าอย่างเดียว ไม่มี pull-up ภายใน · หลีกเลี่ยง ADC2 เมื่อใช้ Wi-Fi · ADC 12-bit ไม่เท่ากับความแม่นยำ 12-bit</p><p>ขา EN เป็น reset ไม่ใช่ GPIO; ชื่อ VP/VN บนบอร์ดคือ GPIO36/39 · พิน output ที่ไม่ติดข้อจำกัดอื่นใช้ PWM ได้ผ่าน LEDC โดยไม่จำเป็นต้องมีเครื่องหมาย ~ แบบ Arduino Uno</p></details>
+</section>
+<section id="projects-view" hidden aria-label="เลือกโปรเจกต์">
+<div class="catalog-heading"><div><h2>วันนี้อยากให้บอร์ดทำอะไร?</h2><p>แต่ละวงจรใช้แยกกัน · ถ้ารวมหลายวงจรต้องจัดพินและไฟเลี้ยงใหม่</p></div><label class="search">ค้นหาอุปกรณ์<input id="project-search" type="search" placeholder="เช่น servo, UART, แสง"></label></div>
+<div id="categories" class="chips" role="group" aria-label="หมวดวงจร"></div><div id="project-grid" class="project-grid"></div><p id="no-projects" hidden>ไม่พบวงจร ลองชื่ออุปกรณ์หรือเปลี่ยนหมวด</p>
+</section>
+<section id="workbench" hidden class="workbench" aria-label="โต๊ะทดลองวงจร">
+<div class="bench-heading"><button id="back-catalog" class="quiet">← เลือกวงจรอื่น</button><span class="eyebrow">INTERACTIVE VECTOR / SVG</span></div>
+<div class="bench-title"><div><h2 id="recipe-title"></h2><p id="recipe-subtitle"></p></div><div class="downloads"><a id="svg-download" class="quiet" download>Vector SVG ↓</a><a id="webp-download" class="quiet" download>ภาพ WebP ↓</a></div></div>
+<div class="bench-layout"><div class="panel drawing-panel"><div class="drawing-toolbar"><span id="wire-progress" aria-live="polite"></span><div><button id="wire-start">เริ่มทีละสาย</button><button id="wire-prev" aria-label="ย้อนหนึ่งสาย">−</button><button id="wire-next">ต่อสายถัดไป +</button><button id="wire-all">ดูครบ</button></div></div><div id="diagram-scroll" class="diagram-scroll" tabindex="0" aria-label="ภาพวงจร เลื่อนแนวนอนเพื่อดูภาพขยาย"><div id="diagram"></div></div><div class="drawing-caption">ภาพแสดงการเชื่อมต่อทางไฟฟ้าและรางไฟร่วม ไม่ใช่หมายเลขรูเสียบจริง · ดูชื่อขาบนอุปกรณ์ประกอบ · <button id="zoom-diagram" class="link-button" aria-pressed="false">ขยายภาพ / เลื่อนดู</button></div></div>
+<aside class="panel bench-controls"><span class="eyebrow">TRY IT / แบบจำลองการทำงาน</span><label class="power-control"><input type="checkbox" id="sim-power">เปิดไฟจำลอง</label><p id="power-hint"></p><label id="value-label" for="sim-value"></label><input id="sim-value" type="range"><output id="sim-output" for="sim-value"></output><button id="arm-esc" hidden>Arm จำลอง (Throttle ต้อง 0)</button><button id="reverse-motor" hidden>สลับทิศ (Duty ต้อง 0)</button><div id="sim-result" class="sim-result" aria-live="polite"></div><button id="listen-audio" hidden>ฟังโทนตัวอย่าง 1 วินาที</button><button id="motion-toggle">เล่นการเคลื่อนไหว</button><p class="small">ผลจำลองเพื่อเรียนรู้ความสัมพันธ์ของสัญญาณ ไม่คำนวณกระแสจริง และไม่ส่งคำสั่งไปฮาร์ดแวร์</p></aside></div>
+<div class="bench-bottom"><section class="panel"><h3>เดินสายตามนี้</h3><p class="small">คลิกรายการเพื่อไฮไลต์สายนั้นในภาพ</p><ol id="wire-list" class="wire-list"></ol><button id="clear-wire" class="quiet">แสดงทุกสายที่ต่อแล้ว</button></section><section class="panel"><h3>อุปกรณ์และไฟเลี้ยง</h3><ul id="parts"></ul><h3>เข้าใจก่อนลงมือ</h3><ul id="recipe-notes" class="notes"></ul><div id="recipe-refs" class="references"></div></section></div>
+<details class="panel code-panel"><summary>ดูโค้ด Arduino-ESP32 core 3.x</summary><p id="code-library"></p><div class="code-actions"><button id="copy-code">คัดลอกโค้ด</button><a id="code-download" download="sketch.ino">ดาวน์โหลด .ino ↓</a></div><pre><code id="recipe-code"></code></pre><p class="small">ตรวจพิน แรงดัน รุ่นอุปกรณ์ และติดตั้งไลบรารีก่อนอัปโหลด โค้ดตัวอย่างแยกจากสไลเดอร์จำลองบนเว็บ</p></details>
+</section>
+<footer>อ้างอิงแนวทาง lab → pinout → wiring จาก <a href="https://github.com/agharsallah/esp-labs-web" target="_blank" rel="noopener">esp-labs-web (MIT)</a> · เขียนวงจรใหม่สำหรับ ESP32 รุ่นดั้งเดิม · <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html" target="_blank" rel="noopener">ตรวจสเปกพินกับ Espressif</a></footer>
+</main>
+<script type="module" src="../scripts/pinout/app.js"></script><script src="../scripts/slide-support.js"></script>
+</body></html>

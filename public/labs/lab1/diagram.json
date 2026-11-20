@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "author": "ESP32 Classroom · Cat Feeder",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": 100,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-servo",
+      "id": "flap",
+      "top": 120,
+      "left": 355,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "beep",
+      "top": 255,
+      "left": 365,
+      "attrs": {
+        "volume": "0.15"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "meal",
+      "top": 290,
+      "left": 175,
+      "attrs": {
+        "color": "blue",
+        "label": "MEAL"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "flap:V+",
+      "esp:VIN",
+      "red",
+      []
+    ],
+    [
+      "flap:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "flap:PWM",
+      "esp:D18",
+      "orange",
+      []
+    ],
+    [
+      "beep:2",
+      "esp:D25",
+      "violet",
+      []
+    ],
+    [
+      "beep:1",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "meal:1.l",
+      "esp:D19",
+      "blue",
+      []
+    ],
+    [
+      "meal:2.l",
+      "esp:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "dependencies": {},
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  }
+}

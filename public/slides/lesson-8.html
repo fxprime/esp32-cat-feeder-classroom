@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สไลด์ 11: ESP32 Playground — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
+  <link rel="stylesheet" href="../styles/classroom.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Prompt', sans-serif; }
+    .code-font, .code-font * { font-family: 'JetBrains Mono', monospace; }
+
+    body {
+      background: linear-gradient(135deg, #fefce8 0%, #f0f9ff 50%, #f5f3ff 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .block-chip {
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .block-chip.is-running {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 3.5px #22c55e, 0 8px 16px rgba(34, 197, 94, 0.25);
+    }
+
+    .code-line {
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      border-left: 3px solid transparent;
+    }
+    .code-line.is-running {
+      background-color: rgba(34, 197, 94, 0.25);
+      border-left-color: #22c55e;
+    }
+
+    .servo-arm {
+      transform-origin: 40px 44px;
+      transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes buzzerPing {
+      0% { opacity: 0.95; transform: scale(0.8); }
+      100% { opacity: 0; transform: scale(1.4); }
+    }
+    .buzzer-wave {
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+    .buzzer-wave.is-active {
+      animation: buzzerPing 0.4s ease-out infinite;
+    }
+  </style>
+<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/syntax-dracula.css"><link rel="stylesheet" href="../styles/playground-code.css"><link rel="stylesheet" href="../styles/feeder-playground.css"></head>
+<body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
+
+  <!-- Top Bar -->
+  <header class="w-full max-w-6xl mx-auto px-4 pt-3 pb-1 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2.5">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-600 text-white text-xs sm:text-sm font-bold shadow-sm">
+        ESP32 ม.4 • Playground อิสระ
+      </span>
+      <span class="text-xs sm:text-sm font-semibold text-slate-600 bg-white/80 backdrop-blur px-3 py-1 rounded-full border border-slate-200">
+        สไลด์ที่ 9 (ลองเล่น &amp; แก้โค้ดได้ไม่พัง!)
+      </span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button id="soundToggleBtn" type="button"
+        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-white hover:bg-violet-50 text-violet-700 border-2 border-violet-400 shadow-sm transition active:scale-95 cursor-pointer">
+        <span id="soundIcon">🔇</span>
+        <span id="soundText">เสียง: ปิด</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="w-full max-w-6xl mx-auto px-4 py-2 flex-1 flex flex-col justify-center gap-3">
+    <!-- Header -->
+    <section class="text-center">
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-1">
+        <span class="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-amber-500 bg-clip-text text-transparent">
+          ESP32 Playground: สั่งฝาถังอาหารแมว
+        </span>
+      </h1>
+      <p class="text-xs sm:text-sm font-semibold text-slate-600">
+        เริ่มจากบล็อกบี๊บ เปิดฝา และปิดฝา แล้วลองเปลี่ยนเซนเซอร์เพื่อดูว่าเครื่องจะยอมจ่ายอาหารเมื่อไหร่
+      </p>
+      <button type="button" id="open-wiring-library" class="wiring-library-trigger" aria-haspopup="dialog" aria-controls="wiring-library">
+        <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="6" y="6" width="12" height="12" rx="2"/>
+          <path d="M9 3v3m6-3v3m-6 12v3m6-3v3M3 9h3m-3 6h3m12-6h3m-3 6h3m-8-5h-2v2h2z"/>
+        </svg>
+        <span>คลัง Pinout และ 16 วงจร</span>
+      </button>
+    </section>
+
+    <!-- 3-Column Playground -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+
+      <!-- COL 1: Block Palette & Presets -->
+      <div class="lg:col-span-4 bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-lg border-2 border-violet-200 flex flex-col justify-between gap-3">
+        <div>
+          <h2 class="text-sm font-extrabold text-violet-800 mb-2 flex items-center gap-1.5">
+            <span>🧩</span> 1. คลิกเพิ่มบล็อกคำสั่ง
+          </h2>
+          <div class="grid grid-cols-2 lg:grid-cols-1 gap-2">
+            <button type="button" data-add="led_on"
+              class="add-block-btn text-left px-3 py-2 rounded-2xl bg-amber-100 hover:bg-amber-200 border-2 border-amber-300 font-bold text-xs sm:text-sm text-amber-950 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-between">
+              <span>💡 เปิดไฟ LED</span>
+              <span class="text-xs text-amber-700">+ เพิ่ม</span>
+            </button>
+
+            <button type="button" data-add="led_off"
+              class="add-block-btn text-left px-3 py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 font-bold text-xs sm:text-sm text-slate-800 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-between">
+              <span>🌑 ปิดไฟ LED</span>
+              <span class="text-xs text-slate-500">+ เพิ่ม</span>
+            </button>
+
+            <button type="button" data-add="wait"
+              class="add-block-btn text-left px-3 py-2 rounded-2xl bg-sky-100 hover:bg-sky-200 border-2 border-sky-300 font-bold text-xs sm:text-sm text-sky-900 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-between">
+              <span>⏳ รอเวลา (ปรับได้)</span>
+              <span class="text-xs text-sky-700">+ เพิ่ม</span>
+            </button>
+
+            <button type="button" data-add="beep"
+              class="add-block-btn text-left px-3 py-2 rounded-2xl bg-purple-100 hover:bg-purple-200 border-2 border-purple-300 font-bold text-xs sm:text-sm text-purple-900 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-between">
+              <span>🔔 ส่งเสียง “ติ๊ด!”</span>
+              <span class="text-xs text-purple-700">+ เพิ่ม</span>
+            </button>
+
+            <button type="button" data-add="servo"
+              class="add-block-btn text-left px-3 py-2 rounded-2xl bg-emerald-100 hover:bg-emerald-200 border-2 border-emerald-300 font-bold text-xs sm:text-sm text-emerald-900 shadow-sm transition active:scale-95 cursor-pointer flex items-center justify-between col-span-2 lg:col-span-1">
+              <span>🦾 หมุนแขนกล Servo (0°–180°)</span>
+              <span class="text-xs text-emerald-700">+ เพิ่ม</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- LED Color Picker + Quick Presets -->
+        <div class="space-y-2.5 pt-2 border-t border-slate-100">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[11px] font-bold text-slate-500">🎨 สีหลอดไฟ LED:</span>
+            <div class="flex items-center gap-1.5">
+              <button type="button" data-color="yellow" class="color-dot w-5 h-5 rounded-full bg-yellow-400 ring-2 ring-offset-1 ring-slate-700 cursor-pointer" aria-label="สีเหลือง"></button>
+              <button type="button" data-color="red" class="color-dot w-5 h-5 rounded-full bg-rose-500 cursor-pointer" aria-label="สีแดง"></button>
+              <button type="button" data-color="green" class="color-dot w-5 h-5 rounded-full bg-emerald-500 cursor-pointer" aria-label="สีเขียว"></button>
+              <button type="button" data-color="blue" class="color-dot w-5 h-5 rounded-full bg-sky-500 cursor-pointer" aria-label="สีฟ้า"></button>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-[11px] font-bold text-slate-500 mb-1.5">✨ สูตรสำเร็จ (กดลองได้เลย):</p>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" data-preset="feeder" aria-pressed="true" class="preset-btn px-2.5 py-1 rounded-xl text-xs font-bold bg-violet-100 hover:bg-violet-200 text-violet-800 border border-violet-300 cursor-pointer">
+                ถึงมื้อแมว
+              </button>
+              <button type="button" data-preset="blink" class="preset-btn px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 cursor-pointer">
+                💡 ไฟกะพริบ
+              </button>
+              <button type="button" data-preset="alarm" class="preset-btn px-2.5 py-1 rounded-xl text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 cursor-pointer">
+                🚨 ไซเรนแจ้งเตือน
+              </button>
+              <button type="button" data-preset="gate" class="preset-btn px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 cursor-pointer">
+                🚧 ไม้กั้นเปิด-ปิด
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COL 2: Editable Block Workspace -->
+      <div class="lg:col-span-4 bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-lg border-2 border-sky-200 flex flex-col justify-between gap-3">
+        <div class="flex-1 flex flex-col">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-sm font-extrabold text-sky-800 flex items-center gap-1.5">
+              <span>🔁</span> 2. ปรับแต่งบล็อกใน loop()
+            </h2>
+            <button id="clearBlocksBtn" type="button"
+              class="px-2.5 py-1 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 cursor-pointer transition">
+              ล้างทั้งหมด
+            </button>
+          </div>
+
+          <div id="workspaceList" class="flex-1 min-h-[250px] max-h-[340px] overflow-y-auto bg-slate-50 rounded-2xl p-2.5 border-2 border-dashed border-slate-200 flex flex-col gap-2">
+          </div>
+        </div>
+
+        <button id="runBlocksBtn" type="button"
+          class="w-full py-3 px-4 rounded-2xl font-extrabold text-sm sm:text-base bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-md transition transform active:scale-95 cursor-pointer flex items-center justify-center gap-2">
+          <span>▶️</span>
+          <span id="runBlocksText">กดรันโปรแกรมของฉัน!</span>
+        </button>
+      </div>
+
+      <!-- COL 3: Virtual Hardware + Safe Editable C Code -->
+      <div class="lg:col-span-4 flex flex-col gap-3">
+        <!-- Virtual Hardware -->
+        <div class="bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-lg border-2 border-emerald-200">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800">
+              3. บอร์ดจำลอง
+            </span>
+            <span id="simStepBadge" class="text-xs font-bold text-slate-500 truncate max-w-[180px]">
+              พร้อมทำงาน
+            </span>
+          </div>
+
+          <div class="w-full rounded-2xl bg-slate-50 border border-slate-200 p-2">
+            <svg viewBox="0 0 320 132" class="w-full h-auto">
+              <!-- LED -->
+              <g transform="translate(15, 16)">
+                <rect x="0" y="0" width="88" height="98" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
+                <circle id="hwLedGlow" cx="44" cy="38" r="28" fill="#fef08a" opacity="0" />
+                <path id="hwLedGlass" d="M31 48 L31 32 A13 13 0 0 1 57 32 L57 48 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2" />
+                <rect x="28" y="46" width="32" height="6" rx="2" fill="#94a3b8" />
+                <text x="44" y="74" text-anchor="middle" font-size="10.5" font-weight="800" fill="#475569">หลอด LED</text>
+                <text id="hwLedStatus" x="44" y="88" text-anchor="middle" font-size="9.5" font-weight="700" fill="#94a3b8">ปิดอยู่</text>
+              </g>
+
+              <!-- Buzzer -->
+              <g transform="translate(116, 16)">
+                <rect x="0" y="0" width="88" height="98" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
+                <circle cx="44" cy="39" r="19" fill="#1e293b" stroke="#0f172a" stroke-width="2" />
+                <circle cx="44" cy="39" r="5" fill="#94a3b8" />
+                <circle id="hwBuzzerWave" cx="44" cy="39" r="26" fill="none" stroke="#a855f7" stroke-width="3" class="buzzer-wave" />
+                <text x="44" y="74" text-anchor="middle" font-size="10.5" font-weight="800" fill="#475569">ลำโพง</text>
+                <text id="hwBuzzerStatus" x="44" y="88" text-anchor="middle" font-size="9.5" font-weight="700" fill="#94a3b8">เงียบ</text>
+              </g>
+
+              <!-- Servo -->
+              <g transform="translate(217, 16)">
+                <rect x="0" y="0" width="88" height="98" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
+                <rect x="16" y="34" width="38" height="20" rx="4" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.8" />
+                <circle cx="40" cy="44" r="5" fill="#ffffff" stroke="#1e293b" stroke-width="1.8" />
+                <g id="hwServoArm" class="servo-arm">
+                  <rect x="37" y="40.5" width="32" height="7" rx="3.5" fill="#facc15" stroke="#b45309" stroke-width="1.8" />
+                  <circle cx="40" cy="44" r="2.5" fill="#1e293b" />
+                </g>
+                <text x="44" y="74" text-anchor="middle" font-size="10.5" font-weight="800" fill="#475569">แขนกล</text>
+                <text id="hwServoStatus" x="44" y="88" text-anchor="middle" font-size="9.5" font-weight="700" fill="#94a3b8">0°</text>
+              </g>
+            </svg>
+          </div>
+          <div id="fast-loop-readout" class="mt-2 rounded-2xl border border-sky-200 bg-sky-50 px-2.5 py-2 text-xs text-slate-700" hidden>
+            <p class="font-bold text-sky-800">ลูปจำลอง 100 Hz · 1 รอบใช้ 10 ms</p>
+            <svg viewBox="0 0 300 62" class="w-full h-auto" role="img" aria-label="รูปคลื่นไฟ LED ในสองรอบของลูป">
+              <path d="M24 12H286M24 39H286M155 8V43" fill="none" stroke="#a8c8df" stroke-width="1"/>
+              <path id="fast-led-wave" fill="none" stroke="#0369a1" stroke-width="2.4" stroke-linejoin="round"/>
+              <g fill="#475569" font-size="9"><text x="2" y="15">ON</text><text x="2" y="42">OFF</text><text x="24" y="56">0</text><text x="155" y="56" text-anchor="middle">10 ms</text><text x="286" y="56" text-anchor="end">20 ms</text></g>
+            </svg>
+            <p id="fast-led-note"></p>
+            <small class="mt-1 block">คำนวณโดยให้แต่ละบล็อกใช้เวลาเท่ากัน ความเร็วบนบอร์ดจริงขึ้นกับคำสั่ง</small>
+          </div>
+        </div>
+
+        <!-- Live C++ Code Preview (Highlighted as it runs!) -->
+        <div class="playground-code-card flex-1 bg-slate-900 rounded-3xl p-4 shadow-lg border-2 border-slate-700 text-slate-100 flex flex-col">
+          <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-700">
+            <span class="text-xs font-bold text-amber-300">✨ โค้ดภาษา C ที่ระบบแปลให้ฟรี!</span>
+            <span class="text-[10px] font-semibold text-emerald-300">ใส่ ; และ { } ให้ครบ</span>
+          </div>
+          <pre class="playground-code code-font text-[11px] leading-relaxed flex-1" tabindex="0" role="region" aria-label="โค้ด ESP32 ที่สร้างจากบล็อก"><code id="generatedCodeBox" class="hljs language-arduino"></code></pre>
+        </div>
+      </div>
+
+    </section>
+    <details class="fp-conditions" data-feeder-conditions>
+      <summary>ลองเงื่อนไขของเครื่องให้อาหาร</summary>
+      <p class="fp-lead">เปลี่ยนค่าที่เซนเซอร์ส่งมา แล้วกด “ถึงมื้อถัดไป” บอร์ดจะตรวจใหม่ก่อนเปิดฝา ลองส่งมื้อเดิมซ้ำหรือบังลำแสงหลังหยุดจ่าย แล้วดูว่าจำนวนมื้อเปลี่ยนไหม</p>
+      <div class="fp-grid">
+        <fieldset class="fp-controls">
+          <legend>อินพุตของบอร์ด</legend>
+          <label for="meal-humidity">DHT22 · ความชื้นอากาศในถัง <output id="meal-humidity-value" for="meal-humidity">55% RH</output></label>
+          <input type="range" id="meal-humidity" min="30" max="95" value="55" aria-describedby="meal-threshold">
+          <p id="meal-threshold" class="text-xs">ตั้งเกณฑ์สาธิตไว้ที่ 70% RH ขึ้นไป</p>
+          <label><input type="checkbox" id="meal-sensor-error"> จำลอง DHT22 อ่านไม่ได้</label>
+          <label for="meal-distance">Ultrasonic · ระยะจากหัววัดถึงผิวเม็ด <output id="meal-distance-value" for="meal-distance">10 ซม.</output></label>
+          <input type="range" id="meal-distance" min="6" max="24" value="10">
+          <label><input type="checkbox" id="meal-ir"> มีตัวมาที่ชาม · บังลำแสง IR <output id="meal-ir-value" for="meal-ir">HIGH · ลำแสงผ่านถึงตัวรับ</output></label>
+          <label><input type="checkbox" id="meal-online" checked> Wi‑Fi พร้อม · ส่งข้อความจำลอง</label>
+        </fieldset>
+        <figure class="fp-machine">
+          <svg viewBox="0 0 310 215" role="img" aria-label="เครื่องให้อาหารแมวพร้อม Servo เปิดฝา ไฟแดง และลำแสง IR ที่ชาม">
+            <path d="M52 192h205" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
+            <rect x="79" y="16" width="143" height="173" rx="16" fill="#e9e0ff" stroke="#aa94d2" stroke-width="2"/>
+            <path d="M104 36h86l-13 73h-60Z" fill="#fff6e6" stroke="#c1a675" stroke-width="2"/>
+            <g fill="#b66b35"><circle cx="122" cy="66" r="4"/><circle cx="144" cy="72" r="4"/><circle cx="173" cy="76" r="4"/><circle cx="132" cy="87" r="4"/><circle cx="157" cy="94" r="4"/></g>
+            <rect x="182" y="108" width="26" height="23" rx="5" fill="#79a8e5" stroke="#25518c"/><text x="195" y="123" font-size="9" fill="#173b72" text-anchor="middle">18</text>
+            <rect x="114" y="104" width="64" height="77" rx="11" fill="#ecf7fa" stroke="#aacad4" stroke-width="2"/>
+            <rect class="fp-flap" x="121" y="124" width="38" height="6" rx="3" fill="#7043aa"/>
+            <circle cx="154" cy="127" r="6" fill="#512a89"/>
+            <circle class="fp-led" cx="207" cy="50" r="7" fill="#a2aec1" stroke="#7687a5"/>
+            <g class="fp-food" fill="#a16228"><circle cx="141" cy="146" r="4"/><circle cx="151" cy="156" r="4"/><circle cx="139" cy="166" r="4"/></g>
+            <path d="M122 169h48l-6 17h-36Z" fill="#72d4bd" stroke="#318e7a" stroke-width="2"/>
+            <path class="fp-beam" d="M117 160h58" stroke="#2eab92" stroke-width="2"/>
+            <g class="fp-cat" fill="#9a661f"><path d="M243 151l2-12 9 6 9-5 3 12a12 12 0 1 1-23-1Z"/><ellipse cx="252" cy="175" rx="18" ry="12"/></g>
+            <path class="fp-buzzer" d="M227 79q12 7 0 14m6-20q21 13 0 26" fill="none" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <figcaption id="meal-result" role="status">รอมื้อต่อไป</figcaption>
+          <progress id="meal-simulated" max="1" value="0" aria-label="เวลาก่อนเปลี่ยนขั้น" hidden></progress>
+          <div class="fp-metrics"><span id="meal-number">ยังไม่เริ่มมื้อ</span><span>จ่าย <b id="meal-count">0</b> รอบ</span><span>พบที่ชาม <b id="meal-arrivals">0</b> ครั้ง</span></div>
+        </figure>
+      </div>
+      <div class="fp-actions">
+        <button type="button" id="meal-start">ถึงมื้อถัดไป</button>
+        <button type="button" id="meal-repeat" disabled>ส่งมื้อเดิมซ้ำ</button>
+        <button type="button" id="meal-reset">ตั้งต้น</button>
+      </div>
+      <ul class="fp-events" id="meal-events" aria-label="เหตุการณ์ของเครื่อง"></ul>
+    </details>
+  <p class="mx-auto max-w-6xl px-4 pb-4 text-xs text-slate-700">ESP32 core 3.x + Library ESP32Servo · LED GPIO23 ผ่าน 330Ω · Buzzer GPIO25 · Servo signal GPIO18 ใช้ไฟเลี้ยง 5V ที่เหมาะสมและ GND ร่วมกัน · โปรแกรมนี้จำลองบล็อก ไม่ได้คอมไพล์ C++ จริง</p></main>
+
+  <dialog id="wiring-library" class="wiring-library" aria-labelledby="wiring-library-title">
+    <div class="wiring-library-bar">
+      <h2 id="wiring-library-title">คลัง Pinout และวงจร</h2>
+      <form method="dialog"><button type="submit" autofocus>ปิดคลัง</button></form>
+    </div>
+    <iframe id="wiring-library-frame" title="ผังพิน ESP32 และวงจรทดลอง 16 แบบ" data-src="./pinout-library.html"></iframe>
+  </dialog>
+
+  <script type="module">
+    const openLibrary = document.getElementById('open-wiring-library');
+    const library = document.getElementById('wiring-library');
+    const libraryFrame = document.getElementById('wiring-library-frame');
+
+    openLibrary.addEventListener('click', () => {
+      if (!libraryFrame.hasAttribute('src')) libraryFrame.src = libraryFrame.dataset.src;
+      library.showModal();
+    });
+
+    // The classroom handles arrow keys for slide navigation outside this dialog.
+    library.addEventListener('keydown', event => event.stopPropagation());
+    libraryFrame.addEventListener('load', () => {
+      libraryFrame.contentDocument?.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !event.defaultPrevented) library.close();
+      });
+    });
+  </script>
+
+  <script type="module" src="../scripts/feeder/playground-conditions.js"></script>
+
+  <script type="module">
+    import {highlightLines} from '../scripts/vendor/code-highlight.js';
+    import {fastPlaygroundLoop} from '../scripts/signal-lab/model.js';
+    (function () {
+      const workspaceList = document.getElementById('workspaceList');
+      const generatedCodeBox = document.getElementById('generatedCodeBox');
+      const runBlocksBtn = document.getElementById('runBlocksBtn');
+      const runBlocksText = document.getElementById('runBlocksText');
+      const clearBlocksBtn = document.getElementById('clearBlocksBtn');
+      const simStepBadge = document.getElementById('simStepBadge');
+      const fastReadout = document.getElementById('fast-loop-readout');
+      const fastLedWave = document.getElementById('fast-led-wave');
+      const fastLedNote = document.getElementById('fast-led-note');
+      const soundToggleBtn = document.getElementById('soundToggleBtn');
+      const soundIcon = document.getElementById('soundIcon');
+      const soundText = document.getElementById('soundText');
+
+      const hwLedGlow = document.getElementById('hwLedGlow');
+      const hwLedGlass = document.getElementById('hwLedGlass');
+      const hwLedStatus = document.getElementById('hwLedStatus');
+      const hwBuzzerWave = document.getElementById('hwBuzzerWave');
+      const hwBuzzerStatus = document.getElementById('hwBuzzerStatus');
+      const hwServoArm = document.getElementById('hwServoArm');
+      const hwServoStatus = document.getElementById('hwServoStatus');
+
+      const addButtons = Array.from(document.querySelectorAll('.add-block-btn'));
+      const presetButtons = Array.from(document.querySelectorAll('.preset-btn'));
+      const colorDots = Array.from(document.querySelectorAll('.color-dot'));
+
+      const ledColors = {
+        yellow: { glow: '#fef08a', fill: '#fde047', stroke: '#b45309' },
+        red:    { glow: '#fecaca', fill: '#f87171', stroke: '#b91c1c' },
+        green:  { glow: '#bbf7d0', fill: '#4ade80', stroke: '#15803d' },
+        blue:   { glow: '#bae6fd', fill: '#38bdf8', stroke: '#0369a1' }
+      };
+      let currentLedColor = 'yellow';
+      let ledLevel = 0;
+
+      const presets = {
+        feeder: [
+          { type: 'beep', val: 880 },
+          { type: 'wait', val: 500 },
+          { type: 'servo', val: 90 },
+          { type: 'wait', val: 1000 },
+          { type: 'servo', val: 0 }
+        ],
+        blink: [
+          { type: 'led_on' },
+          { type: 'wait', val: 500 },
+          { type: 'led_off' },
+          { type: 'wait', val: 500 }
+        ],
+        alarm: [
+          { type: 'led_on' },
+          { type: 'beep', val: 880 },
+          { type: 'wait', val: 300 },
+          { type: 'led_off' },
+          { type: 'beep', val: 523 },
+          { type: 'wait', val: 300 }
+        ],
+        gate: [
+          { type: 'led_on' },
+          { type: 'servo', val: 90 },
+          { type: 'beep', val: 880 },
+          { type: 'wait', val: 800 },
+          { type: 'servo', val: 0 },
+          { type: 'led_off' },
+          { type: 'wait', val: 500 }
+        ]
+      };
+
+      let runOnce = true;
+      let program = presets.feeder.map(item => ({...item}));
+      let isRunning = false;
+      let runTimer = null;
+      let beepDisplayTimer = null;
+      let currentIdx = -1;
+      let soundEnabled = false;
+      let audioCtx = null;
+      let fastLoop = null;
+      let fastTone = null;
+
+      function playBeep(freq, continuous = false) {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return;
+            audioCtx = new Ctx();
+          }
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq || 880;
+          gain.gain.setValueAtTime(continuous ? 0.05 : 0.12, audioCtx.currentTime);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.addEventListener('ended', () => { osc.disconnect(); gain.disconnect(); }, {once: true});
+          osc.start();
+          if (continuous) {
+            fastTone = osc;
+          } else {
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+            osc.stop(audioCtx.currentTime + 0.18);
+          }
+        } catch (_) {}
+      }
+
+      function stopFastTone() {
+        if (fastTone) { fastTone.stop(); fastTone = null; }
+      }
+
+      function applyLedVisual(level) {
+        ledLevel = Number(level);
+        const on = ledLevel > 0;
+        const pct = Math.round(ledLevel * 100);
+        const c = ledColors[currentLedColor];
+        hwLedGlow.setAttribute('fill', c.glow);
+        hwLedGlow.setAttribute('opacity', String(ledLevel));
+        hwLedGlass.setAttribute('fill', on ? c.fill : '#cbd5e1');
+        if (ledLevel > 0 && ledLevel < 1) {
+          hwLedGlass.style.fill = `color-mix(in srgb, ${c.fill} ${pct}%, #cbd5e1)`;
+        } else {
+          hwLedGlass.style.removeProperty('fill');
+        }
+        hwLedGlass.setAttribute('stroke', on ? c.stroke : '#64748b');
+        hwLedStatus.textContent = fastLoop
+          ? (ledLevel === 1 ? 'ติดค้าง' : on ? `เฉลี่ย ${pct}%` : 'ดับค้าง')
+          : (on ? 'เปิดสว่าง!' : 'ปิดอยู่');
+        hwLedStatus.setAttribute('fill', on ? c.stroke : '#94a3b8');
+      }
+
+      function resetHardware() {
+        applyLedVisual(false);
+        hwBuzzerWave.classList.remove('is-active');
+        hwBuzzerStatus.textContent = 'เงียบ';
+        hwBuzzerStatus.setAttribute('fill', '#94a3b8');
+        hwServoArm.style.transform = 'rotate(0deg)';
+        hwServoStatus.textContent = '0°';
+        hwServoStatus.setAttribute('fill', '#94a3b8');
+      }
+
+      function stopProgram({ resetOutputs = true } = {}) {
+        isRunning = false;
+        if (runTimer) { clearTimeout(runTimer); runTimer = null; }
+        if (beepDisplayTimer) { clearTimeout(beepDisplayTimer); beepDisplayTimer = null; }
+        stopFastTone();
+        fastLoop = null;
+        fastReadout.hidden = true;
+        currentIdx = -1;
+        runBlocksText.textContent = 'กดรันโปรแกรมของฉัน!';
+        runBlocksBtn.className = 'w-full py-3 px-4 rounded-2xl font-extrabold text-sm sm:text-base bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-md transition transform active:scale-95 cursor-pointer flex items-center justify-center gap-2';
+        simStepBadge.textContent = 'หยุดทำงาน';
+        if (resetOutputs) resetHardware();
+        renderAll();
+      }
+
+      function getBlockCode(item) {
+        if (item.type === 'led_on') return '  digitalWrite(23, HIGH);';
+        if (item.type === 'led_off') return '  digitalWrite(23, LOW);';
+        if (item.type === 'wait') return `  delay(${item.val});`;
+        if (item.type === 'beep') return `  tone(25, ${item.val}, 200);`;
+        if (item.type === 'servo') return `  myServo.write(${item.val});`;
+        return '';
+      }
+
+      function getBlockStyle(type) {
+        if (type === 'led_on') return 'bg-amber-100 border-amber-300 text-amber-950';
+        if (type === 'led_off') return 'bg-slate-100 border-slate-300 text-slate-800';
+        if (type === 'wait') return 'bg-sky-100 border-sky-300 text-sky-900';
+        if (type === 'beep') return 'bg-purple-100 border-purple-300 text-purple-900';
+        return 'bg-emerald-100 border-emerald-300 text-emerald-900';
+      }
+
+      function sketchHeader() {
+        const setup = '#include <ESP32Servo.h>\nServo myServo;\nvoid setup() {\n  pinMode(23, OUTPUT);\n  myServo.setPeriodHertz(50);\n  myServo.attach(18, 500, 2400);\n  myServo.write(0);';
+        return (runOnce ? setup + '\n  // ทดลองจ่ายหนึ่งรอบตอนเปิดเครื่อง' : setup + '\n}\nvoid loop() {').split('\n');
+      }
+
+      function renderCode() {
+        const header = sketchHeader();
+        const body = program.length ? program.map(getBlockCode) : ['  // เพิ่มบล็อกทางซ้ายได้เลย'];
+        const lines = [...header, ...body, '}', ...(runOnce ? ['', 'void loop() {}'] : [])];
+        const highlighted = highlightLines(lines.join('\n'));
+        const fragment = document.createDocumentFragment();
+        highlighted.forEach((html, index) => {
+          const line = document.createElement('span');
+          const blockIndex = index - header.length;
+          const active = blockIndex >= 0 && blockIndex < program.length && blockIndex === currentIdx;
+          line.className = `code-line${active ? ' is-running' : ''}`;
+          if (active) line.setAttribute('aria-current', 'step');
+          line.innerHTML = html;
+          fragment.appendChild(line);
+          if (index < lines.length - 1) fragment.appendChild(document.createTextNode('\n'));
+        });
+        generatedCodeBox.replaceChildren(fragment);
+      }
+
+      function renderWorkspace() {
+        workspaceList.innerHTML = '';
+        if (program.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'm-auto text-center text-xs font-semibold text-slate-400 py-8';
+          empty.textContent = 'คลิกบล็อกทางซ้ายเพื่อเพิ่มคำสั่งลงในช่องนี้ได้เลย!';
+          workspaceList.appendChild(empty);
+          return;
+        }
+
+        program.forEach((item, idx) => {
+          const row = document.createElement('div');
+          row.className = `block-chip px-3 py-2 rounded-2xl border-2 font-bold text-xs sm:text-sm flex items-center justify-between gap-2 ${getBlockStyle(item.type)} ${idx === currentIdx ? 'is-running' : ''}`;
+
+          const left = document.createElement('div');
+          left.className = 'flex items-center gap-1.5 flex-wrap';
+
+          if (item.type === 'led_on') {
+            left.textContent = `${idx + 1}. 💡 เปิดไฟ LED`;
+          } else if (item.type === 'led_off') {
+            left.textContent = `${idx + 1}. 🌑 ปิดไฟ LED`;
+          } else if (item.type === 'wait') {
+            const lbl = document.createElement('span');
+            lbl.textContent = `${idx + 1}. ⏳ รอ`;
+            const sel = document.createElement('select');
+            sel.setAttribute('aria-label', `บล็อก ${idx + 1}: ${item.type === 'wait' ? 'เวลารอ' : item.type === 'beep' ? 'ความถี่เสียง' : 'องศา Servo'}`);
+            sel.className = 'bg-white border border-sky-400 rounded-lg px-1.5 py-0.5 text-xs font-bold text-sky-900 cursor-pointer';
+            [200, 300, 500, 800, 1000].forEach((ms) => {
+              const opt = document.createElement('option');
+              opt.value = String(ms);
+              opt.textContent = `${ms / 1000} วิ`;
+              if (item.val === ms) opt.selected = true;
+              sel.appendChild(opt);
+            });
+            sel.addEventListener('change', (e) => {
+              item.val = Number(e.target.value);
+              renderCode();
+            });
+            left.appendChild(lbl);
+            left.appendChild(sel);
+          } else if (item.type === 'beep') {
+            const lbl = document.createElement('span');
+            lbl.textContent = `${idx + 1}. 🔔 เสียง`;
+            const sel = document.createElement('select');
+            sel.setAttribute('aria-label', `บล็อก ${idx + 1}: ${item.type === 'wait' ? 'เวลารอ' : item.type === 'beep' ? 'ความถี่เสียง' : 'องศา Servo'}`);
+            sel.className = 'bg-white border border-purple-400 rounded-lg px-1.5 py-0.5 text-xs font-bold text-purple-900 cursor-pointer';
+            [{ f: 523, t: 'ต่ำ (โด)' }, { f: 659, t: 'กลาง (มี)' }, { f: 880, t: 'สูง (ลา)' }].forEach((n) => {
+              const opt = document.createElement('option');
+              opt.value = String(n.f);
+              opt.textContent = n.t;
+              if (item.val === n.f) opt.selected = true;
+              sel.appendChild(opt);
+            });
+            sel.addEventListener('change', (e) => {
+              item.val = Number(e.target.value);
+              renderCode();
+            });
+            left.appendChild(lbl);
+            left.appendChild(sel);
+          } else if (item.type === 'servo') {
+            const lbl = document.createElement('span');
+            lbl.textContent = `${idx + 1}. 🦾 หมุน`;
+            const sel = document.createElement('select');
+            sel.setAttribute('aria-label', `บล็อก ${idx + 1}: ${item.type === 'wait' ? 'เวลารอ' : item.type === 'beep' ? 'ความถี่เสียง' : 'องศา Servo'}`);
+            sel.className = 'bg-white border border-emerald-400 rounded-lg px-1.5 py-0.5 text-xs font-bold text-emerald-900 cursor-pointer';
+            [0, 45, 90, 135, 180].forEach((deg) => {
+              const opt = document.createElement('option');
+              opt.value = String(deg);
+              opt.textContent = `${deg}°`;
+              if (item.val === deg) opt.selected = true;
+              sel.appendChild(opt);
+            });
+            sel.addEventListener('change', (e) => {
+              item.val = Number(e.target.value);
+              renderCode();
+            });
+            left.appendChild(lbl);
+            left.appendChild(sel);
+          }
+
+          row.appendChild(left);
+
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'px-2 py-0.5 rounded-lg bg-white/75 hover:bg-rose-500 hover:text-white text-slate-500 text-xs font-extrabold transition cursor-pointer shrink-0';
+          delBtn.textContent = '✕';
+          delBtn.setAttribute('aria-label', 'ลบบล็อกนี้');
+          delBtn.addEventListener('click', () => {
+            if (isRunning) stopProgram();
+            program.splice(idx, 1);
+            renderAll();
+          });
+          row.appendChild(delBtn);
+
+          workspaceList.appendChild(row);
+        });
+      }
+
+      function renderAll() {
+        renderWorkspace();
+        renderCode();
+      }
+
+      function applyServoVisual(angle) {
+        hwServoArm.style.transform = `rotate(${-angle}deg)`;
+        hwServoStatus.textContent = `${angle}°`;
+        hwServoStatus.setAttribute('fill', '#059669');
+      }
+
+      function runFastLoop() {
+        fastLoop = fastPlaygroundLoop(program);
+        const {slots, duty, servo, tone} = fastLoop;
+        const pct = Math.round(duty * 100);
+        const levels = [...slots, ...slots];
+        const length = 262 / levels.length;
+        const wave = levels.map((level, i) =>
+          `${i ? 'V' : 'M24 '}${level ? 12 : 39}H${(24 + (i + 1) * length).toFixed(2)}`,
+        ).join(' ');
+        simStepBadge.textContent = 'ลูปเร็ว 100 Hz';
+        fastLedWave.setAttribute('d', wave);
+        fastLedNote.textContent = duty === 1
+          ? 'LED เปิดตลอดรอบและติดค้าง'
+          : duty === 0
+            ? 'LED ดับตลอดรอบ'
+            : `LED เปิด ${pct}% ของรอบ ตาจึงมักเห็นแสงคงที่ตามเวลาเปิดเฉลี่ย ถ้าเปิดสั้นมากอาจดูเหมือนดับ`;
+        fastReadout.hidden = false;
+        applyLedVisual(duty);
+        if (servo !== undefined) applyServoVisual(servo);
+        if (tone !== undefined) {
+          hwBuzzerStatus.textContent = `${tone} Hz`;
+          hwBuzzerStatus.setAttribute('fill', '#7e22ce');
+          playBeep(tone, true);
+        }
+      }
+
+      function executeStep(idx) {
+        if (!isRunning || program.length === 0) return;
+        currentIdx = idx;
+        renderAll();
+
+        const item = program[idx];
+        let stepDelay = 380;
+
+        if (item.type === 'led_on') {
+          simStepBadge.textContent = `ขั้นที่ ${idx + 1}: เปิดไฟ LED`;
+          applyLedVisual(true);
+        } else if (item.type === 'led_off') {
+          simStepBadge.textContent = `ขั้นที่ ${idx + 1}: ปิดไฟ LED`;
+          applyLedVisual(false);
+        } else if (item.type === 'wait') {
+          simStepBadge.textContent = `ขั้นที่ ${idx + 1}: รอ ${item.val / 1000} วิ...`;
+          stepDelay = item.val;
+        } else if (item.type === 'beep') {
+          simStepBadge.textContent = `ขั้นที่ ${idx + 1}: ส่งเสียง (${item.val} Hz)`;
+          hwBuzzerWave.classList.add('is-active');
+          hwBuzzerStatus.textContent = 'ติ๊ด!';
+          hwBuzzerStatus.setAttribute('fill', '#7e22ce');
+          playBeep(item.val);
+          beepDisplayTimer = setTimeout(() => {
+            beepDisplayTimer = null;
+            hwBuzzerWave.classList.remove('is-active');
+            hwBuzzerStatus.textContent = 'เงียบ';
+            hwBuzzerStatus.setAttribute('fill', '#94a3b8');
+          }, 320);
+        } else if (item.type === 'servo') {
+          simStepBadge.textContent = `ขั้นที่ ${idx + 1}: Servo หมุน ${item.val}°`;
+          applyServoVisual(item.val);
+        }
+
+        const finished = runOnce && idx === program.length - 1;
+        const nextIdx = (idx + 1) % program.length;
+        runTimer = setTimeout(() => {
+          if (finished) {
+            stopProgram({ resetOutputs: false });
+            simStepBadge.textContent = 'จบหนึ่งรอบ · กดเพื่อรันอีกครั้ง';
+          } else {
+            executeStep(nextIdx);
+          }
+        }, stepDelay);
+      }
+
+      addButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (isRunning) stopProgram();
+          if (program.length >= 10) {
+            simStepBadge.textContent = 'ต่อได้สูงสุด 10 บล็อกนะ!';
+            return;
+          }
+          const t = btn.dataset.add;
+          const newItem = { type: t };
+          if (t === 'wait') newItem.val = 500;
+          if (t === 'beep') newItem.val = 880;
+          if (t === 'servo') newItem.val = 90;
+          program.push(newItem);
+          renderAll();
+        });
+      });
+
+      presetButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          stopProgram();
+          runOnce = btn.dataset.preset === 'feeder';
+          program = presets[btn.dataset.preset].map(item => ({...item}));
+          for (const preset of presetButtons) preset.setAttribute('aria-pressed', String(preset === btn));
+          renderAll();
+        });
+      });
+
+      colorDots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+          currentLedColor = dot.dataset.color;
+          colorDots.forEach((d) => d.classList.remove('ring-2', 'ring-offset-1', 'ring-slate-700'));
+          dot.classList.add('ring-2', 'ring-offset-1', 'ring-slate-700');
+          if (ledLevel > 0) applyLedVisual(ledLevel);
+        });
+      });
+
+      clearBlocksBtn.addEventListener('click', () => {
+        stopProgram();
+        program = [];
+        renderAll();
+      });
+
+      runBlocksBtn.addEventListener('click', () => {
+        if (isRunning) {
+          stopProgram();
+          return;
+        }
+        if (program.length === 0) {
+          simStepBadge.textContent = 'เพิ่มบล็อกอย่างน้อย 1 อันก่อนนะ!';
+          return;
+        }
+        isRunning = true;
+        runBlocksText.textContent = runOnce ? 'กำลังรันหนึ่งรอบ... (กดเพื่อหยุด)' : 'กำลังรันวนซ้ำ... (กดเพื่อหยุด)';
+        runBlocksBtn.className = 'w-full py-3 px-4 rounded-2xl font-extrabold text-sm sm:text-base bg-rose-600 hover:bg-rose-700 text-white shadow-md transition transform active:scale-95 cursor-pointer flex items-center justify-center gap-2';
+        if (runOnce || program.some(item => item.type === 'wait')) executeStep(0);
+        else runFastLoop();
+      });
+
+      soundToggleBtn.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        soundIcon.textContent = soundEnabled ? '🔊' : '🔇';
+        soundText.textContent = soundEnabled ? 'เสียง: เปิด' : 'เสียง: ปิด';
+        if (!soundEnabled) stopFastTone();
+        else if (fastLoop?.tone !== undefined) playBeep(fastLoop.tone, true);
+      });
+
+      function fullSketch() {
+        return [...sketchHeader(), ...program.map(getBlockCode), '}', ...(runOnce ? ['', 'void loop() {}'] : []), ''].join('\n');
+      }
+      const exportBar = document.createElement('div');
+      exportBar.className = 'flex flex-wrap gap-2 mt-4';
+      const exportButton = document.createElement('button');
+      exportButton.type='button'; exportButton.className='px-4 py-2 rounded-xl bg-sky-700 text-white text-xs font-bold'; exportButton.textContent='ดาวน์โหลด sketch.ino';
+      exportButton.addEventListener('click',()=>{const u=URL.createObjectURL(new Blob([fullSketch()],{type:'text/plain'}));const a=document.createElement('a');a.href=u;a.download='sketch.ino';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)});
+      const copyButton=document.createElement('button');copyButton.type='button';copyButton.className='px-4 py-2 rounded-xl bg-emerald-700 text-white text-xs font-bold';copyButton.textContent='คัดลอกโค้ดทั้งไฟล์';
+      copyButton.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(fullSketch());copyButton.textContent='คัดลอกแล้ว'}catch{copyButton.textContent='คัดลอกไม่ได้ ใช้ดาวน์โหลดแทน'}});
+      exportBar.append(copyButton,exportButton);generatedCodeBox.closest('.playground-code-card').append(exportBar);
+      window.addEventListener('pagehide',()=>{stopProgram();audioCtx?.close().catch(()=>{})});
+      renderAll();
+    })();
+  </script>
+
+  <!-- Embed Mode Handler & Navigation Key Forwarder -->
+  <style>
+    html.is-embedded header > div:first-child { display: none !important; }
+  </style>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('embed') === '1') {
+        document.documentElement.classList.add('is-embedded');
+        const hideBadge = function () {
+          const header = document.querySelector('header');
+          if (header) {
+            const leftBadge = header.querySelector('div:first-child');
+            if (leftBadge) {
+              leftBadge.style.display = 'none';
+            }
+            const remainingControls = header.querySelector('button, a');
+            if (!remainingControls) {
+              header.style.display = 'none';
+            } else {
+              header.style.justifyContent = 'flex-end';
+              header.classList.remove('justify-between');
+            }
+          }
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', hideBadge);
+        } else {
+          hideBadge();
+        }
+      }
+
+
+    })();
+  </script>
+
+<script src="../scripts/slide-support.js"></script></body>
+</html>

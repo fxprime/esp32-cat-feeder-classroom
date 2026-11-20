@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สไลด์ 2: หลักการทำงาน Input → Process → Output — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
+  <link rel="stylesheet" href="../styles/classroom.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Prompt', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 50%, #ecfdf5 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    @keyframes flowDash {
+      to { stroke-dashoffset: -28; }
+    }
+    .ipo-wire-lit {
+      stroke-dasharray: 8 6;
+      animation: flowDash 0.65s linear infinite;
+    }
+
+    .ipo-dot {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .ipo-dot.is-visible {
+      opacity: 1;
+    }
+
+    /* Inner wrapper animates scale without overriding parent <g transform="translate(...)"> */
+    @keyframes brainPulse2x {
+      0%   { filter: drop-shadow(0 0 0px #f59e0b); transform: scale(1); }
+      25%  { filter: drop-shadow(0 0 16px #facc15); transform: scale(1.07); }
+      50%  { filter: drop-shadow(0 0 2px #f59e0b); transform: scale(1); }
+      75%  { filter: drop-shadow(0 0 18px #38bdf8); transform: scale(1.07); }
+      100% { filter: drop-shadow(0 0 0px #f59e0b); transform: scale(1); }
+    }
+    .process-inner {
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+    .process-inner.is-blinking {
+      animation: brainPulse2x 0.95s ease-in-out 1;
+    }
+
+    /* Output 1: Hand Wave & Servo 90 deg (Local coordinates inside sub-card) */
+    @keyframes handWave {
+      0%   { transform: rotate(0deg); }
+      25%  { transform: rotate(-22deg); }
+      50%  { transform: rotate(16deg); }
+      75%  { transform: rotate(-18deg); }
+      100% { transform: rotate(0deg); }
+    }
+    .human-hand {
+      transform-origin: 41px 54px;
+    }
+    .human-hand.is-active {
+      animation: handWave 0.9s ease-in-out 2;
+    }
+
+    .servo-arm {
+      transform-origin: 41px 46px;
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .servo-arm.is-active {
+      transform: rotate(-90deg);
+    }
+    .angle-arc {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .angle-arc.is-active {
+      opacity: 1;
+    }
+
+    /* Output 2: Flashlight / Eyes Sparkle & LED Glow */
+    .light-beam {
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .light-beam.is-active {
+      opacity: 1;
+    }
+    @keyframes ledGlowPulse {
+      0%, 100% { filter: drop-shadow(0 0 4px #facc15); }
+      50% { filter: drop-shadow(0 0 14px #fde047); }
+    }
+    .led-bulb.is-active {
+      fill: #fef08a;
+      animation: ledGlowPulse 0.7s ease-in-out infinite;
+    }
+
+    /* Output 3: Mouth Speech & Buzzer Sound Waves */
+    .speech-bubble {
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center bottom;
+      transform: scale(0.6);
+      transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .speech-bubble.is-active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    @keyframes soundRipple {
+      0% { opacity: 0.95; transform: scale(0.8); }
+      100% { opacity: 0; transform: scale(1.35); }
+    }
+    .buzzer-wave-1, .buzzer-wave-2 {
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+    .buzzer-wave-1.is-active {
+      animation: soundRipple 0.8s ease-out infinite;
+    }
+    .buzzer-wave-2.is-active {
+      animation: soundRipple 0.8s ease-out 0.35s infinite;
+    }
+
+    .output-subcard {
+      transition: opacity 0.25s ease;
+    }
+    .output-subcard.is-dimmed {
+      opacity: 0.28;
+    }
+  </style>
+<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/feeder-foundations.css"></head>
+<body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
+
+  <header class="w-full max-w-6xl mx-auto px-4 pt-3 pb-1 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2.5">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-600 text-white text-xs sm:text-sm font-bold shadow-sm">
+        ESP32 ม.4 • คาบที่ 1
+      </span>
+      <span class="text-xs sm:text-sm font-semibold text-slate-600 bg-white/80 backdrop-blur px-3 py-1 rounded-full border border-slate-200">
+        สไลด์ที่ 2 / 17
+      </span>
+    </div>
+  </header>
+
+  <main class="w-full max-w-6xl mx-auto px-4 py-2 flex-1 flex flex-col justify-center">
+    <section class="text-center mb-3">
+      <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 mb-1.5">
+        <span class="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
+          หลักการทำงาน: Input → Process → Output
+        </span>
+      </h1>
+      <p class="text-sm sm:text-lg font-semibold text-slate-700">
+        ตามดูว่าข้อมูลในเครื่องให้อาหารแมวเดินจากเซนเซอร์ไปถึงอุปกรณ์ที่ทำงานยังไง
+      </p>
+    </section>
+
+    <section class="ff-card ff-ipo" data-feeder-ipo aria-labelledby="ff-ipo-title">
+      <div class="ff-ipo-head">
+        <div>
+          <h2 id="ff-ipo-title">สัญญาณเดินไปทางไหน?</h2>
+          <p>เลือกอุปกรณ์ฝั่ง Input แล้วอ่านกติกาของ ESP32 ตรงกลาง</p>
+        </div>
+        <button type="button" class="ff-primary" data-ipo-run>เดินสัญญาณ</button>
+      </div>
+      <div class="ff-ipo-lanes">
+        <div class="ff-ipo-node ff-ipo-input">
+          <p class="ff-ipo-kind">Input</p>
+          <fieldset class="ff-ipo-switches">
+            <legend>เลือกสิ่งที่บอร์ดจะอ่าน</legend>
+            <button type="button" data-ipo-sensor="humidity" aria-pressed="true">ความชื้น <span>DHT22</span></button>
+            <button type="button" data-ipo-sensor="distance" aria-pressed="false">ระยะถึงผิวอาหาร <span>Ultrasonic</span></button>
+            <button type="button" data-ipo-sensor="arrival" aria-pressed="false">มาถึงชามหรือยัง <span>IR</span></button>
+          </fieldset>
+          <label class="ff-ipo-condition"><input type="checkbox" data-ipo-condition> <span data-ipo-condition-label>จำลองความชื้นเกินเกณฑ์</span></label>
+          <strong data-ipo-reading>55% RH</strong>
+        </div>
+        <div class="ff-link" aria-hidden="true"><span></span></div>
+        <div class="ff-ipo-node ff-ipo-process">
+          <p class="ff-ipo-kind">Process</p>
+          <h3>ESP32</h3>
+          <p data-ipo-rule>เทียบกับ 70% RH และตรวจว่ามีอาหารพอ เมื่อถึงมื้อจึงเริ่มจ่าย</p>
+        </div>
+        <div class="ff-link" aria-hidden="true"><span></span></div>
+        <div class="ff-ipo-node ff-ipo-output">
+          <p class="ff-ipo-kind">Output</p>
+          <h3 data-ipo-output>บี๊บ → ฝาเปิดและปิด</h3>
+          <p data-ipo-output-detail>เมื่อตรวจเงื่อนไขการจ่ายผ่าน</p>
+        </div>
+      </div>
+      <p class="ff-ipo-status" role="status" data-ipo-status>เลือกอุปกรณ์หรือเปลี่ยนเงื่อนไข แล้วลองเดินสัญญาณ</p>
+    </section>
+    <details class="ff-extra"><summary>ดูตัวอย่างเดิมเทียบกับการทำงานของร่างกาย</summary>
+    <!-- 3 Pillar Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-3">
+      <div id="ipo-card-input" class="bg-white/95 rounded-2xl p-3 border-2 border-sky-200 shadow-sm transition-all duration-300">
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-sky-100 text-sky-800">1. INPUT</span>
+          <span class="text-xs font-bold text-slate-500">(ตา หู ผิวหนัง)</span>
+        </div>
+        <p class="text-sm font-bold text-slate-800">เซนเซอร์ / ปุ่มกด</p>
+        <p class="text-xs text-slate-600">ทำหน้าที่รับรู้สิ่งรอบตัว</p>
+      </div>
+
+      <div id="ipo-card-process" class="bg-white/95 rounded-2xl p-3 border-2 border-amber-200 shadow-sm transition-all duration-300">
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900">2. PROCESS</span>
+          <span class="text-xs font-bold text-slate-500">(สมอง)</span>
+        </div>
+        <p class="text-sm font-bold text-slate-800">บอร์ด ESP32</p>
+        <p class="text-xs text-slate-600">คิดและตัดสินใจตามโค้ดที่เขียน</p>
+      </div>
+
+      <div id="ipo-card-output" class="bg-white/95 rounded-2xl p-3 border-2 border-emerald-200 shadow-sm transition-all duration-300">
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-900">3. OUTPUT</span>
+          <span class="text-xs font-bold text-slate-500">(แขน ขา ปาก)</span>
+        </div>
+        <p class="text-sm font-bold text-slate-800">มอเตอร์ / ไฟ / ลำโพง</p>
+        <p class="text-xs text-slate-600">แสดงผลลัพธ์ได้หลากหลายแบบ</p>
+      </div>
+    </section>
+
+    <!-- Interactive Signal Pipeline Diagram -->
+    <section class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-xl border-2 border-indigo-200">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <!-- Output Mode Selector -->
+        <div class="flex flex-wrap items-center gap-1.5" role="group" aria-label="เลือกรูปแบบ Output">
+          <span class="text-xs font-bold text-slate-500 mr-1">เลือกรูปแบบ Output:</span>
+          <button type="button" data-mode="all" class="mode-pill px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm transition cursor-pointer">
+            ✨ ทั้ง 3 แบบพร้อมกัน
+          </button>
+          <button type="button" data-mode="motion" class="mode-pill px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-emerald-50 transition cursor-pointer">
+            1. ขยับ (มือ/Servo)
+          </button>
+          <button type="button" data-mode="light" class="mode-pill px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-emerald-50 transition cursor-pointer">
+            2. แสง (ไฟฉาย/LED)
+          </button>
+          <button type="button" data-mode="sound" class="mode-pill px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-emerald-50 transition cursor-pointer">
+            3. เสียง (พูด/Buzzer)
+          </button>
+        </div>
+
+        <span id="ipoStatusText" class="text-xs sm:text-sm font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+          พร้อมจำลอง: กดปุ่มด้านล่างได้เลย!
+        </span>
+      </div>
+
+      <div class="w-full overflow-hidden rounded-2xl bg-gradient-to-b from-slate-50 to-sky-50/60 border border-slate-200">
+        <svg viewBox="0 0 820 310" class="w-full h-auto">
+          <!-- Row Labels -->
+          <rect x="12" y="18" width="108" height="24" rx="12" fill="#e0e7ff" />
+          <text x="66" y="34" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3730a3">ร่างกายมนุษย์</text>
+
+          <rect x="12" y="166" width="108" height="24" rx="12" fill="#cffafe" />
+          <text x="66" y="182" text-anchor="middle" font-size="11.5" font-weight="700" fill="#155e75">ระบบ ESP32</text>
+
+          <line x1="20" y1="154" x2="800" y2="154" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 6" />
+
+          <!-- Connection Wires -->
+          <path id="wire-h-1" d="M 192 92 L 290 92" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" fill="none" />
+          <path id="wire-h-2" d="M 400 92 L 490 92" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" fill="none" />
+          <path id="wire-a-1" d="M 192 240 L 290 240" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" fill="none" />
+          <path id="wire-a-2" d="M 400 240 L 490 240" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" fill="none" />
+
+          <!-- Moving Blue / Green Signal Dots -->
+          <circle id="dot-h-1" cx="192" cy="92" r="8.5" fill="#0ea5e9" stroke="#ffffff" stroke-width="2.5" class="ipo-dot" />
+          <circle id="dot-a-1" cx="192" cy="240" r="8.5" fill="#0ea5e9" stroke="#ffffff" stroke-width="2.5" class="ipo-dot" />
+          <circle id="dot-h-2" cx="400" cy="92" r="8.5" fill="#22c55e" stroke="#ffffff" stroke-width="2.5" class="ipo-dot" />
+          <circle id="dot-a-2" cx="400" cy="240" r="8.5" fill="#22c55e" stroke="#ffffff" stroke-width="2.5" class="ipo-dot" />
+
+          <!-- ROW 1: HUMAN -->
+          <!-- Eye (Input) -->
+          <g transform="translate(106, 48)">
+            <rect x="0" y="0" width="88" height="88" rx="16" fill="#ffffff" stroke="#38bdf8" stroke-width="2.5" />
+            <path d="M19 36 Q44 14 69 36 Q44 58 19 36 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5" />
+            <circle cx="44" cy="36" r="10" fill="#0284c7" />
+            <circle cx="44" cy="36" r="4.5" fill="#0f172a" />
+            <circle cx="47" cy="33" r="2" fill="#ffffff" />
+            <text x="44" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#0369a1">ดวงตา</text>
+          </g>
+
+          <!-- Brain (Process) -->
+          <g transform="translate(290, 48)">
+            <g id="node-brain" class="process-inner">
+              <rect x="0" y="0" width="110" height="88" rx="16" fill="#fef3c7" stroke="#f59e0b" stroke-width="3" />
+              <path d="M32 48 C22 48 20 34 29 30 C28 20 42 16 50 24 C56 16 74 18 75 29 C85 32 84 48 72 48 Z"
+                fill="#fb7185" stroke="#be123c" stroke-width="2" />
+              <path d="M52 24 L52 48" stroke="#be123c" stroke-width="2" />
+              <text x="55" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">สมอง</text>
+            </g>
+          </g>
+
+          <!-- Human Outputs (3 Types) -->
+          <g transform="translate(490, 44)">
+            <rect x="0" y="0" width="316" height="96" rx="18" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+
+            <!-- 1. Waving Hand -->
+            <g id="out-h-motion" class="output-subcard" transform="translate(10, 6)">
+              <rect x="0" y="0" width="92" height="84" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5" />
+              <g id="humanHand" class="human-hand">
+                <path d="M33 52 L33 28 C33 24 38 24 38 28 L38 37 L41 19 C41 15 46 15 46 19 L46 35 L49 21 C49 17 54 17 54 21 L54 37 L57 27 C57 24 62 24 62 28 L59 48 C57 56 49 58 41 58 C35 58 33 55 33 52 Z"
+                  fill="#fdba74" stroke="#c2410c" stroke-width="1.8" />
+              </g>
+              <text x="46" y="75" text-anchor="middle" font-size="11" font-weight="700" fill="#065f46">มือโบก</text>
+            </g>
+
+            <!-- 2. Flashlight -->
+            <g id="out-h-light" class="output-subcard" transform="translate(112, 6)">
+              <rect x="0" y="0" width="92" height="84" rx="12" fill="#fefce8" stroke="#fde047" stroke-width="1.5" />
+              <polygon id="humanFlashBeam" points="58,28 86,10 86,52 58,36" fill="#fde047" opacity="0.7" class="light-beam" />
+              <rect x="14" y="27" width="32" height="14" rx="4" fill="#475569" stroke="#1e293b" stroke-width="1.5" />
+              <path d="M46 25 L58 21 L58 47 L46 43 Z" fill="#94a3b8" stroke="#1e293b" stroke-width="1.5" />
+              <circle cx="24" cy="34" r="3" fill="#ef4444" />
+              <text x="46" y="75" text-anchor="middle" font-size="11" font-weight="700" fill="#854d0e">เปิดไฟฉาย</text>
+            </g>
+
+            <!-- 3. Mouth Speaking -->
+            <g id="out-h-sound" class="output-subcard" transform="translate(214, 6)">
+              <rect x="0" y="0" width="92" height="84" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5" />
+              <!-- Mouth -->
+              <path d="M16 42 Q30 32 44 42 Q30 56 16 42 Z" fill="#fb7185" stroke="#be123c" stroke-width="1.8" />
+              <path d="M22 40 Q30 44 38 40" stroke="#ffffff" stroke-width="2" fill="none" />
+              <!-- Speech Bubble -->
+              <g id="humanSpeech" class="speech-bubble">
+                <rect x="44" y="8" width="44" height="24" rx="8" fill="#0284c7" />
+                <polygon points="48,30 42,36 54,32" fill="#0284c7" />
+                <text x="66" y="24" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">สวัสดี!</text>
+              </g>
+              <text x="46" y="75" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">ปากพูดทัก</text>
+            </g>
+          </g>
+
+          <!-- ROW 2: ESP32 -->
+          <!-- Ultrasonic Sensor (Input) -->
+          <g transform="translate(106, 196)">
+            <rect x="0" y="0" width="88" height="88" rx="16" fill="#ffffff" stroke="#38bdf8" stroke-width="2.5" />
+            <rect x="18" y="16" width="52" height="28" rx="5" fill="#0284c7" stroke="#0369a1" stroke-width="2" />
+            <circle cx="33" cy="30" r="9" fill="#e2e8f0" stroke="#475569" stroke-width="2" />
+            <circle cx="55" cy="30" r="9" fill="#e2e8f0" stroke="#475569" stroke-width="2" />
+            <circle cx="33" cy="30" r="4" fill="#334155" />
+            <circle cx="55" cy="30" r="4" fill="#334155" />
+            <text x="44" y="62" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0369a1">เซนเซอร์</text>
+            <text x="44" y="76" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0284c7">Ultrasonic</text>
+          </g>
+
+          <!-- ESP32 Board (Process) -->
+          <g transform="translate(290, 194)">
+            <g id="node-arduino" class="process-inner">
+              <rect x="0" y="0" width="110" height="88" rx="16" fill="#e0f2fe" stroke="#0284c7" stroke-width="3" />
+              <rect x="24" y="14" width="62" height="40" rx="5" fill="#0284c7" stroke="#0369a1" stroke-width="2" />
+              <rect x="18" y="22" width="10" height="14" rx="2" fill="#94a3b8" />
+              <rect x="42" y="26" width="28" height="16" rx="2" fill="#0f172a" />
+              <circle cx="77" cy="22" r="3.5" fill="#22c55e" />
+              <circle cx="77" cy="31" r="3" fill="#facc15" />
+              <text x="55" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#0369a1">บอร์ด ESP32</text>
+            </g>
+          </g>
+
+          <!-- ESP32 Outputs (3 Types) -->
+          <g transform="translate(490, 190)">
+            <rect x="0" y="0" width="316" height="96" rx="18" fill="#ffffff" stroke="#10b981" stroke-width="2.5" />
+
+            <!-- 1. Servo Motor -->
+            <g id="out-a-motion" class="output-subcard" transform="translate(10, 6)">
+              <rect x="0" y="0" width="92" height="84" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5" />
+              <path id="servoArc" d="M 63 46 A 22 22 0 0 0 41 24" stroke="#10b981" stroke-width="2" stroke-dasharray="3 3" fill="none" class="angle-arc" />
+              <rect x="15" y="34" width="40" height="22" rx="4" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.8" />
+              <circle cx="41" cy="46" r="5.5" fill="#ffffff" stroke="#1e293b" stroke-width="1.8" />
+              <g id="servoArm" class="servo-arm">
+                <rect x="38" y="42.5" width="34" height="7" rx="3.5" fill="#facc15" stroke="#b45309" stroke-width="1.8" />
+                <circle cx="41" cy="46" r="2.5" fill="#1e293b" />
+              </g>
+              <text x="46" y="75" text-anchor="middle" font-size="11" font-weight="700" fill="#065f46">Servo 90°</text>
+            </g>
+
+            <!-- 2. LED Light -->
+            <g id="out-a-light" class="output-subcard" transform="translate(112, 6)">
+              <rect x="0" y="0" width="92" height="84" rx="12" fill="#fefce8" stroke="#fde047" stroke-width="1.5" />
+              <circle id="ledHalo" cx="46" cy="30" r="22" fill="#fef08a" opacity="0.65" class="light-beam" />
+              <!-- LED Legs -->
+              <line x1="41" y1="44" x2="41" y2="59" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
+              <line x1="51" y1="44" x2="51" y2="56" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
+              <!-- LED Dome -->
+              <path id="ledBulb" d="M36 42 L36 28 A10 10 0 0 1 56 28 L56 42 Z" fill="#cbd5e1" stroke="#b45309" stroke-width="2" class="led-bulb" />
+              <rect x="33" y="40" width="26" height="5" rx="2" fill="#f59e0b" />
+              <text x="46" y="75" text-anchor="middle" font-size="11" font-weight="700" fill="#854d0e">หลอดไฟ LED</text>
+            </g>
+
+            <!-- 3. Buzzer Speaker -->
+            <g id="out-a-sound" class="output-subcard" transform="translate(214, 6)">
+              <rect x="0" y="0" width="92" height="84" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5" />
+              <!-- Buzzer Body -->
+              <circle cx="36" cy="37" r="18" fill="#1e293b" stroke="#0f172a" stroke-width="2" />
+              <circle cx="36" cy="37" r="5" fill="#94a3b8" />
+              <!-- Sound Waves -->
+              <path id="buzzerW1" d="M58 29 Q64 37 58 45" stroke="#0284c7" stroke-width="2.8" fill="none" stroke-linecap="round" class="buzzer-wave-1" />
+              <path id="buzzerW2" d="M64 23 Q73 37 64 51" stroke="#38bdf8" stroke-width="2.8" fill="none" stroke-linecap="round" class="buzzer-wave-2" />
+              <text id="buzzerText" x="72" y="18" font-size="9" font-weight="700" fill="#0284c7" class="light-beam">ติ๊ด!</text>
+              <text x="46" y="75" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">ลำโพง Buzzer</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Trigger Button -->
+      <div class="mt-3.5 flex flex-wrap items-center justify-center gap-3">
+        <button id="simulateIpoBtn" type="button"
+          class="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-2xl font-extrabold text-base sm:text-lg bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white shadow-lg transition transform active:scale-95 cursor-pointer">
+          <span>🚶</span>
+          <span>จำลองเหตุการณ์: มีคนเดินเข้าใกล้</span>
+        </button>
+      </div>
+    </section>
+    </details>
+  </main>
+
+  <script>
+    (function () {
+      const simulateIpoBtn = document.getElementById('simulateIpoBtn');
+      const ipoStatusText = document.getElementById('ipoStatusText');
+      const ipoCardInput = document.getElementById('ipo-card-input');
+      const ipoCardProcess = document.getElementById('ipo-card-process');
+      const ipoCardOutput = document.getElementById('ipo-card-output');
+      const modePills = Array.from(document.querySelectorAll('.mode-pill'));
+
+      const wireH1 = document.getElementById('wire-h-1');
+      const wireA1 = document.getElementById('wire-a-1');
+      const wireH2 = document.getElementById('wire-h-2');
+      const wireA2 = document.getElementById('wire-a-2');
+      const dotH1 = document.getElementById('dot-h-1');
+      const dotA1 = document.getElementById('dot-a-1');
+      const dotH2 = document.getElementById('dot-h-2');
+      const dotA2 = document.getElementById('dot-a-2');
+      const nodeBrain = document.getElementById('node-brain');
+      const nodeESP32 = document.getElementById('node-arduino');
+
+      const outSubcards = {
+        motion: [document.getElementById('out-h-motion'), document.getElementById('out-a-motion')],
+        light: [document.getElementById('out-h-light'), document.getElementById('out-a-light')],
+        sound: [document.getElementById('out-h-sound'), document.getElementById('out-a-sound')]
+      };
+
+      const animTargets = {
+        motion: [
+          document.getElementById('humanHand'),
+          document.getElementById('servoArm'),
+          document.getElementById('servoArc')
+        ],
+        light: [
+          document.getElementById('humanFlashBeam'),
+          document.getElementById('ledHalo'),
+          document.getElementById('ledBulb')
+        ],
+        sound: [
+          document.getElementById('humanSpeech'),
+          document.getElementById('buzzerW1'),
+          document.getElementById('buzzerW2'),
+          document.getElementById('buzzerText')
+        ]
+      };
+
+      let selectedMode = 'all';
+      let ipoTimers = [];
+      let ipoRafId = null;
+
+      function updateModeUI() {
+        modePills.forEach((pill) => {
+          const isSelected = pill.dataset.mode === selectedMode;
+          pill.setAttribute('aria-pressed', String(isSelected));
+          pill.className = isSelected
+            ? 'mode-pill px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm transition cursor-pointer'
+            : 'mode-pill px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-emerald-50 transition cursor-pointer';
+        });
+
+        Object.keys(outSubcards).forEach((type) => {
+          const dim = selectedMode !== 'all' && selectedMode !== type;
+          outSubcards[type].forEach((el) => el.classList.toggle('is-dimmed', dim));
+        });
+      }
+
+      function resetIpoAnimation() {
+        ipoTimers.forEach((t) => clearTimeout(t));
+        ipoTimers = [];
+        if (ipoRafId) {
+          cancelAnimationFrame(ipoRafId);
+          ipoRafId = null;
+        }
+
+        [wireH1, wireA1, wireH2, wireA2].forEach((w) => {
+          w.setAttribute('stroke', '#cbd5e1');
+          w.classList.remove('ipo-wire-lit');
+        });
+        [dotH1, dotA1, dotH2, dotA2].forEach((d) => d.classList.remove('is-visible'));
+        dotH1.setAttribute('cx', '192');
+        dotA1.setAttribute('cx', '192');
+        dotH2.setAttribute('cx', '400');
+        dotA2.setAttribute('cx', '400');
+
+        nodeBrain.classList.remove('is-blinking');
+        nodeESP32.classList.remove('is-blinking');
+
+        Object.values(animTargets).flat().forEach((el) => el.classList.remove('is-active'));
+
+        ipoCardInput.classList.remove('ring-4', 'ring-sky-300', 'bg-sky-50');
+        ipoCardProcess.classList.remove('ring-4', 'ring-amber-300', 'bg-amber-50');
+        ipoCardOutput.classList.remove('ring-4', 'ring-emerald-300', 'bg-emerald-50');
+      }
+
+      function animateDotX(dotEls, startX, endX, durationMs, onDone) {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          dotEls.forEach(d => { d.setAttribute('cx', String(endX)); d.classList.add('is-visible'); });
+          ipoTimers.push(setTimeout(() => { dotEls.forEach(d => d.classList.remove('is-visible')); if(onDone) onDone(); }, durationMs));
+          return;
+        }
+        const startTime = performance.now();
+        dotEls.forEach((d) => d.classList.add('is-visible'));
+
+        function step(now) {
+          const progress = Math.min((now - startTime) / durationMs, 1);
+          const curX = startX + (endX - startX) * progress;
+          dotEls.forEach((d) => d.setAttribute('cx', String(curX)));
+          if (progress < 1) {
+            ipoRafId = requestAnimationFrame(step);
+          } else {
+            dotEls.forEach((d) => d.classList.remove('is-visible'));
+            if (onDone) onDone();
+          }
+        }
+        ipoRafId = requestAnimationFrame(step);
+      }
+
+      function runSimulation() {
+        resetIpoAnimation();
+
+        // Phase 1: Input -> Process
+        ipoStatusText.textContent = '1. INPUT: ดวงตา & เซนเซอร์รับสัญญาณ!';
+        ipoStatusText.className = 'text-xs sm:text-sm font-bold text-sky-700 bg-sky-100 px-3 py-1 rounded-full';
+        ipoCardInput.classList.add('ring-4', 'ring-sky-300', 'bg-sky-50');
+        wireH1.setAttribute('stroke', '#38bdf8');
+        wireA1.setAttribute('stroke', '#38bdf8');
+        wireH1.classList.add('ipo-wire-lit');
+        wireA1.classList.add('ipo-wire-lit');
+
+        animateDotX([dotH1, dotA1], 192, 290, 700, () => {
+          // Phase 2: Process (Blink 2x)
+          ipoStatusText.textContent = '2. PROCESS: สมอง & ESP32 กำลังคิด (กะพริบ 2 ครั้ง)!';
+          ipoStatusText.className = 'text-xs sm:text-sm font-bold text-amber-800 bg-amber-100 px-3 py-1 rounded-full';
+          ipoCardProcess.classList.add('ring-4', 'ring-amber-300', 'bg-amber-50');
+          nodeBrain.classList.add('is-blinking');
+          nodeESP32.classList.add('is-blinking');
+
+          ipoTimers.push(setTimeout(() => {
+            // Phase 3: Process -> Output
+            ipoStatusText.textContent = '3. OUTPUT: ส่งคำสั่งไปยังอุปกรณ์แสดงผล!';
+            ipoStatusText.className = 'text-xs sm:text-sm font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full';
+            ipoCardOutput.classList.add('ring-4', 'ring-emerald-300', 'bg-emerald-50');
+            wireH2.setAttribute('stroke', '#22c55e');
+            wireA2.setAttribute('stroke', '#22c55e');
+            wireH2.classList.add('ipo-wire-lit');
+            wireA2.classList.add('ipo-wire-lit');
+
+            animateDotX([dotH2, dotA2], 400, 490, 620, () => {
+              const activeTypes = selectedMode === 'all' ? ['motion', 'light', 'sound'] : [selectedMode];
+              activeTypes.forEach((t) => animTargets[t].forEach((el) => el.classList.add('is-active')));
+
+              const labelMap = {
+                all: 'สำเร็จ! ขยับตัว + เปิดไฟ + ส่งเสียง พร้อมกันทั้ง 3 แบบ!',
+                motion: 'สำเร็จ! มือโบก + แขนกล Servo หมุนยก 90° พร้อมกัน',
+                light: 'สำเร็จ! เปิดไฟฉาย + หลอดไฟ LED สว่างจ้าพร้อมกัน',
+                sound: 'สำเร็จ! ปากพูด "สวัสดี!" + ลำโพง Buzzer ดังติ๊ดๆ!'
+              };
+              ipoStatusText.textContent = labelMap[selectedMode];
+
+              ipoTimers.push(setTimeout(() => {
+                Object.values(animTargets).flat().forEach((el) => el.classList.remove('is-active'));
+                [wireH1, wireA1, wireH2, wireA2].forEach((w) => w.classList.remove('ipo-wire-lit'));
+              }, 2600));
+            });
+          }, 950));
+        });
+      }
+
+      modePills.forEach((pill) => {
+        pill.addEventListener('click', () => {
+          selectedMode = pill.dataset.mode;
+          updateModeUI();
+          runSimulation();
+        });
+      });
+
+      simulateIpoBtn.addEventListener('click', runSimulation);
+      updateModeUI();
+    })();
+  </script>
+
+  <!-- Embed Mode Handler & Navigation Key Forwarder -->
+  <style>
+    html.is-embedded header > div:first-child { display: none !important; }
+  </style>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('embed') === '1') {
+        document.documentElement.classList.add('is-embedded');
+        const hideBadge = function () {
+          const header = document.querySelector('header');
+          if (header) {
+            const leftBadge = header.querySelector('div:first-child');
+            if (leftBadge) {
+              leftBadge.style.display = 'none';
+            }
+            const remainingControls = header.querySelector('button, a');
+            if (!remainingControls) {
+              header.style.display = 'none';
+            } else {
+              header.style.justifyContent = 'flex-end';
+              header.classList.remove('justify-between');
+            }
+          }
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', hideBadge);
+        } else {
+          hideBadge();
+        }
+      }
+
+
+    })();
+  </script>
+
+<script type="module" src="../scripts/feeder-foundations.js"></script><script src="../scripts/slide-support.js"></script></body>
+</html>

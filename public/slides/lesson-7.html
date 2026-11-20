@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สไลด์ 9: PWM ของ LED กับ Servo — ESP32 Classroom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/classroom.css"><link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/signal-lab.css"><link rel="stylesheet" href="../styles/pwm-comparison.css"><link rel="stylesheet" href="../styles/servo-feedback.css">
+</head><body class="pwm-slide">
+<header class="pwm-slide-header"><span>ESP32 ม.4 • PWM</span><span>สไลด์ที่ 9 / 17</span></header>
+<main><section class="signal-lab" aria-labelledby="signal-title">
+ <div class="signal-intro"><div><span class="signal-kicker">ลองเทียบก่อนนำไปใช้</span><h1 id="signal-title">PWM เหมือนกัน แต่ใช้สื่อความหมายต่างกัน</h1><p>เลื่อนทั้งสองแถบ แล้วดูว่าอะไรเปลี่ยน และอะไรยังเท่าเดิม</p></div><label class="signal-time-toggle"><input type="checkbox" id="same-timebase"> ใช้ฐานเวลาเดียวกัน 20 ms</label></div>
+ <div class="signal-compare">
+  <article class="signal-card signal-led"><div class="signal-card-top"><div><span class="signal-kicker">LED · หรี่ความสว่าง</span><h2>ปรับสัดส่วนเวลาเปิด</h2></div><svg viewBox="0 0 80 80" role="img" aria-label="LED จำลอง" class="signal-icon"><circle id="compare-led-glow" cx="40" cy="32" r="30" fill="#fbbf24" opacity=".3"/><path id="compare-led-body" d="M25 47V30a15 15 0 0 1 30 0v17Z" fill="#fbbf24" stroke="#a86514" stroke-width="2"/><path d="M31 47v24M49 47v24" stroke="#718096" stroke-width="4"/></svg></div>
+   <label for="compare-led-duty">Duty cycle <output id="compare-led-duty-value">50%</output></label><input id="compare-led-duty" type="range" min="0" max="100" value="50">
+   <div class="signal-meters" id="led-timing"></div><svg viewBox="0 0 550 125" class="signal-wave" role="img" aria-label="คลื่น PWM ของ LED"><text x="0" y="14">3.3 V</text><text x="0" y="110">0 V</text><g transform="translate(30 0)"><path d="M0 94H520" class="signal-grid"/><polyline id="compare-led-wave" fill="none" stroke="#e9a52f" stroke-width="2"/></g></svg><p class="signal-axis" id="led-axis"></p><p>เวลาเปิดมากขึ้น → กำลังเฉลี่ยมากขึ้น → เห็น LED สว่างขึ้น <small>(ภาพความสว่างเป็นแบบจำลอง)</small></p>
+  </article>
+  <article class="signal-card signal-servo"><div class="signal-card-top"><div><span class="signal-kicker">SERVO · GPIO18</span><h2>สั่งมุมฝาถังอาหาร</h2><p>ฝาในโครงงานหมุนจาก 0° ไป 90°</p></div></div>
+    <figure class="pwm-feeder-demo">
+      <svg viewBox="0 0 296 146" role="img" aria-labelledby="pwm-feeder-title">
+        <title id="pwm-feeder-title">ถังอาหาร ฝาที่หมุนตามคำสั่ง Servo และชามด้านล่าง</title>
+        <path d="M71 15h115l-8 57-27 24h-47L79 72Z" fill="#dff3ff" stroke="#3480a8" stroke-width="2"/>
+        <path d="M82 48h93l-7 22-22 22h-37L89 71Z" fill="#ecc78f"/>
+        <g fill="#a96b35"><circle cx="106" cy="61" r="4"/><circle cx="129" cy="70" r="4"/><circle cx="149" cy="58" r="4"/><circle cx="136" cy="83" r="4"/></g>
+        <path d="M104 96h47" stroke="#26769c" stroke-width="2"/>
+        <rect x="154" y="77" width="40" height="33" rx="8" fill="#5790c2"/>
+        <g transform="translate(155 97)">
+          <g id="servo-arm"><path d="M0 0V-54" stroke="#1e5d91" stroke-width="8" stroke-linecap="round"/><circle cy="-49" r="2.5" fill="#bcefff"/></g>
+          <circle r="5" fill="#d8f5ff" stroke="#2870a0" stroke-width="2"/>
+        </g>
+        <g class="pwm-feeder-pellets" fill="#a96b35"><circle cx="127" cy="112" r="3.5"/><circle cx="136" cy="122" r="3.5"/></g>
+        <path d="M81 128h94l-15 13H96Z" fill="#a5eafa" stroke="#3d83a5" stroke-width="2"/>
+        <path d="M193 87h20l13-18" fill="none" stroke="#62819a" stroke-width="1.5"/>
+        <text x="226" y="67">Servo</text><text x="233" y="85">GPIO18</text>
+      </svg>
+      <figcaption><strong id="pwm-feeder-state" aria-live="polite">0° · ฝาปิด</strong><span>ฝาจริงปรับมุมตามกลไก</span></figcaption>
+    </figure>
+    <div class="pwm-feeder-presets"><button type="button" data-feeder-pulse="1000">ปิดฝา 0°</button><button type="button" data-feeder-pulse="1500">เปิดฝา 90°</button></div>
+   <label for="servo-pulse">ความกว้างพัลส์ <output id="servo-pulse-value">1,000 µs</output></label><input id="servo-pulse" type="range" min="1000" max="2000" step="1" value="1000">
+   <div class="signal-meters" id="servo-timing"></div><svg viewBox="0 0 550 125" class="signal-wave" role="img" aria-label="คลื่นสั่ง Servo"><text x="0" y="14">HIGH</text><text x="0" y="110">LOW</text><g transform="translate(30 0)"><path d="M0 94H520" class="signal-grid"/><polyline id="compare-servo-wave" fill="none" stroke="#77b8ff" stroke-width="3"/></g></svg><p class="signal-axis">0 → 20 ms · 1 รอบ</p><p><strong id="servo-meaning"></strong> พัลส์นี้บอกชิปใน Servo ว่าต้องหมุนไปที่มุมไหน</p>
+   <button id="servo-why" class="servo-loop-button" type="button" aria-haspopup="dialog" aria-controls="servo-loop-dialog">ทำไม?</button>
+  </article>
+ </div>
+ <dialog id="servo-loop-dialog" class="servo-loop-dialog sf-dialog" aria-labelledby="servo-loop-title">
+  <div class="sf-panel">
+   <header class="sf-header"><hgroup><span class="sf-eyebrow">ตามสัญญาณเข้าไปในเซอร์โว</span><h2 id="servo-loop-title">เซอร์โวรู้ได้ยังไงว่าหมุนถึงมุมแล้ว?</h2></hgroup><button type="button" class="sf-close" data-sf-close aria-label="ปิดหน้าต่าง" autofocus>×</button></header>
+   <div class="sf-view-switch" role="group" aria-label="เลือกเส้นทางสัญญาณ"><button type="button" data-sf-view="pulse" aria-pressed="true">จากพัลส์เข้าเซอร์โว</button><button type="button" data-sf-view="full" aria-pressed="false">ดูเต็มตั้งแต่ ESP32</button></div>
+   <section class="sf-upstream" data-sf-upstream hidden aria-label="ESP32 สร้างพัลส์">
+    <div class="sf-code"><span>ตั้งมุมใน ESP32</span><code data-sf-code>servo.write(90);</code><small class="sf-library">ESP32Servo · attach(18, 1000, 2000) · 50 Hz</small><label>มุมที่สั่ง <output data-sf-angle-value>90°</output><input type="range" min="0" max="180" step="1" value="90" data-sf-angle-input aria-label="มุมที่สั่งจาก ESP32"></label></div>
+    <span class="sf-inline-arrow" aria-hidden="true">→</span>
+    <div class="sf-convert"><strong>ไลบรารีแปลงมุมเป็นเวลา HIGH</strong><p>ตัวอย่างนี้ตั้งช่วง 0–180° ไว้ที่ 1,000–2,000 µs</p><code data-sf-formula></code><small>LEDC ของ ESP32 สร้างพัลส์ซ้ำทุก 20 ms</small></div>
+   </section>
+   <section class="sf-input" aria-label="พัลส์คำสั่ง">
+    <div class="sf-pulse-control"><label for="servo-feedback-pulse">ลากความกว้างพัลส์ <output data-sf-pulse-value>1,500 µs</output></label><input id="servo-feedback-pulse" type="range" min="1000" max="2000" step="1" value="1500" data-sf-pulse-input aria-describedby="sf-scale-note"><div class="sf-scale"><span>1 ms · 0°</span><span>1.5 ms · 90°</span><span>2 ms · 180°</span></div></div>
+    <div><svg class="sf-wave" viewBox="0 0 550 92" role="img" aria-label="พัลส์คำสั่ง HIGH ตามความกว้างที่เลือก กราฟซูมช่วง 0 ถึง 4 ms"><path d="M24 63H524" stroke="#36516b"/><path data-sf-wave fill="none" stroke="#7dd3fc" stroke-width="3" stroke-linejoin="round"/><line x1="40" x2="228" y1="13" y2="13" data-sf-width stroke="#fbbf24" stroke-width="1.5"/><path d="M40 8V68" stroke="#fbbf24" stroke-dasharray="3 4"/><line data-sf-width-end y1="8" y2="68" stroke="#fbbf24" stroke-dasharray="3 4"/><text data-sf-width-label y="10" text-anchor="middle"></text><text x="24" y="84">0</text><text x="510" y="84">4 ms</text></svg><p class="sf-wave-note">ซูม 0–4 ms · พัลส์ส่งซ้ำทุก 20 ms (50 Hz)</p></div>
+   </section>
+   <div class="sf-section-label"><span>ภายในเซอร์โว</span><small>เส้นฟ้า = คำสั่งไปข้างหน้า · เส้นม่วง = มุมจริงป้อนกลับ</small></div>
+   <div class="sf-map" data-sf-map>
+    <svg class="sf-connections" data-sf-paths aria-hidden="true"><defs><marker id="sf-forward-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#38a5ce"/></marker><marker id="sf-feedback-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#9b74c4"/></marker></defs><g data-sf-connectors></g></svg>
+    <div class="sf-nodes" data-servo-nodes></div>
+   </div>
+   <div class="sf-live"><p data-sf-status role="status"></p><div><button type="button" data-sf-disturb>ลองดันเพลา</button><button type="button" data-sf-pause>พักภาพ</button></div></div>
+   <section class="sf-shaft-stage" aria-labelledby="sf-shaft-title">
+    <h3 id="sf-shaft-title">มุมจริงที่เพลา</h3>
+    <svg class="sf-shaft-large" viewBox="0 0 400 230" role="img" aria-label="แขนเซอร์โวขนาดใหญ่ เส้นทึบแสดงมุมจริง เส้นประแสดงมุมเป้าหมาย">
+     <path d="M80 160a120 120 0 0 1 240 0" fill="none" stroke="#c4ddee" stroke-width="3"/>
+     <g stroke="#97bfd9" stroke-width="2"><path d="M80 160h12m23-85 9 9m76-44v12m85 23-9 9m44 76h-12"/></g>
+     <g class="sf-angle-labels" text-anchor="middle"><text x="59" y="166">0°</text><text x="104" y="65">45°</text><text x="200" y="25">90°</text><text x="296" y="65">135°</text><text x="343" y="166">180°</text></g>
+     <rect x="162" y="168" width="76" height="41" rx="10" fill="#c2e0f3" stroke="#8ebad5" stroke-width="2"/>
+     <path d="M179 193h42" stroke="#9bc4dd" stroke-width="3" stroke-linecap="round"/>
+     <g transform="translate(200 160)">
+      <g data-sf-target-arm><path d="M0 0V-108" fill="none" stroke="#9f9cde" stroke-width="8" stroke-linecap="round" stroke-dasharray="5 10"/></g>
+      <g data-sf-arm><path d="M0 0V-108" stroke="#0284c7" stroke-width="16" stroke-linecap="round"/><circle cy="-97" r="4" fill="#e0f2fe"/></g>
+      <circle r="15" fill="#edf6fc" stroke="#6a9cba" stroke-width="3"/><circle r="5" fill="#6a9cba"/>
+     </g>
+    </svg>
+    <div class="sf-shaft-values"><span><i aria-hidden="true"></i>มุมจริง <strong data-sf-actual>90.0°</strong></span><span><i aria-hidden="true"></i>เป้าหมาย <strong data-sf-target>90.0°</strong></span></div>
+   </section>
+   <details class="sf-details"><summary>PID เกี่ยวตรงไหน? เซอร์โวทุกตัวใช้ไหม?</summary>
+    <p>ชิปอ่านความกว้างพัลส์เป็นเป้าหมาย แล้วใช้มุมที่วัดได้ป้อนกลับมาเทียบกัน วงจรควบคุมจริงขึ้นกับรุ่น เซอร์โวดิจิทัลบางรุ่นระบุ PID ไว้ในเอกสาร</p>
+    <p>ภาพนี้เลือกใช้ <strong>PID เป็นแบบจำลองการสอน</strong> เพื่อให้ลองดูว่าตัวควบคุมเปลี่ยนกำลังมอเตอร์อย่างไร</p>
+    <div class="sf-pid-terms"><div><b>P · มุมยังห่างแค่ไหน</b><output data-sf-p>0%</output><span>ยิ่งห่าง ยิ่งสั่งให้ไปหาเป้าหมาย</span></div><div><b>I · ยังคลาดอยู่นานไหม</b><output data-sf-i>0%</output><span>สะสมส่วนต่างที่ยังเหลือ</span></div><div><b>D · กำลังเข้าหาเร็วไหม</b><output data-sf-d>0%</output><span>ช่วยผ่อนแรงเมื่อกำลังเข้าใกล้</span></div></div>
+    <p class="sf-equation">มุมเป้าหมาย − มุมจริง → P + I + D → จำกัดกำลังและทิศทาง → ไดรเวอร์ H-bridge → มอเตอร์ → เพลา → วัดมุมกลับมา</p>
+   </details>
+   <footer class="sf-footer"><p id="sf-scale-note">ใช้การแปลง 1–2 ms ↔ 0–180° เพื่อสอน เซอร์โวแต่ละรุ่นมีช่วงพัลส์และระยะหมุนต่างกัน มุมเป้าหมายในภาพแทนค่าอ้างอิงที่วงจรใช้เทียบ</p><p>อ่านเพิ่มเติม <a href="https://www.pololu.com/blog/13/gettin-all-up-in-your-servos" target="_blank" rel="noopener">วงจรภายในเซอร์โว</a> · <a href="https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/" target="_blank" rel="noopener">ตัวอย่างรุ่นที่ใช้ PID</a></p></footer>
+  </div>
+ </dialog>
+ <p id="compare-time-note" class="signal-note"></p><p class="signal-note">แบบฝึกนี้ตรึง LED ที่ 5,000 Hz และ Servo ที่ 50 Hz ใช้ช่วงสั่งมุมตัวอย่าง 1–2 ms ↔ 0–180°; Servo แต่ละรุ่นอาจใช้ช่วงและทิศทางต่างกัน สาย SIG ส่งคำสั่ง ส่วนไฟเลี้ยง Servo ใช้แหล่งจ่ายตามพิกัดและต่อ GND ร่วมกับ ESP32</p>
+ <form id="pwm-invariant-quiz" class="signal-quiz"><span class="signal-kicker">QUIZ · ตอบแล้วตรวจได้</span><fieldset><legend>เมื่อปรับ duty cycle จาก 10% เป็น 90% โดยตรึงความถี่ไว้ อะไรไม่เปลี่ยน? <small>เลือกให้ครบทุกข้อ</small></legend><label><input type="checkbox" name="invariant" value="timing"> ความถี่และคาบของแต่ละรอบ</label><label><input type="checkbox" name="invariant" value="on"> ระยะเวลาที่เป็น HIGH ในแต่ละรอบ</label><label><input type="checkbox" name="invariant" value="levels"> ระดับแรงดัน HIGH / LOW</label><label><input type="checkbox" name="invariant" value="average"> ความสว่างเฉลี่ยของ LED</label></fieldset><button type="submit" class="signal-button">ตรวจคำตอบ</button><p id="pwm-quiz-feedback" role="status" class="signal-feedback">ลองเลื่อนแถบด้านบนแล้วเลือกคำตอบ</p></form>
+ <p class="signal-reference">อ้างอิง: <a href="https://github.com/madhephaestus/ESP32Servo/blob/master/examples/Sweep/Sweep.ino" target="_blank" rel="noopener">ESP32Servo · 50 Hz / ช่วงพัลส์</a></p>
+</section></main>
+<script src="../scripts/slide-support.js"></script><script type="module" src="../scripts/signal-lab/pwm-comparison.js"></script></body></html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>เครื่องให้อาหารรับและส่งสัญญาณอะไร? · ESP32 Classroom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/classroom.css">
+  <link rel="stylesheet" href="../styles/slide-support.css">
+  <link rel="stylesheet" href="../styles/signal-stories.css">
+</head>
+<body class="signal-stories">
+  <main class="story-page">
+    <header class="story-intro">
+      <h1>เครื่องให้อาหารรับและส่งสัญญาณอะไร?</h1>
+      <p>เลือกเส้นทางบนผัง แล้วลองว่า ESP32 อ่านและแปลข้อมูลจากอุปกรณ์แต่ละตัวอย่างไร</p>
+    </header>
+
+    <section class="story-family-selector" id="story-family-selector" aria-label="ผังสัญญาณรับเข้าและส่งออกของ ESP32">
+      <div class="story-io-diagram">
+        <svg class="story-io-connections" aria-hidden="true"><defs><marker id="io-arrow-digital" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="m1 1 8 4-8 4" fill="none" stroke="#0284c7" stroke-width="1.6"/></marker><marker id="io-arrow-analog" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="m1 1 8 4-8 4" fill="none" stroke="#c2410c" stroke-width="1.6"/></marker></defs><path class="story-io-wire" data-io-link="digital-input" data-family="digital"/><path class="story-io-flow" data-io-link="digital-input" data-family="digital" marker-end="url(#io-arrow-digital)"/><path class="story-io-wire" data-io-link="analog-input" data-family="analog"/><path class="story-io-flow" data-io-link="analog-input" data-family="analog" marker-end="url(#io-arrow-analog)"/><path class="story-io-wire" data-io-link="analog-output" data-family="analog"/><path class="story-io-flow" data-io-link="analog-output" data-family="analog" marker-end="url(#io-arrow-analog)"/><path class="story-io-wire" data-io-link="digital-output" data-family="digital"/><path class="story-io-flow" data-io-link="digital-output" data-family="digital" marker-end="url(#io-arrow-digital)"/></svg>
+        <button type="button" class="story-io-node" data-story-io="digital-input" data-family="digital" aria-controls="story-workbench">
+          <span class="story-io-direction">รับเข้า · 0 / 1</span>
+          <svg class="story-io-illustration" viewBox="0 0 140 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="14" width="65" height="37" rx="7" fill="#dbeafe"/><rect x="38" y="6" width="29" height="25" rx="7" fill="#38bdf8"/><path d="M30 51v9m45-9v9M92 34h13l8-13m-8 13h16"/></g></svg>
+          <strong>Digital input</strong>
+          <span class="story-io-examples">IR · Ultrasonic · DHT22</span>
+          <svg class="story-io-wave" viewBox="0 0 140 56" aria-hidden="true"><path d="M8 40h18V15h28v25h28V15h28v25h22"/></svg>
+          <span class="story-io-explore">กดดูตัวอย่าง</span>
+        </button>
+        <button type="button" class="story-io-node" data-story-io="analog-input" data-family="analog" aria-controls="story-workbench">
+          <span class="story-io-direction">รับเข้า · แรงดัน</span>
+          <svg class="story-io-illustration" viewBox="0 0 140 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="46" cy="29" r="22" fill="#ffedd5"/><path d="m46 29 12-13M30 51v9m16-9v9m16-9v9M81 14h43v34H81zM96 10v42m-8-26h28"/></g></svg>
+          <strong>Analog input</strong>
+          <span class="story-io-examples">Piezo · แรงสั่นจากเม็ดอาหาร</span>
+          <svg class="story-io-wave" viewBox="0 0 140 56" aria-hidden="true"><path d="M8 28c15 0 15-16 30-16s15 32 30 32 15-32 30-32 15 16 34 16"/></svg>
+          <span class="story-io-explore">กดดูตัวอย่าง</span>
+        </button>
+        <figure class="story-io-board">
+          <figcaption><strong>ESP32</strong><span>รับเข้า · ประมวลผล · ส่งออก</span></figcaption>
+          <div class="story-io-chip"><span class="story-io-port" data-io-port="digital-input" aria-hidden="true"></span><span class="story-io-port" data-io-port="analog-input" aria-hidden="true"></span><span class="story-io-port" data-io-port="analog-output" aria-hidden="true"></span><span class="story-io-port" data-io-port="digital-output" aria-hidden="true"></span>
+          <svg viewBox="0 0 180 244" role="img" aria-label="บอร์ด ESP32 อยู่กลางผัง รับสัญญาณจากฝั่ง input และส่งสัญญาณไปฝั่ง output">
+            <g stroke="#b98229" stroke-width="9" stroke-dasharray="3 11"><path d="M27 42v157m126-157v157"/></g>
+            <rect x="33" y="12" width="114" height="216" rx="12" fill="#145b6a" stroke="#084451" stroke-width="2"/>
+            <circle cx="43" cy="23" r="4" fill="#e0f2fe"/><circle cx="137" cy="23" r="4" fill="#e0f2fe"/>
+            <path d="M57 26h65v19H64v10h52V35H72" fill="none" stroke="#fbbf24" stroke-width="3"/>
+            <rect x="52" y="67" width="77" height="76" rx="5" fill="#cedce5" stroke="#8aa9b8" stroke-width="2"/>
+            <path d="M62 78h29m-29 6h21" stroke="#70909f" stroke-width="2"/><text x="90" y="113" text-anchor="middle" fill="#284664" font-size="14" font-weight="700">ESP32</text>
+            <path d="M55 154v22h23m47-22v22h-15" stroke="#67afaa" stroke-width="2" fill="none"/><rect x="80" y="155" width="23" height="28" rx="3" fill="#142f3d"/>
+            <circle cx="121" cy="162" r="4" fill="#8be2c8"/><rect x="47" y="197" width="17" height="11" rx="3" fill="#c7dee8"/><rect x="117" y="197" width="17" height="11" rx="3" fill="#c7dee8"/>
+            <rect x="72" y="207" width="37" height="27" rx="4" fill="#d5e4eb" stroke="#7395a6" stroke-width="2"/><rect x="79" y="221" width="23" height="7" rx="2" fill="#29475b"/>
+          </svg>
+          </div>
+          <p>Input / Output<br>มองจากฝั่ง ESP32</p>
+        </figure>
+        <button type="button" class="story-io-node" data-story-io="analog-output" data-family="analog" aria-controls="story-workbench">
+          <span class="story-io-direction">ส่งออก · แรงดัน</span>
+          <svg class="story-io-illustration" viewBox="0 0 140 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M28 24h20L71 8v48L48 40H28z" fill="#ffedd5"/><path d="M81 20q15 12 0 24m12-35q26 23 0 46" fill="none"/></g></svg>
+          <strong>Analog output</strong>
+          <span class="story-io-examples">ตัวอย่างเสริม · DAC สร้างคลื่นเสียง</span>
+          <svg class="story-io-wave" viewBox="0 0 140 56" aria-hidden="true"><path d="M8 28c15 0 15-16 30-16s15 32 30 32 15-32 30-32 15 16 34 16"/></svg>
+          <span class="story-io-explore">กดดูตัวอย่าง</span>
+        </button>
+        <button type="button" class="story-io-node" data-story-io="digital-output" data-family="digital" aria-controls="story-workbench">
+          <span class="story-io-direction">ส่งออก · 0 / 1</span>
+          <svg class="story-io-illustration" viewBox="0 0 140 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M27 39V27a17 17 0 1 1 34 0v12m-34 0h34M35 43v15m18-15v15" fill="#fef08a"/><rect x="82" y="18" width="44" height="32" rx="6" fill="#dbeafe"/><path d="M91 34h7l10-8m-1 8h10M88 50v9m28-9v9"/></g></svg>
+          <strong>Digital output</strong>
+          <span class="story-io-examples">ไฟแดง · พัลส์สั่ง Servo</span>
+          <svg class="story-io-wave" viewBox="0 0 140 56" aria-hidden="true"><path d="M8 40h18V15h28v25h28V15h28v25h22"/></svg>
+          <span class="story-io-explore">กดดูตัวอย่าง</span>
+        </button>
+      </div>
+      <p class="story-io-hint">ความชื้นและระยะเปลี่ยนได้หลายระดับ ส่วน ESP32 อ่านค่าจากพัลส์ดิจิทัลบนสาย</p>
+      <details class="story-extra">
+        <summary>ตัวอย่างเสริม: GPIO, DAC และบัสสื่อสาร</summary>
+        <div class="story-extra-options">
+          <button type="button" data-story-io="digital-input" data-story-extra="true">อินพุต: ปุ่ม, PIR, บัส</button>
+          <button type="button" data-story-io="analog-input" data-story-extra="true">อินพุต: ลูกบิด, แบตเตอรี่, AC</button>
+          <button type="button" data-story-io="digital-output" data-story-extra="true">เอาต์พุต: รีเลย์, PWM, บัส</button>
+          <button type="button" data-story-io="analog-output" data-story-extra="true">เอาต์พุต: เสียงจาก DAC</button>
+        </div>
+      </details>
+    </section>
+
+    <section id="story-workbench" class="signal-workbench" aria-labelledby="story-title" data-family="digital" hidden>
+      <header class="story-header">
+        <hgroup>
+          <p class="story-index"><span id="signal-family"></span><span id="story-number"></span></p>
+          <p class="story-io-context"><strong id="story-io-route"></strong><span id="story-io-note"></span></p>
+          <h2 id="story-title" tabindex="-1"></h2>
+          <p class="story-summary" id="story-summary"></p>
+          <p class="story-rates" id="story-rates" hidden><strong>ค่าที่มักใช้กับ ESP32</strong> <span></span></p>
+        </hgroup>
+        <div class="story-nav">
+          <button class="story-previous" id="story-previous" type="button">
+            <span aria-hidden="true">←</span> <span id="story-previous-label">ย้อนกลับ</span>
+          </button>
+          <button class="story-next" id="story-next" type="button">
+            ถัดไป <span id="story-next-icon" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="story-sensor-control" id="story-sensor-control" hidden>
+        <label for="story-sensor-value"><span id="story-sensor-label"></span><output id="story-sensor-output" for="story-sensor-value"></output></label>
+        <input type="range" id="story-sensor-value">
+      </div>
+      <div class="story-stage">
+        <figure class="story-graph">
+          <figcaption><strong>แรงดันเทียบกับเวลา</strong><span id="story-graph-mode">เล่นช้าลง</span></figcaption>
+          <div class="story-plot" id="story-plot"></div>
+        </figure>
+
+        <div class="story-signal" id="story-signal" aria-hidden="true">
+          <span id="story-wires"></span>
+          <svg viewBox="0 0 90 28" aria-hidden="true">
+            <path d="M9 14H77m-8-7 8 7-8 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="story-reverse" d="m16 7-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle class="story-signal-dot" cx="9" cy="14" r="4" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <figure class="story-device" id="story-device">
+          <figcaption id="story-device-name"></figcaption>
+          <div id="story-art" class="story-art"></div>
+          <p id="story-result" class="story-result"></p>
+          <button class="story-use-case" id="story-use-case" type="button" aria-haspopup="dialog">Use case</button>
+        </figure>
+      </div>
+
+      <dialog class="story-case-dialog" id="story-case-dialog" aria-labelledby="story-case-title">
+        <div class="story-case-panel">
+          <p id="story-case-mode" class="story-case-mode"></p>
+          <h2 id="story-case-title"></h2>
+          <p class="story-case-when">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg>
+            <span id="story-case-when"></span>
+          </p>
+          <figure class="story-case-diagram">
+            <div class="story-case-scene" aria-hidden="true">
+              <div class="story-case-endpoint" data-side="left"><div></div><strong></strong></div>
+              <div class="story-case-lanes" id="story-case-lanes"></div>
+              <div class="story-case-endpoint" data-side="right"><div></div><strong></strong></div>
+            </div>
+            <figcaption class="sr-only"><ol id="story-case-routes" aria-label="ลำดับการส่งสัญญาณ"></ol></figcaption>
+          </figure>
+          <figure id="story-case-network" class="story-case-network" hidden></figure>
+          <div class="story-case-footer">
+            <p class="story-case-result" id="story-case-result"></p>
+            <form method="dialog">
+              <button type="submit" class="story-previous" autofocus>ปิด</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+      <template id="story-case-exchange">
+        <div class="story-case-lane">
+          <span class="story-case-phase" hidden></span>
+          <span class="story-case-signal"></span>
+          <div class="story-case-wire">
+            <span class="story-case-packet-track"><span class="story-case-packet"></span></span>
+          </div>
+        </div>
+      </template>
+
+      <div class="story-copy">
+        <p id="story-message"></p>
+        <small id="story-note"></small>
+        <a id="story-source" class="story-source" target="_blank" rel="noopener" hidden></a>
+      </div>
+      <p id="story-announcement" class="sr-only" role="status"></p>
+    </section>
+
+  </main>
+
+  <script src="../scripts/slide-support.js"></script>
+  <script type="module" src="../scripts/sensor-signals.js"></script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+{
+  "version": 1,
+  "author": "ESP32 Classroom · Cat Feeder",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": 100,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-servo",
+      "id": "flap",
+      "top": 120,
+      "left": 355,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "beep",
+      "top": 255,
+      "left": 365,
+      "attrs": {
+        "volume": "0.15"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "meal",
+      "top": 290,
+      "left": 175,
+      "attrs": {
+        "color": "blue",
+        "label": "MEAL"
+      }
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "stock",
+      "top": -68,
+      "left": 245,
+      "attrs": {
+        "distance": "10"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "echoTop",
+      "top": 8,
+      "left": 305,
+      "attrs": {
+        "value": "1000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "echoBottom",
+      "top": 10,
+      "left": 417,
+      "attrs": {
+        "value": "1800"
+      },
+      "rotate": 90
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "air",
+      "top": -44,
+      "left": -200,
+      "attrs": {
+        "humidity": "55"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "dhtPull",
+      "top": 30,
+      "left": -152,
+      "attrs": {
+        "value": "10000"
+      }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "beam",
+      "top": 220,
+      "left": -164,
+      "attrs": {
+        "value": "1",
+        "bounce": "0"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "beamLabel",
+      "top": 174,
+      "left": -160,
+      "attrs": {
+        "text": "IR: left = cat at bowl"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "fault",
+      "top": 168,
+      "left": 216,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "ledR",
+      "top": 211,
+      "left": 217,
+      "attrs": {
+        "value": "330"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "flap:V+",
+      "esp:VIN",
+      "red",
+      []
+    ],
+    [
+      "flap:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "flap:PWM",
+      "esp:D18",
+      "orange",
+      []
+    ],
+    [
+      "beep:2",
+      "esp:D25",
+      "violet",
+      []
+    ],
+    [
+      "beep:1",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "meal:1.l",
+      "esp:D19",
+      "blue",
+      []
+    ],
+    [
+      "meal:2.l",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "stock:VCC",
+      "esp:VIN",
+      "red",
+      []
+    ],
+    [
+      "stock:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "stock:TRIG",
+      "esp:D26",
+      "blue",
+      []
+    ],
+    [
+      "stock:ECHO",
+      "echoTop:1",
+      "green",
+      []
+    ],
+    [
+      "echoTop:2",
+      "echoBottom:1",
+      "green",
+      []
+    ],
+    [
+      "echoTop:2",
+      "esp:D27",
+      "green",
+      []
+    ],
+    [
+      "echoBottom:2",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "air:VCC",
+      "esp:3V3",
+      "red",
+      []
+    ],
+    [
+      "air:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "air:SDA",
+      "esp:D32",
+      "cyan",
+      []
+    ],
+    [
+      "dhtPull:1",
+      "air:SDA",
+      "cyan",
+      []
+    ],
+    [
+      "dhtPull:2",
+      "esp:3V3",
+      "red",
+      []
+    ],
+    [
+      "beam:2",
+      "esp:D33",
+      "blue",
+      []
+    ],
+    [
+      "beam:1",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "esp:D23",
+      "ledR:1",
+      "purple",
+      []
+    ],
+    [
+      "ledR:2",
+      "fault:A",
+      "purple",
+      []
+    ],
+    [
+      "fault:C",
+      "esp:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "dependencies": {},
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "esp32-interactive-classroom",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "prebuild": "node scripts/build-signal-assets.mjs && node scripts/export-labs.mjs && node scripts/build-classroom.mjs && node scripts/check-feeder.mjs && node scripts/check-code-lesson.mjs && node scripts/check-block-structure.mjs && node scripts/check-multimeter.mjs && node scripts/build-code-lesson.mjs && node scripts/check-placement.mjs && node scripts/check-signals.mjs && node scripts/check-circuit-analysis.mjs && node scripts/check-breadboard-quiz.mjs && node scripts/check-pinout.mjs && node scripts/build-pinout.mjs && tailwindcss -i src/classroom/index.css -o public/styles/classroom.css --minify",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "predev": "npm run prebuild",
+    "check:pinout": "node scripts/check-pinout.mjs",
+    "check:quiz": "node scripts/check-breadboard-quiz.mjs",
+    "check:current": "node scripts/check-circuit-analysis.mjs",
+    "check:placement": "node scripts/check-placement.mjs",
+    "check:signals": "node scripts/check-signals.mjs",
+    "check:code": "node scripts/check-code-lesson.mjs",
+    "check:blocks": "node scripts/check-block-structure.mjs",
+    "check:meter": "node scripts/check-multimeter.mjs",
+    "check:feeder": "node scripts/check-feeder.mjs"
+  },
+  "dependencies": {
+    "@microsoft/focusgroup-polyfill": "^1.6.0",
+    "highlight.js": "^11.12.0",
+    "invokers-polyfill": "^1.0.4",
+    "lucide-react": "^0.468.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^3.4.17",
+    "vite": "^7.2.0"
+  }
+}

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>แหล่งพลังงาน (Power Source) · ESP32 Classroom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/slide-support.css">
+  <link rel="stylesheet" href="../styles/power-source.css">
+  <link rel="stylesheet" href="../styles/adapter-lab.css">
+  <link rel="stylesheet" href="../styles/lithium-protection.css">
+<link rel="stylesheet" href="../styles/feeder-foundations.css">
+</head>
+<body>
+<main class="power-page">
+  <header class="power-hero">
+    <p class="power-eyebrow">พื้นฐานการต่อวงจร ESP32</p>
+    <h1>แหล่งพลังงาน <span>(Power Source)</span></h1>
+    <p>USB เลี้ยงบอร์ด ส่วน Servo ที่เปิดฝารับไฟจากแหล่งจ่ายอีกตัว ลองต่อทีละเส้นแล้วทดสอบ</p>
+  </header>
+
+  <section class="ff-card ff-power" data-feeder-power aria-labelledby="feeder-power-title">
+    <h2 id="feeder-power-title">ฝาถังขยับได้เมื่อไฟและสัญญาณครบ</h2>
+    <p>GPIO18 ส่งคำสั่งเปิดฝา ไฟ 5 V จากแหล่งจ่ายเลี้ยง Servo แล้วใช้ GND ร่วมเป็นจุดอ้างอิง</p>
+    <div class="ff-power-grid">
+      <svg class="ff-power-svg" viewBox="0 0 620 315" role="img" aria-labelledby="feeder-power-art">
+        <title id="feeder-power-art">USB เลี้ยง ESP32 ขา GPIO18 ส่งสัญญาณเข้า Servo ที่ใช้ไฟ 5 V ภายนอก และกราวด์ทุกฝั่งต่อร่วมกัน</title>
+        <g fill="none" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+          <path class="ff-power-wire ff-usb-wire" d="M174 114h60"/>
+          <path class="ff-power-wire ff-adapter-wire" d="M163 240h50v-56h321v-43"/>
+          <path class="ff-power-wire ff-ground-wire" d="M163 260h349V142M305 161v99"/>
+          <path d="M352 112h88v18h28" stroke="#b45309"/>
+        </g>
+        <rect x="30" y="70" width="144" height="83" rx="11" fill="#f6fbfe" stroke="#5e91ad" stroke-width="2"/>
+        <rect x="62" y="92" width="48" height="30" rx="4" fill="#d3ebf9" stroke="#315e77" stroke-width="2"/>
+        <path d="M56 127h62" stroke="#315e77" stroke-width="3" stroke-linecap="round"/>
+        <text x="123" y="116" class="ff-svg-label">USB</text>
+        <rect x="233" y="71" width="120" height="91" rx="9" fill="#184d5e"/>
+        <rect x="252" y="91" width="82" height="36" rx="6" fill="#afc9d8"/>
+        <text x="264" y="114" class="ff-svg-label">ESP32</text>
+        <text x="355" y="96" class="ff-svg-label">GPIO18 · สัญญาณ</text>
+        <rect x="31" y="213" width="133" height="65" rx="11" fill="#fff6e9" stroke="#b98243" stroke-width="2"/>
+        <text x="46" y="240" class="ff-svg-label">แหล่งจ่าย 5 V</text>
+        <text x="46" y="262" class="ff-svg-label">สำหรับ Servo</text>
+        <text x="311" y="250" class="ff-svg-label">GND ร่วม</text>
+        <text x="420" y="174" class="ff-svg-label">สายไฟ 5 V</text>
+        <rect x="465" y="77" width="108" height="66" rx="10" fill="#d2ebff" stroke="#386c9a" stroke-width="2"/>
+        <path class="ff-test-arm" d="M480 125h65" stroke="#17394b" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="480" cy="125" r="7" fill="#ffd285" stroke="#3c5a72" stroke-width="2"/>
+        <text x="486" y="104" class="ff-svg-label">Servo</text>
+      </svg>
+      <div class="ff-power-controls">
+        <button type="button" data-feeder-wire="usb" aria-pressed="false">USB → ESP32 <small>ยังไม่ต่อ</small></button>
+        <button type="button" data-feeder-wire="adapter" aria-pressed="false">แหล่งจ่าย 5 V → Servo <small>ยังไม่ต่อ</small></button>
+        <button type="button" data-feeder-wire="ground" aria-pressed="false">ต่อ GND ร่วม <small>ยังไม่ต่อ</small></button>
+        <button type="button" data-power-test class="ff-primary">ทดสอบสั่งเปิดฝา</button>
+        <p class="ff-power-status" role="status" data-feeder-power-status>ลองเสียบ USB อย่างเดียวก่อน แล้วทดสอบว่าฝาขยับได้หรือยัง</p>
+      </div>
+    </div>
+    <p>ภาพนี้แยกไฟ 5 V ของ Servo ออกจากไฟ USB ของบอร์ด เชื่อมเฉพาะ GND ร่วมกัน</p>
+  </section>
+
+  <details class="ff-extra">
+    <summary>ทดลองเพิ่ม · USB, Adapter, ถ่าน และแบตเตอรี่</summary>
+  <nav class="power-picker" aria-label="เลือกแหล่งพลังงาน">
+    <fieldset class="power-picker-group">
+      <legend>On wire</legend>
+      <div class="power-picker-options">
+        <button type="button" data-source="usb" aria-pressed="true"><strong>USB จากคอม</strong><span>ทดลองบนโต๊ะ</span></button>
+        <button type="button" data-source="adapter" aria-pressed="false"><strong>Adapter 5V 2A</strong><span>ตั้งใช้งานประจำ</span></button>
+      </div>
+    </fieldset>
+    <fieldset class="power-picker-group">
+      <legend>On battery</legend>
+      <div class="power-picker-options">
+        <button type="button" data-source="aa" aria-pressed="false"><strong>ถ่าน AA / AAA</strong><span>พกพา · งานกินไฟน้อย</span></button>
+        <button type="button" data-source="lithium" aria-pressed="false"><strong>LiPo / Li-ion</strong><span>อุปกรณ์พกพาถึงโดรน</span></button>
+      </div>
+    </fieldset>
+  </nav>
+
+  <section id="usb-panel" class="power-card" aria-labelledby="usb-title">
+    <div class="power-card-heading">
+      <div><h2 id="usb-title">USB จาก Laptop / Desktop</h2><p>ตัวอย่างโน้ตบุ๊กเก่า จ่าย <strong>4.90V</strong> ที่ต้นสาย ใช้เพดานจำลอง <strong>500mA</strong> ตามกรณี USB 2.0 ที่อนุญาตกระแสระดับนี้</p></div>
+      <button type="button" class="power-action" id="usb-connect">เสียบสาย USB</button>
+    </div>
+    <div class="usb-controls">
+      <fieldset class="power-options">
+        <legend>เลือกอุปกรณ์ที่ต่อกับ ESP32</legend>
+        <button type="button" data-load="board" aria-pressed="true">บอร์ดอย่างเดียว</button>
+        <button type="button" data-load="led" aria-pressed="false">LED + R</button>
+        <button type="button" data-load="servo" aria-pressed="false">Servo</button>
+        <button type="button" data-load="motor" aria-pressed="false">DC Motor + Driver</button>
+      </fieldset>
+      <div id="motor-actions" class="motor-actions" hidden>
+        <button type="button" id="motor-stall">จำลองมือหยุดล้อ</button>
+        <button type="button" id="motor-brake">ดูไฟย้อนขณะเบรก</button>
+        <button type="button" id="motor-reset">ให้ล้อหมุนใหม่</button>
+      </div>
+    </div>
+    <p class="power-narrow">เลื่อนภาพด้านข้างเพื่อดูเส้นทางไฟทั้งหมด</p>
+    <div class="power-scene-scroll" tabindex="0" role="region" aria-label="ภาพการจ่ายไฟจาก USB เลื่อนดูด้านข้างได้">
+      <svg id="usb-scene" class="usb-scene" viewBox="0 0 940 350" role="img" aria-labelledby="usb-scene-title"></svg>
+    </div>
+    <div id="power-live" class="power-live" data-zone="off" role="status">
+      <div class="power-status-head"><strong id="power-zone">ยังไม่ได้เสียบสาย</strong><span id="power-total">—</span></div>
+      <div class="current-scale" id="current-scale" role="img" aria-label="กระแสจาก USB">
+        <div class="current-track"><span id="current-fill"></span></div>
+        <div class="usb-limit"><span>500mA</span></div>
+      </div>
+      <div class="power-current-parts" id="power-current-parts"></div>
+      <p id="power-message"></p>
+    </div>
+    <div class="power-quick">
+      <p><strong>พิกัดฉากนี้</strong> 4.9V × 0.5A ≈ 2.45W ดูพิกัดพอร์ตและสายจริงก่อนใช้งาน</p>
+      <p><strong>เหมาะกับ</strong> อัปโหลดโค้ด ทดลองบอร์ด เซนเซอร์หรือ LED เล็ก ๆ ที่รวมแล้วอยู่ในพิกัด</p>
+      <p><strong>งบคร่าว ๆ</strong> 0–150 บาท ถ้ามีคอมอยู่แล้ว นับเฉพาะสาย USB ที่รองรับข้อมูล</p>
+    </div>
+  </section>
+
+  <section id="other-panel" class="power-card" aria-labelledby="other-title" hidden></section>
+
+  <section class="power-card power-comparison" aria-labelledby="compare-title">
+    <h2 id="compare-title">เลือกจากงานที่จะใช้</h2>
+    <div class="compare-scroll" tabindex="0" role="region" aria-label="ตารางเปรียบเทียบแหล่งพลังงาน">
+      <table>
+        <thead><tr><th scope="col">แหล่งจ่าย</th><th scope="col">ย่านกำลังในตัวอย่าง</th><th scope="col">งานที่เหมาะ</th><th scope="col">งบตัวอย่าง</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">USB จากคอม</th><td>ถึง ~2.45W ในฉาก 4.9V / 500mA</td><td>เขียนโค้ดและทดลองโหลดเล็ก</td><td>0–150 บาท · สาย</td></tr>
+          <tr><th scope="row">Adapter 5V 2A</th><td>0–10W ที่เอาต์พุต 5V</td><td>จอหรือเซนเซอร์ประจำที่ มีปลั๊กไฟ</td><td>100–300 บาท · Adapter</td></tr>
+          <tr><th scope="row">AA / AAA</th><td>0.05–0.75W ในฉากเทียบโหลด</td><td>รีโมตหรือเซนเซอร์ที่ตื่นเป็นช่วง</td><td>40–140 บาท · ถ่านใช้แล้วทิ้ง 4 ก้อน<br>350–500 บาท · NiMH + ที่ชาร์จ</td></tr>
+          <tr><th scope="row">LiPo / Li-ion</th><td>~3.7–296W ในตัวอย่างแพ็กและโหลดต่างขนาด</td><td>เครื่องพกพา หุ่นยนต์เล็ก หรือโดรนตามพิกัดแพ็ก</td><td>150–350 บาท · 1S<br>800–1,600 บาท · 4S โดรน</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="power-footnote">ช่วงกำลังของแบตเป็นโหลดตัวอย่าง พิกัดจ่ายจริงขึ้นกับรุ่น การป้องกัน และตัวแปลงไฟ งบเป็นราคาคร่าว ๆ ในไทย ไม่รวมบอร์ดและวงจรต่อเพิ่ม</p>
+  </section>
+
+  <details class="power-card power-references">
+    <summary>แหล่งอ้างอิงและตัวอย่างราคา</summary>
+    <ul>
+      <li><a href="https://display.meanwell.com/qa.aspx?c=9" target="_blank" rel="noopener">MEAN WELL · รูปแบบการป้องกันโหลดเกิน</a></li>
+      <li><a href="https://www.allnewstep.com/category/74/accessories/usb-adapter-%E0%B8%AA%E0%B8%B2%E0%B8%A2-usb?tskp=2" target="_blank" rel="noopener">ราคาสาย USB ตัวอย่าง</a></li>
+      <li><a href="https://www.usb.org/sites/default/files/USB-IFTestProc1_3.pdf" target="_blank" rel="noopener">USB-IF · การทดสอบแรงดันและโหลด USB</a></li>
+      <li><a href="https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32/schematic-checklist.html" target="_blank" rel="noopener">Espressif · ไฟเลี้ยง ESP32</a></li>
+      <li><a href="https://www.ti.com/document-viewer/lit/html/SLVAFQ3" target="_blank" rel="noopener">Texas Instruments · กระแสเมื่อมอเตอร์ติดขัด</a> และ <a href="https://www.ti.com/document-viewer/lit/html/SLLA527" target="_blank" rel="noopener">แรงดันย้อนของมอเตอร์</a></li>
+      <li><a href="https://www.es.co.th/Schemetic/PDF/ET-SW-ADAP-5V-2A.PDF" target="_blank" rel="noopener">ETT · Adapter 5V 2A</a> และ <a href="https://www.allnewstep.com/product/1359/adapter-5v-2a-jack-5-5x2-5mm-%E0%B8%AD%E0%B8%B0%E0%B9%81%E0%B8%94%E0%B8%9B%E0%B9%80%E0%B8%95%E0%B8%AD%E0%B8%A3%E0%B9%8C-5v-2a" target="_blank" rel="noopener">ราคา Adapter ตัวอย่าง</a></li>
+      <li><a href="https://energizer.com/apac/australia/wp-content/uploads/sites/3/2024/05/e91_max_na_AA.pdf" target="_blank" rel="noopener">Energizer · กราฟถ่านอัลคาไลน์ AA</a> และ <a href="https://www.panasonic.com/global/energy/products/eneloop/en/lineup/eneloop.html" target="_blank" rel="noopener">Panasonic · NiMH AA/AAA</a> · <a href="https://www.ikea.com/th/en/cat/batteries-battery-chargers-41070/" target="_blank" rel="noopener">ราคาถ่านชาร์จและที่ชาร์จ</a></li>
+      <li><a href="https://www.molicel.com/wp-content/uploads/INR18650P28A-V2-80093.pdf" target="_blank" rel="noopener">Molicel · 18650</a> และ <a href="https://www.genstattu.com/4s-14-8v-lipo-battery.html" target="_blank" rel="noopener">Tattu · LiPo 4S</a> · <a href="https://www.fpvthai.com/collections/battery/products/tattu-14-8v-1550mah-120c" target="_blank" rel="noopener">ราคาแพ็กโดรนตัวอย่าง</a></li>
+    </ul>
+  </details>
+  </details>
+</main>
+<script type="module" src="../scripts/feeder-foundations.js"></script>
+<script src="../scripts/slide-support.js"></script>
+<script type="module" src="../scripts/power-source/app.js"></script>
+</body>
+</html>
