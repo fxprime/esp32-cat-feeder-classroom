@@ -128,7 +128,7 @@
       </div>
 
       <!-- Breadboard SVG Container -->
-      <div class="w-full overflow-x-auto rounded-2xl bg-slate-100 p-2 sm:p-3 border border-slate-200">
+      <div id="breadboardScroll" class="w-full overflow-x-auto rounded-2xl bg-slate-100 p-2 sm:p-3 border border-slate-200">
         <svg id="breadboardSvg" viewBox="0 0 880 390" class="w-full min-w-[640px] h-auto" aria-label="แผงทดลองรางไฟที่แยกซ้ายและขวา">
           <!-- Breadboard Body -->
           <rect x="10" y="10" width="860" height="370" rx="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="4" />
@@ -186,6 +186,7 @@
       const stripsLayer = document.getElementById('stripsLayer');
       const labelsLayer = document.getElementById('labelsLayer');
       const holesLayer = document.getElementById('holesLayer');
+      const boardViewport = document.getElementById('breadboardScroll');
       const jumpersLayer = document.getElementById('railJumpersLayer');
       const bridgeStatus = document.getElementById('rail-bridge-status');
       const bridgeButtons = [...document.querySelectorAll('[data-rail-bridge]')];
@@ -443,6 +444,7 @@
           jumper.connected = !jumper.connected;
           button.setAttribute('aria-pressed', String(jumper.connected));
           jumper.wire.dataset.connected = String(jumper.connected);
+          boardViewport.scrollLeft = (boardViewport.scrollWidth - boardViewport.clientWidth) / 2;
           lockedGroup = `${id}-left`;
           lockedHoleEl = null;
           highlightGroup(lockedGroup, null);
