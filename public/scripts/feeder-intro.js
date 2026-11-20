@@ -13,7 +13,7 @@ const legends = [...project.querySelectorAll('[data-project-parts]')];
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const stages = [
   {
-    id: 'features', name: 'ฟีเจอร์', title: 'อยากให้เครื่องทำอะไรได้บ้าง?',
+    id: 'features', name: 'ฟีเจอร์', title: 'ให้อาหารตามเวลา แม้คุณไม่อยู่บ้าน',
     next: 'การจะทำสิ่งนี้ได้ต้องรู้อะไรบ้าง?',
     art: 'ภาพด้านนอกของตู้ให้อาหาร มีชาม แมว และสัญลักษณ์ Wi-Fi',
   },
