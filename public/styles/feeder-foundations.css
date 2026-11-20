@@ -1,15 +1,3 @@
-.ff-intro {
-  text-align: center;
-  margin: .45rem auto .85rem;
-}
-.ff-intro h1 {
-  margin: 0;
-  font-size: clamp(1.45rem, 4.2vw, 2.6rem);
-  font-weight: 800;
-  line-height: 1.32;
-  color: #135281;
-}
-.ff-intro p { margin: .28rem 0 0; color: #475569; }
 .ff-card {
   border: 1px solid #c7dceb;
   border-radius: 1.5rem;
@@ -18,48 +6,7 @@
   min-inline-size: 0;
 }
 .ff-card h2 { margin: 0; color: #164064; font-size: clamp(1.14rem, 2.35vw, 1.48rem); font-weight: 800; }
-.ff-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(17.5rem, 1fr);
-  align-items: center;
-  gap: clamp(.8rem, 2.4vw, 1.9rem);
-  padding: clamp(.65rem, 2vw, 1.35rem);
-}
-.ff-scene {
-  position: relative;
-  align-self: stretch;
-  display: grid;
-  align-content:center;
-  border: 1px solid #d1e5f5;
-  border-radius: 1rem;
-  overflow: hidden;
-  min-inline-size: 0;
-  background: radial-gradient(ellipse at 30% 34%, #fafdff, #e8f5ff 90%);
-}
-.ff-scene svg { inline-size: 100%; block-size: auto; display: block; }
 .ff-svg-label { fill: #315675; font-size: 14px; font-weight: 700; }
-.ff-scene-caption { text-align:center; margin: 0 .7rem .55rem; color: #475569; font-size: .8rem; line-height: 1.5; }
-.ff-flap { transform-origin: 228px 253px; transform: rotate(0deg); }
-.ff-drop, .ff-beep, .ff-alert-art, .ff-served-kibble { opacity: 0; }
-[data-phase="dispensing"] .ff-flap { transform: rotate(-55deg); }
-[data-phase="dispensing"] .ff-drop,
-[data-beeping="true"] .ff-beep,
-[data-fault="true"] .ff-alert-art,
-[data-food-in-bowl="true"] .ff-served-kibble { opacity: 1; }
-[data-fault="true"] .ff-fault-lamp { fill: #dc2626; }
-.ff-cat { transform: translateX(0); }
-[data-cat-at-bowl="true"] .ff-cat { transform: translateX(-150px); }
-.ff-desk { display: grid; gap: .66rem; align-content: start; }
-.ff-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .35rem;
-  border: 0;
-  min-inline-size: 0;
-  margin: 0;
-  padding: 0;
-}
-.ff-options legend { font-size: .81rem; font-weight: 700; color: #465669; margin-block-end: .27rem; }
 .ff-card button {
   display: inline-flex;
   align-items: center;
@@ -82,25 +29,6 @@
 .ff-card button.ff-primary { background: #0369a1; border-color: #0369a1; color: #fff; }
 .ff-card button.ff-primary:hover { background: #075781; border-color: #075781; }
 .ff-card button:disabled { opacity: .5; cursor: default; }
-.ff-card button.ff-quiet { background: #fff; color: #53677d; }
-.ff-readings { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .35rem; margin: 0; }
-.ff-readings div { min-inline-size: 0; border: 1px solid #dbe8f1; padding: .38rem .45rem; background: #f8fbfe; border-radius: .68rem; }
-.ff-readings dt { color: #485e74; font-size: .72rem; line-height: 1.4; }
-.ff-readings dd { margin: 0; color: #164064; font-size: .97rem; font-weight: 700; }
-.ff-actions { display: flex; gap: .36rem; flex-wrap: wrap; }
-.ff-feedback {
-  min-block-size: 4rem;
-  padding: .5rem .68rem;
-  border-radius: .78rem;
-  border: 1px solid #cfe5e5;
-  background: #effafa;
-  display: grid;
-  gap: .1rem;
-}
-[data-fault="true"] .ff-feedback { border-color: #f2c6ce; background: #fff3f5; }
-.ff-feedback strong { color: #144763; font-size: .94rem; }
-.ff-feedback span { color: #364d60; font-size: .82rem; line-height: 1.55; }
-.ff-clue { margin: 0; color: #53677d; font-size: .75rem; line-height: 1.55; }
 .ff-extra {
   margin: .85rem 0 1rem;
   padding: .5rem .7rem;
@@ -132,15 +60,8 @@
 .ff-power p.ff-power-status { min-block-size: 3.8rem; margin: 0; border: 1px solid #cfe2ed; background: #f2faff; color: #254663; border-radius: .78rem; padding: .45rem .55rem; font-weight: 700; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .ff-flap, .ff-cat, .ff-test-arm, .ff-fault-lamp, .ff-power-wire { transition: transform 210ms ease-out, fill 160ms ease, opacity 160ms ease, stroke 160ms ease; }
-  [data-phase="dispensing"] .ff-drop { animation: ff-drops .55s linear infinite; }
+  .ff-test-arm, .ff-power-wire { transition: transform 210ms ease-out, fill 160ms ease, opacity 160ms ease, stroke 160ms ease; }
 }
-@keyframes ff-drops { from { transform: translateY(-6px); } to { transform: translateY(23px); } }
-
 @media (max-width: 48rem) {
-  .ff-hero, .ff-power-grid { grid-template-columns: minmax(0,1fr); }
-  .ff-scene svg { max-block-size: 25rem; }
-}
-@media (max-width: 40rem) {
-  .ff-readings dt { min-block-size: 2em; }
+  .ff-power-grid { grid-template-columns: minmax(0, 1fr); }
 }
