@@ -26,6 +26,14 @@ root.innerHTML = `
           <span class="dm-state" data-terminal-state></span>
         </div>
         <p class="dm-category" data-category></p>
+        <div class="dm-loop" data-loop-demo hidden>
+          <button type="button" data-run-loop>รัน loop() 1 รอบ</button>
+          <dl class="dm-loop-values">
+            <div><dt>ต้นรอบ</dt><dd data-loop-start>–</dd></div>
+            <div><dt>ค่าที่พิมพ์หลัง ++</dt><dd data-loop-print>–</dd></div>
+          </dl>
+          <p class="dm-loop-status" role="status" data-loop-status></p>
+        </div>
         <pre tabindex="0" aria-label="ผลตัวอย่าง" data-output></pre>
       </section>
     </div>
@@ -72,6 +80,10 @@ const topics = q('.dm-topics');
 let example;
 let repaired = false;
 let located = false;
+let loopRounds = 0;
+let globalCount = 0;
+let serialLines = [];
+const isLoopExample = () => example.id === 'loop-scope';
 
 for (const [index,info] of examples.entries()) {
   const button = document.createElement('button');
@@ -92,7 +104,8 @@ function renderCode() {
     const focus = located && !repaired && line === example.line;
     const scope = located && !repaired && example.scope?.includes(line);
     const changed = fixed && (example.fixedLines ?? [example.line]).includes(line);
-    return `<div class="dm-line" data-line="${line}"${focus?' data-focus':''}${scope?' data-scope':''}${changed?' data-changed':''}>
+    const printed = isLoopExample() && loopRounds > 0 && line === (repaired ? 7 : 6);
+    return `<div class="dm-line" data-line="${line}"${focus?' data-focus':''}${scope?' data-scope':''}${changed?' data-changed':''}${printed?' data-printed':''}>
       <span aria-hidden="true">${line}</span><code class="hljs language-arduino">${html || ' '}</code></div>`;
   }).join('');
 }
@@ -104,7 +117,8 @@ function renderOutput() {
   put('[data-output-title]',terminal);
   put('[data-terminal-state]',repaired ? 'หลังแก้' : 'ก่อนแก้');
   const output = q('[data-output]');
-  output.textContent = repaired ? example.expected : example.output;
+  output.textContent = isLoopExample() ? '' : repaired ? example.expected : example.output;
+  q('[data-loop-demo]').hidden = !isLoopExample();
   q('.dm-terminal').dataset.repaired = String(repaired);
   q('.dm-terminal').dataset.compileError = String(compileError);
   q('.dm-terminal').dataset.uploadError = String(upload && !repaired);
@@ -167,15 +181,48 @@ function renderFindings() {
     findings.textContent = 'เครื่องหมาย ^ ชี้ตำแหน่งชื่อ snacks ที่ compiler หาไม่เจอ ส่วน exit status 1 อยู่ท้าย Output และสรุปว่าคอมไพล์ไม่ผ่าน ให้เริ่มจาก error แรกที่อยู่ด้านบน';
     return;
   }
+  if (isLoopExample()) {
+    findings.textContent = 'int loopCount = 0; อยู่ในปีกกา loop() ทุกครั้งที่เข้าฟังก์ชัน บรรทัดนี้สร้างตัวแปร local ขึ้นใหม่แล้วตั้งเป็น 0';
+    return;
+  }
   findings.textContent = example.scope
     ? 'แถบสีฟ้าคือบล็อก if ตั้งแต่ { ถึง } ส่วนบรรทัดพิมพ์อยู่ด้านนอก ชื่อ treats ที่ประกาศข้างในจึงใช้ตรงนี้ไม่ได้'
     : `แถบที่ไฮไลต์คือบรรทัด ${example.line} ลองเทียบโค้ดกับผลตัวอย่างก่อนเลือกวิธีแก้`;
 }
 
+function resetLoop() {
+  loopRounds = 0;
+  globalCount = 0;
+  serialLines = [];
+  if (!isLoopExample()) return;
+  put('[data-loop-start]', '–');
+  put('[data-loop-print]', '–');
+  put('[data-loop-status]', repaired
+    ? 'เริ่มโปรแกรมใหม่แล้ว ลองกดรันทีละรอบ'
+    : 'ลองกดรัน 3 รอบ แล้วดูเลขที่ Serial Monitor');
+}
+
+q('[data-run-loop]').addEventListener('click', () => {
+  ++loopRounds;
+  const start = repaired ? globalCount : 0;
+  const printed = start + 1;
+  if (repaired) globalCount = printed;
+  serialLines.push(printed);
+  if (serialLines.length > 6) serialLines.shift();
+  if (loopRounds === 1) renderCode();
+  put('[data-loop-start]', start);
+  put('[data-loop-print]', printed);
+  put('[data-output]', serialLines.join('\n'));
+  put('[data-loop-status]', repaired
+    ? `รอบ ${loopRounds} พิมพ์ ${printed} · จบรอบแล้ว global ยังเก็บ ${printed} ไว้ให้รอบถัดไป`
+    : `รอบ ${loopRounds} พิมพ์ ${printed} · จบรอบแล้วตัวแปร local หมดอายุ`);
+});
+
 function select(info) {
   example = info;
   repaired = false;
   located = false;
+  resetLoop();
   for (const button of topics.children) button.setAttribute('aria-pressed',String(button.dataset.topic === example.id));
   put('[data-phase]',example.phase);
   put('[data-category]',`ประเภท · ${example.category}`);
@@ -225,6 +272,7 @@ q('.dm-form').addEventListener('change',()=>{
   q('[data-check]').disabled = false;
   if (repaired) {
     repaired = false;
+    resetLoop();
     q('[data-locate]').disabled = false;
     renderCode();
     renderOutput();
@@ -236,12 +284,14 @@ q('.dm-form').addEventListener('submit',event=>{
   event.preventDefault();
   const chosen = new FormData(event.currentTarget).get('fix');
   if (chosen === null) return;
+  const wasRepaired = repaired;
   repaired = Number(chosen) === example.answer;
+  if (wasRepaired !== repaired) resetLoop();
   put('[data-result]',repaired ? example.solved : example.hint);
   q('[data-result]').dataset.tone = repaired ? 'success' : 'hint';
   q('[data-locate]').disabled = repaired;
   renderCode();
-  renderOutput();
+  if (!isLoopExample() || wasRepaired !== repaired) renderOutput();
   renderFindings();
 });
 q('[data-reset]').addEventListener('click',()=>select(example));
