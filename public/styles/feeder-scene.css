@@ -35,7 +35,7 @@
 .fs-pour-target, .fs-bin-highlight,
 .fs-dump-guide, .fs-fill-guide, .fs-dumped,
 .fs-wet-wash, .fs-mist, .fs-rain, .fs-refill-stream,
-.fs-serving, .fs-bowl-food, .fs-beep { opacity: 0; }
+.fs-serving ellipse, .fs-bowl-food ellipse, .fs-beep { opacity: 0; }
 .fs-lab[data-stage="discard"] .fs-bin-highlight,
 .fs-lab[data-stage="discard"] .fs-dump-guide,
 .fs-lab[data-discarded="true"] .fs-dumped,
@@ -48,8 +48,7 @@
 .fs-lab .fs-mist { opacity: var(--fs-mist, 0); }
 .fs-lab[data-raining="true"] .fs-rain,
 .fs-lab[data-stage="refilling"] .fs-refill-stream,
-.fs-lab[data-phase="dispensing"] .fs-serving,
-.fs-lab[data-served="true"] .fs-bowl-food,
+.fs-serving ellipse[data-airborne], .fs-bowl-food ellipse[data-present],
 .fs-lab[data-phase="beeping"] .fs-beep { opacity: 1; }
 .fs-lab[data-cat-at-bowl="true"] .fs-ir-beam { opacity: .12; }
 .fs-gate { transform-origin: 274px 337px; }
@@ -154,6 +153,7 @@
 .fs-node h3 { display: flex; align-items: baseline; justify-content: space-between; gap: .32rem; margin: 0; color: var(--fs-ink); font-size: .96rem; font-weight: 800; }
 .fs-node h3 span { color: #465f78; font-size: .79rem; font-weight: 600; }
 .fs-node p { margin: .23rem 0 0; color: #3b5168; font-size: .84rem; line-height: 1.48; }
+.fs-node .fs-bowl-summary { color: #285b51; font-variant-numeric: tabular-nums; }
 .fs-readings { margin: .35rem 0 0; }
 .fs-readings div { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: .3rem; padding: .23rem .32rem; border-radius: .4rem; color: #354e67; font-size: .8rem; line-height: 1.4; }
 .fs-readings div + div { margin-block-start: .10rem; }
@@ -194,7 +194,11 @@
   .fs-gate { transition: transform 430ms ease-in-out; }
   .fs-actor[data-settling] { transition: translate 260ms ease-out; }
   .fs-box svg { transition: transform 260ms ease-in-out; }
-  .fs-lab[data-phase="dispensing"] .fs-serving ellipse { animation: fs-fall .66s ease-in .20s 2 both; }
+  .fs-serving ellipse { transform: translateY(var(--fs-fall-offset, 0px)); }
+  .fs-bowl-food ellipse { transform-box: fill-box; transform-origin: center; transform: scale(.65); transition: opacity .14s ease, transform .14s ease; }
+  .fs-bowl-food ellipse[data-present] { transform: scale(1); }
+  .fs-cat-head { transform-origin: 69px 63px; transition: transform .12s ease-in-out; }
+  .fs-lab[data-biting="true"] .fs-cat-head { transform: translateY(2px) rotate(8deg); }
   .fs-lab[data-stage="refilling"] .fs-refill-stream ellipse { animation: fs-fall .48s ease-in 2 both; }
   .fs-lab[data-raining="true"] .fs-rain use { animation: fs-rain .62s linear 6 both; }
   .fs-lab[data-raining="true"] .fs-rain use:nth-child(even) { animation-delay: .17s; }

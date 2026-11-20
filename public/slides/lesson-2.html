@@ -299,20 +299,19 @@
               </g>
               <circle cx="274" cy="337" r="7.5" fill="#f9fcff" stroke="#24466e" stroke-width="3"/>
             </g>
-            <g class="fs-serving" fill="#b96f32">
-              <ellipse cx="318" cy="350" rx="6" ry="3.5"/>
-              <ellipse cx="333" cy="362" rx="6" ry="4"/>
-              <ellipse cx="311" cy="375" rx="5.2" ry="3.4"/>
-              <ellipse cx="340" cy="385" rx="5.6" ry="3.2"/>
+            <g class="fs-serving" fill="#b96f32" data-pellet-stream>
+              <ellipse cx="338" cy="349" rx="6" ry="3.5"/>
+              <ellipse cx="330" cy="350" rx="6.5" ry="4"/>
+              <ellipse cx="312" cy="352" rx="5.8" ry="3.6"/>
+              <ellipse cx="337" cy="346" rx="6.6" ry="3.8"/>
+              <ellipse cx="322" cy="345" rx="6.2" ry="3.7"/>
+              <ellipse cx="305" cy="349" rx="6.9" ry="3.5"/>
             </g>
 
             <path d="M259 412h123l-12 26q-49 17-98 0z" fill="url(#fs-base)" stroke="#587eaa" stroke-width="3"/>
             <ellipse cx="320" cy="413" rx="62" ry="13" fill="#e5f3fb" stroke="#587eaa" stroke-width="3"/>
-            <g class="fs-bowl-food" fill="#b77039">
-              <ellipse cx="297" cy="414" rx="9" ry="3.4"/><ellipse cx="313" cy="409" rx="8" ry="3.7"/>
-              <ellipse cx="329" cy="415" rx="10" ry="3.4"/><ellipse cx="345" cy="411" rx="7" ry="3.8"/>
-            </g>
-            <text x="321" y="435" class="fs-art-label" text-anchor="middle">ชาม</text>
+            <g class="fs-bowl-food" data-bowl-art></g>
+            <text x="321" y="435" class="fs-art-label" text-anchor="middle" data-bowl-label>ชามว่าง</text>
             <g class="fs-ir">
               <path d="M231 395h49" stroke="#d54967" stroke-dasharray="4 4" stroke-width="3" stroke-linecap="round" class="fs-ir-beam"/>
               <rect x="272" y="386" width="21" height="18" rx="5" fill="#314771" stroke="#e0ebf9" stroke-width="2"/>
@@ -348,13 +347,16 @@
               <path d="M42 68C16 76 8 61 16 48" fill="none" stroke="#98512e" stroke-width="10" stroke-linecap="round"/>
               <path d="M42 68C16 76 8 61 16 48" fill="none" stroke="#e89b59" stroke-width="6" stroke-linecap="round"/>
               <path d="M36 56c10-9 32-8 48 3l10 19c-1 10-10 10-15 5H50c-8 4-15 0-17-9z" fill="#f6b975" stroke="#98512e" stroke-width="3"/>
-              <path d="M67 39 66 13q1-5 5-2l18 15 19-14q5-1 4 4l-3 26c8 24-7 37-25 34-17-1-30-12-17-37z" fill="#f8bf7d" stroke="#98512e" stroke-width="3" stroke-linejoin="round"/>
-              <path d="m71 18 12 12-11 4zm35 0-12 12 10 4z" fill="#ed9389"/>
-              <path d="M88 31v11m-7-10 2 8m12-8-2 8M42 59l7 9m-1-12 8 8" stroke="#ce7844" stroke-width="3" stroke-linecap="round"/>
-              <path d="M75 58q13-10 27 0-3 12-14 12-10-1-13-12z" fill="#ffe4b7"/>
-              <circle cx="78" cy="50" r="3" fill="#493123"/><circle cx="100" cy="50" r="3" fill="#493123"/>
-              <path d="m86 56 6 0-3 3z" fill="#9b4a59"/>
-              <path d="M89 59v3m-4 1q3 1 4-1 2 2 5 1m-22-9-7-2m7 7-8 1m42-6 8-2m-8 7 8 1" fill="none" stroke="#885135" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M42 59l7 9m-1-12 8 8" stroke="#ce7844" stroke-width="3" stroke-linecap="round"/>
+              <g class="fs-cat-head">
+                <path d="M67 39 66 13q1-5 5-2l18 15 19-14q5-1 4 4l-3 26c8 24-7 37-25 34-17-1-30-12-17-37z" fill="#f8bf7d" stroke="#98512e" stroke-width="3" stroke-linejoin="round"/>
+                <path d="m71 18 12 12-11 4zm35 0-12 12 10 4z" fill="#ed9389"/>
+                <path d="M88 31v11m-7-10 2 8m12-8-2 8" stroke="#ce7844" stroke-width="3" stroke-linecap="round"/>
+                <path d="M75 58q13-10 27 0-3 12-14 12-10-1-13-12z" fill="#ffe4b7"/>
+                <circle cx="78" cy="50" r="3" fill="#493123"/><circle cx="100" cy="50" r="3" fill="#493123"/>
+                <path d="m86 56 6 0-3 3z" fill="#9b4a59"/>
+                <path d="M89 59v3m-4 1q3 1 4-1 2 2 5 1m-22-9-7-2m7 7-8 1m42-6 8-2m-8 7 8 1" fill="none" stroke="#885135" stroke-width="1.6" stroke-linecap="round"/>
+              </g>
             </svg>
             <span aria-hidden="true">ลากแมว</span>
           </button>
@@ -426,6 +428,7 @@
             <h3>Output <span data-servo-state>ฝาปิด · 0°</span></h3>
             <code data-command>servo.write(0);</code>
             <p data-output>รอคำสั่งจ่ายอาหาร</p>
+            <p class="fs-bowl-summary">ในชาม <strong data-bowl-count>0</strong> เม็ด</p>
           </div>
         </div>
       </div>

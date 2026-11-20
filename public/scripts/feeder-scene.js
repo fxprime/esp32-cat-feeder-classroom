@@ -12,6 +12,16 @@ const MORNING_MEAL = 8 * 60;
 const EVENING_MEAL = 18 * 60;
 const CLOCK_CENTER = [79, 236];
 const CLOCK_SNAP_MINUTES = 7;
+const CHEW_MS = 470;
+const BITE_POSE_MS = 170;
+const FIRST_DROP_MS = 125;
+const FALL_MS = 280;
+const BOWL_SPOTS = [
+  [349, 413], [329, 417], [311, 414], [338, 408], [319, 408], [294, 413],
+  [359, 410], [341, 418], [301, 407], [320, 418], [330, 411], [303, 418],
+  [281, 412], [289, 408], [347, 409], [318, 413], [355, 416], [297, 417],
+];
+const PELLET_COLORS = ['#a96137', '#ce8a46', '#b77039'];
 
 const HOME = {
   cat: [77, 410],
@@ -49,6 +59,12 @@ function mountFeederScene(lab) {
   const artFood = scene.querySelector('[data-art-food]');
   const artHumidity = scene.querySelector('[data-art-humidity]');
   const artCommand = scene.querySelector('[data-art-command]');
+  const bowlArt = scene.querySelector('[data-bowl-art]');
+  const bowlLabel = scene.querySelector('[data-bowl-label]');
+  const bowlCount = lab.querySelector('[data-bowl-count]');
+  const stream = [...scene.querySelectorAll('[data-pellet-stream] ellipse')];
+  const dropInterval = (FEEDER_LIMITS.portionMs - FIRST_DROP_MS - FALL_MS) / stream.length;
+  const bowlPellets = [];
   const rainArt = scene.querySelector('[data-rain-art]');
   const alert = scene.querySelector('[data-scene-alert]');
   const clockControl = scene.querySelector('[data-clock-control]');
@@ -80,11 +96,18 @@ function mountFeederScene(lab) {
   let lastTime = 0;
   let scale = 1;
   let portionStart = INITIAL_FOOD;
+  let bowlPieces = 0;
+  let drawnPieces = 0;
+  let landedInPortion = 0;
+  let chewRemaining = CHEW_MS;
+  let bitePose = 0;
+  let finishedEating = false;
   let clockTime = 7 * 60;
   let earliest = 6 * 60;
   let nextMeal = MORNING_MEAL;
 
   const atBowl = () => positions.cat[0] >= 220;
+  const eating = () => atBowl() && bowlPieces > 0;
   const raining = () => positions.cloud[0] >= 270;
   const busy = state => state.phase === 'beeping' || state.phase === 'dispensing';
   const nearBin = ([x, y]) => Math.abs(x - BIN[0]) <= 68 && Math.abs(y - BIN[1]) <= 60;
@@ -168,6 +191,10 @@ function mountFeederScene(lab) {
     if (wasAtBowl !== atBowl()) {
       hit = 700;
       input = 'cat';
+      if (!atBowl()) {
+        bitePose = 0;
+        finishedEating = false;
+      }
       applyInputs();
     }
   }
@@ -215,6 +242,62 @@ function mountFeederScene(lab) {
     }
   }
 
+  function serveIntoBowl(pourElapsed) {
+    const completed = Math.floor((pourElapsed - FIRST_DROP_MS - FALL_MS) / dropInterval) + 1;
+    const landed = clamp(completed, 0, stream.length);
+    if (landed <= landedInPortion) return;
+    if (bowlPieces === 0) chewRemaining = CHEW_MS;
+    bowlPieces += landed - landedInPortion;
+    landedInPortion = landed;
+    finishedEating = false;
+  }
+
+  function chew(elapsed) {
+    bitePose = Math.max(0, bitePose - elapsed);
+    if (!eating()) return;
+    chewRemaining -= elapsed;
+    if (chewRemaining > 0) return;
+    bowlPieces -= 1;
+    chewRemaining = CHEW_MS;
+    bitePose = BITE_POSE_MS;
+    finishedEating = bowlPieces === 0;
+  }
+
+  function drawBowl() {
+    if (drawnPieces === bowlPieces) return;
+    while (bowlPellets.length < bowlPieces) {
+      const i = bowlPellets.length;
+      const [cx, cy] = BOWL_SPOTS[i % BOWL_SPOTS.length];
+      const layer = Math.floor(i / BOWL_SPOTS.length);
+      const node = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+      attr(node, 'cx', cx + (layer % 5) - (layer % 2));
+      attr(node, 'cy', cy - layer % 4);
+      attr(node, 'rx', 6.2 + (i % 3) * .35);
+      attr(node, 'ry', 3.4 + (i % 2) * .4);
+      attr(node, 'fill', PELLET_COLORS[i % PELLET_COLORS.length]);
+      attr(node, 'stroke', '#92552e');
+      attr(node, 'stroke-width', '.6');
+      bowlArt.appendChild(node);
+      bowlPellets.push(node);
+    }
+    const first = Math.min(drawnPieces, bowlPieces);
+    const last = Math.max(drawnPieces, bowlPieces);
+    for (let i = first; i < last; i++) bowlPellets[i].toggleAttribute('data-present', i < bowlPieces);
+    drawnPieces = bowlPieces;
+    text(bowlCount, String(bowlPieces));
+    text(bowlLabel, bowlPieces ? `${bowlPieces} เม็ด` : 'ชามว่าง');
+  }
+
+  function drawFallingFood(state) {
+    const pourElapsed = FEEDER_LIMITS.portionMs - state.remainingMs;
+    for (const [i, node] of stream.entries()) {
+      const progress = (pourElapsed - FIRST_DROP_MS - i * dropInterval) / FALL_MS;
+      const falling = state.phase === 'dispensing' && progress >= 0 && progress < 1;
+      node.toggleAttribute('data-airborne', falling);
+      if (falling) node.style.setProperty('--fs-fall-offset', `${62 * progress ** 1.65}px`);
+    }
+  }
+
   function getCopy(state, current) {
     const latest = state.events.at(-1);
     if (current === 'refilling') return ['กำลังเติมอาหารใหม่', 'ดูผิวอาหารสูงขึ้น ระยะที่วัดได้จะสั้นลง'];
@@ -224,17 +307,19 @@ function mountFeederScene(lab) {
     if (current === 'rain-off') return ['แจ้งเตือนแล้ว · เลื่อนเมฆออกก่อน', 'ลากเมฆกลับไปทางซ้าย อาหารในถังยังชื้นอยู่'];
     if (state.phase === 'beeping') return ['ส่งเสียงเตือนก่อนจ่าย', 'จากนั้นดูคำสั่ง Servo และฝาในภาพ'];
     if (state.phase === 'dispensing') return ['เปิดฝาให้เม็ดอาหารตก', 'สังเกตว่าอาหารในถังลดลงก่อนฝาหมุนกลับมาปิด'];
-    if (closing) return ['ครบหนึ่งรอบ · ฝาหมุนกลับมาปิด', 'ลากแมวมาที่ชามเพื่อดูว่า IR รับรู้การมาถึงยังไง'];
+    if (closing) return ['ครบหนึ่งรอบ · ฝาหมุนกลับมาปิด', 'ลากแมวมาที่ชาม แล้วดูว่า IR อ่านค่าอะไรตอนแมวมากิน'];
     if (current === 'raining') return ['ความชื้นกำลังสะสมในถัง', `เมื่อถึง ${FEEDER_LIMITS.humidity}% RH เครื่องจะแจ้งเตือนและงดจ่ายจนกว่าจะเปลี่ยนอาหาร`];
     if (clockDrag || input === 'clock' && nearMeal()) return [nearMeal() ? 'ปล่อยเข็มแล้วรอดูเครื่องทำงาน' : `หมุนเข็มไปที่มื้อ ${dueLabel()}`,
       'ขีดสีส้มบอกเวลาให้อาหาร'];
     if (recovered) return ['ถังพร้อมสำหรับมื้อใหม่', `เติมอาหารใหม่แล้ว ไฟแดงดับ ลองหมุนเข็มไปรอที่มื้อ ${dueLabel()}`];
     if (drag?.name === 'level') return ['ปรับระดับอาหารในถัง', 'ดูเม็ดอาหารขยับตามเส้น ยิ่งอาหารสูง ระยะที่วัดได้ยิ่งสั้น'];
+    if (eating()) return ['แมวกำลังกิน', 'IR อ่าน LOW และเม็ดอาหารในชามค่อย ๆ ลดลง'];
+    if (finishedEating) return ['กินหมดชามแล้ว', `ฝาปิดอยู่ เครื่องรอมื้อ ${dueLabel()}`];
     if (state.reason === 'empty') return ['มื้อก่อนงดจ่ายเพราะอาหารหมด', `เพิ่มระดับอาหารก่อน แล้วหมุนเข็มไปที่มื้อ ${dueLabel()}`];
     if (latest?.type === 'arrival') return ['IR บันทึกว่ามีตัวมาที่ชามแล้ว', 'ลองลากแมวถอยออกเพื่อดูลำแสงกลับมา หรือลากเมฆเพื่อทดสอบถังชื้น'];
     if (atBowl()) return ['แมวบังลำแสง · IR อ่าน LOW', `เครื่องใช้เวลานัดจ่ายอาหาร มื้อถัดไป ${dueLabel()}`];
+    if (bowlPieces > 0) return ['มีอาหารอยู่ในชาม', 'ลากแมวมาที่ชามเพื่อให้กินทีละเม็ด'];
     if (latest?.type === 'no-arrival') return ['รอบเฝ้าดูชามจบแล้ว', `หมุนเข็มไปที่มื้อ ${dueLabel()} แล้วลองลากแมวมาที่ชามหลังฝาปิด`];
-    if (state.phase === 'watching') return ['จ่ายอาหารหนึ่งรอบแล้ว', 'ลองลากแมวเข้าไปที่ชามเพื่อบังลำแสง IR'];
     return [`มื้อถัดไป ${dueLabel()}`, 'หมุนเข็มไปที่ขีดสีส้มแล้วปล่อย เส้นสีฟ้าใช้ลองปรับระดับอาหาร'];
   }
 
@@ -259,7 +344,7 @@ function mountFeederScene(lab) {
     data('discarded', discarded);
     data('fault', fault);
     data('clockDue', Boolean(check) || nearMeal());
-    data('served', state.portions > 0 || (angle > 0 && FEEDER_LIMITS.portionMs - state.remainingMs > 600));
+    data('biting', bitePose > 0);
     data('servo', servoMode);
     data('input', input);
     data('hit', hit > 0);
@@ -272,6 +357,8 @@ function mountFeederScene(lab) {
     attr(levelArt, 'transform', `translate(0 ${y})`);
     attr(distanceLine, 'd', `M321 182V${y - 3}`);
     attr(rainArt, 'transform', `translate(${(positions.cloud[0] - CLOUD_X) * .7} 0)`);
+    drawBowl();
+    drawFallingFood(state);
     alert.hidden = !wetFood;
     actors.old.hidden = current !== 'discard';
     attr(actors.cat, 'aria-pressed', state.catAtBowl);
@@ -314,7 +401,8 @@ function mountFeederScene(lab) {
       wetFood ? 'ไฟแดงติด · แจ้งเจ้าของผ่าน Telegram (จำลอง)' :
       state.ledRed ? 'ไฟแดงติด · แจ้งว่าอาหารหมด' :
       state.buzzer ? 'Buzzer เตือนก่อนเปิดฝา' :
-      state.portions ? 'จ่ายหนึ่งรอบ · IR เฝ้าดูที่ชาม' : 'รอคำสั่งจ่ายอาหาร');
+      state.phase === 'watching' ? 'จ่ายแล้ว · IR เฝ้าดูที่ชาม' :
+      state.portions ? 'จ่ายรอบล่าสุดเสร็จแล้ว' : 'รอคำสั่งจ่ายอาหาร');
     const [heading, instruction] = getCopy(state, current);
     text(taskTitle, heading);
     text(taskDetail, instruction);
@@ -324,6 +412,7 @@ function mountFeederScene(lab) {
     const before = sim.getState();
     closing = Math.max(0, closing - elapsed);
     hit = Math.max(0, hit - elapsed);
+    chew(elapsed);
 
     if (refill > 0) {
       updateRefill(elapsed);
@@ -340,11 +429,17 @@ function mountFeederScene(lab) {
     sim.advance(Math.min(elapsed, before.remainingMs || elapsed));
     const after = sim.getState();
     if (after.phase === 'dispensing') {
-      if (before.phase !== 'dispensing') portionStart = food;
-      const poured = 1 - after.remainingMs / FEEDER_LIMITS.portionMs;
+      if (before.phase !== 'dispensing') {
+        portionStart = food;
+        landedInPortion = 0;
+      }
+      const pourElapsed = FEEDER_LIMITS.portionMs - after.remainingMs;
+      const poured = pourElapsed / FEEDER_LIMITS.portionMs;
       food = Math.max(0, portionStart - 11 * poured);
+      serveIntoBowl(pourElapsed);
     } else if (before.phase === 'dispensing') {
       food = Math.max(0, portionStart - 11);
+      serveIntoBowl(FEEDER_LIMITS.portionMs);
       closing = 520;
     }
     applyInputs();
@@ -362,7 +457,7 @@ function mountFeederScene(lab) {
     const state = sim.getState();
     const changingHumidity = raining() ? humidity < 87 :
       humidity > (wetFood && !discarded ? 61 : DRY_RH);
-    return changingHumidity || check || refill || closing || hit || busy(state) || state.phase === 'watching';
+    return changingHumidity || check || refill || closing || hit || bitePose || eating() || busy(state) || state.phase === 'watching';
   }
 
   function animate(now) {
