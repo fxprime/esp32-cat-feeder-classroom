@@ -130,7 +130,8 @@
       opacity: 0.28;
     }
   </style>
-<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/feeder-foundations.css"><link rel="stylesheet" href="../styles/feeder-scene.css"></head>
+<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/feeder-foundations.css"><link rel="stylesheet" href="../styles/feeder-scene.css">
+  <link rel="stylesheet" href="../styles/feeder-ir.css"></head>
 <body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
 
   <header class="w-full max-w-6xl mx-auto px-4 pt-3 pb-1 flex flex-wrap items-center justify-between gap-3">
@@ -314,9 +315,11 @@
             <g class="fs-bowl-food" data-bowl-art></g>
             <text x="321" y="435" class="fs-art-label" text-anchor="middle" data-bowl-label>ชามว่าง</text>
             <g class="fs-ir">
-              <path d="M231 395h49" stroke="#d54967" stroke-dasharray="4 4" stroke-width="3" stroke-linecap="round" class="fs-ir-beam"/>
-              <rect x="272" y="386" width="21" height="18" rx="5" fill="#314771" stroke="#e0ebf9" stroke-width="2"/>
-              <circle cx="277" cy="395" r="3.1" fill="#f9879f"/>
+              <path class="ir-outbound" d="M293 371l-38-6m7-3-7 3 6 5"/>
+              <path class="ir-return" d="M255 365l38 17m-10 1 10-1-6-7"/>
+              <rect x="292" y="363" width="22" height="28" rx="5" fill="#314771" stroke="#e0ebf9" stroke-width="2"/>
+              <circle cx="297" cy="371" r="3.1" fill="#67e8f9"/>
+              <circle class="ir-receiver" cx="297" cy="382" r="3.1" fill="#a78bfa"/>
             </g>
 
             <g transform="translate(431 288)">
@@ -414,7 +417,7 @@
             <h3>Input <span>เวลาและค่าจากเซนเซอร์</span></h3>
             <dl class="fs-readings">
               <div data-sensor="clock"><dt><b>นาฬิกา</b> จำลอง</dt><dd data-value="clock">07:00 น.</dd></div>
-              <div data-sensor="ir"><dt><b>IR</b> ที่ชาม</dt><dd data-value="ir">HIGH</dd></div>
+              <div data-sensor="ir"><dt><b>IR สะท้อน</b> ที่ชาม</dt><dd data-value="ir">HIGH</dd></div>
               <div data-sensor="level"><dt><b>Ultrasonic</b> ถึงผิวอาหาร</dt><dd><span data-value="distance">10.0 ซม.</span><span data-value="food">78%</span></dd></div>
               <div data-sensor="humidity"><dt><b>DHT22</b> ในถัง</dt><dd data-value="humidity">55% RH</dd></div>
             </dl>

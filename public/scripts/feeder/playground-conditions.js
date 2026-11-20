@@ -31,7 +31,7 @@ function paint() {
   root.dataset.presence = String(state.catAtBowl);
   root.querySelector('#meal-humidity-value').textContent = state.humidity === null ? 'อ่านไม่ได้' : `${state.humidity}% RH`;
   root.querySelector('#meal-distance-value').textContent = `${state.distanceCm} ซม. · เหลือประมาณ ${state.foodPercent}%`;
-  root.querySelector('#meal-ir-value').textContent = state.catAtBowl ? 'LOW · มีบางอย่างบังลำแสง' : 'HIGH · ลำแสงผ่านถึงตัวรับ';
+  root.querySelector('#meal-ir-value').textContent = state.catAtBowl ? 'LOW · ตรวจพบจากแสงสะท้อน' : 'HIGH · ยังตรวจไม่พบ';
   root.querySelector('#meal-count').textContent = String(state.portions);
   root.querySelector('#meal-arrivals').textContent = String(state.arrivals);
   root.querySelector('#meal-number').textContent = state.lastMealId ? `มื้อ #${state.lastMealId}` : 'ยังไม่เริ่มมื้อ';

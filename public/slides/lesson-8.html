@@ -53,7 +53,8 @@
       animation: buzzerPing 0.4s ease-out infinite;
     }
   </style>
-<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/syntax-dracula.css"><link rel="stylesheet" href="../styles/playground-code.css"><link rel="stylesheet" href="../styles/feeder-playground.css"></head>
+<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/syntax-dracula.css"><link rel="stylesheet" href="../styles/playground-code.css"><link rel="stylesheet" href="../styles/feeder-playground.css">
+  <link rel="stylesheet" href="../styles/feeder-ir.css"></head>
 <body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
 
   <!-- Top Bar -->
@@ -268,7 +269,7 @@
     </section>
     <details class="fp-conditions" data-feeder-conditions>
       <summary>ลองเงื่อนไขของเครื่องให้อาหาร</summary>
-      <p class="fp-lead">เปลี่ยนค่าที่เซนเซอร์ส่งมา แล้วกด “ให้อาหาร Manual” บอร์ดจะตรวจใหม่ก่อนเปิดฝา ลองส่งมื้อเดิมซ้ำหรือบังลำแสงหลังหยุดจ่าย แล้วดูว่าจำนวนมื้อเปลี่ยนไหม</p>
+      <p class="fp-lead">เปลี่ยนค่าที่เซนเซอร์ส่งมา แล้วกด “ให้อาหาร Manual” บอร์ดจะตรวจใหม่ก่อนเปิดฝา ลองส่งมื้อเดิมซ้ำหรือจำลองแมวเข้าระยะ IR หลังหยุดจ่าย แล้วดูว่าจำนวนมื้อเปลี่ยนไหม</p>
       <div class="fp-grid">
         <fieldset class="fp-controls">
           <legend>อินพุตของบอร์ด</legend>
@@ -278,11 +279,11 @@
           <label><input type="checkbox" id="meal-sensor-error"> จำลอง DHT22 อ่านไม่ได้</label>
           <label for="meal-distance">Ultrasonic · ระยะจากหัววัดถึงผิวเม็ด <output id="meal-distance-value" for="meal-distance">10 ซม.</output></label>
           <input type="range" id="meal-distance" min="6" max="24" value="10">
-          <label><input type="checkbox" id="meal-ir"> มีตัวมาที่ชาม · บังลำแสง IR <output id="meal-ir-value" for="meal-ir">HIGH · ลำแสงผ่านถึงตัวรับ</output></label>
+          <label><input type="checkbox" id="meal-ir"> แมวอยู่ในระยะ IR สะท้อน <output id="meal-ir-value" for="meal-ir">HIGH · ยังตรวจไม่พบ</output></label>
           <label><input type="checkbox" id="meal-online" checked> Wi‑Fi พร้อม · ส่งข้อความจำลอง</label>
         </fieldset>
         <figure class="fp-machine">
-          <svg viewBox="0 0 310 215" role="img" aria-label="เครื่องให้อาหารแมวพร้อม Servo เปิดฝา ไฟแดง และลำแสง IR ที่ชาม">
+          <svg viewBox="0 0 310 215" role="img" aria-label="เครื่องให้อาหารแมวพร้อม Servo เปิดฝา ไฟแดง และเซนเซอร์ IR สะท้อนที่ชาม">
             <path d="M52 192h205" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
             <rect x="79" y="16" width="143" height="173" rx="16" fill="#e9e0ff" stroke="#aa94d2" stroke-width="2"/>
             <path d="M104 36h86l-13 73h-60Z" fill="#fff6e6" stroke="#c1a675" stroke-width="2"/>
@@ -294,7 +295,11 @@
             <circle class="fp-led" cx="207" cy="50" r="7" fill="#a2aec1" stroke="#7687a5"/>
             <g class="fp-food" fill="#a16228"><circle cx="141" cy="146" r="4"/><circle cx="151" cy="156" r="4"/><circle cx="139" cy="166" r="4"/></g>
             <path d="M122 169h48l-6 17h-36Z" fill="#72d4bd" stroke="#318e7a" stroke-width="2"/>
-            <path class="fp-beam" d="M117 160h58" stroke="#2eab92" stroke-width="2"/>
+            <path class="ir-outbound" d="M193 149l43 1m-7-4 7 4-7 4"/>
+            <path class="ir-return" d="M236 150l-43 13m6-6-6 6 9 2"/>
+            <rect x="178" y="143" width="17" height="26" rx="4" fill="#374573"/>
+            <circle cx="191" cy="149" r="2.6" fill="#67e8f9"/>
+            <circle class="ir-receiver" cx="191" cy="163" r="2.6" fill="#a78bfa"/>
             <g class="fp-cat" fill="#9a661f"><path d="M243 151l2-12 9 6 9-5 3 12a12 12 0 1 1-23-1Z"/><ellipse cx="252" cy="175" rx="18" ry="12"/></g>
             <path class="fp-buzzer" d="M227 79q12 7 0 14m6-20q21 13 0 26" fill="none" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
           </svg>

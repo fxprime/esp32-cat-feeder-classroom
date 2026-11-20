@@ -3,7 +3,7 @@ import { FEEDER_LIMITS } from './feeder/model.js';
 
 const feederTests = {
   normal: {
-    input: 'ความชื้น 55% RH · ระยะถึงผิวเม็ด 10 ซม. · กด “ให้อาหาร Manual”หนึ่งครั้ง',
+    input: 'ความชื้น 55% RH · ระยะถึงผิวเม็ด 10 ซม. · กด “ให้อาหาร Manual” หนึ่งครั้ง',
     pass: 'Buzzer ดังหนึ่งครั้ง ฝาเปิดแล้วปิดหนึ่งรอบ ไฟแดงดับ',
   },
   humid: {
@@ -19,7 +19,7 @@ const feederTests = {
     pass: 'โปรแกรมนับว่าจ่ายไปหนึ่งรอบ ฝาอยู่ปิดเมื่อรับเลขมื้อเดิมครั้งที่สอง',
   },
   arrival: {
-    input: 'จ่ายหนึ่งรอบให้เสร็จ แล้วบังลำแสง IR ในช่วงรอตรวจ',
+    input: 'จ่ายหนึ่งรอบให้เสร็จ แล้วจำลองแมวเข้าระยะ IR ในช่วงรอตรวจ',
     pass: 'ขึ้นว่าพบตัวที่ชามหนึ่งครั้ง จำนวนรอบที่จ่ายยังเป็นหนึ่ง',
   },
 };
@@ -32,7 +32,7 @@ const presets = {
     goal: 'เช็กความชื้นและอาหารในถังก่อนจ่ายหนึ่งรอบ แล้วดูว่ามีตัวมาที่ชามหรือยัง',
     budget: '',
     time: 'ช่วง Lab ตอนท้ายวัน',
-    tools: 'ESP32 DevKit V1, DHT22, Ultrasonic, IR break beam, Servo, buzzer, LED แดง, Breadboard และ Wokwi',
+    tools: 'ESP32 DevKit V1, DHT22, Ultrasonic, IR สะท้อน Active LOW, Servo, buzzer, LED แดง, Breadboard และ Wokwi',
     limits: 'มีปุ่มให้อาหาร Manual ใช้เกณฑ์ความชื้นเพื่อสาธิต เปิดฝาทีละมื้อ และตรวจค่าที่เห็นจริงใน Lab',
   },
   plant: {

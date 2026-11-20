@@ -215,7 +215,10 @@ const feederEndpoint = (name, id) => ({ name, illustration: storyArt[id] });
 const feederBoard = endpoint("ESP32", "inputBoard");
 
 export const useCaseArt = {
-  "feeder-ir": { left: feederEndpoint("ลำแสงที่ชาม", "feeder-ir"), right: feederBoard, signals: ["HIGH / LOW"] },
+  "feeder-ir": {
+    left: { name: "IR สะท้อนที่ชาม", illustration: storyArt["feeder-ir"].replace("<svg ", '<svg data-ir-detected="true" ') },
+    right: feederBoard, signals: ["HIGH / LOW"],
+  },
   "feeder-stock": { left: feederBoard, right: feederEndpoint("HC-SR04 ที่ปากถัง", "feeder-stock"), signals: ["TRIG 10 µs", "ECHO บอกระยะ"] },
   "feeder-rh": { left: feederBoard, right: feederEndpoint("DHT22 ในถัง", "feeder-rh"), signals: ["เริ่มอ่าน", "ข้อมูลความชื้น"] },
   "feeder-piezo": { left: feederEndpoint("แผ่นรับแรงกระแทก", "feeder-piezo"), right: feederBoard, signals: ["แรงดันหลังปรับระดับ"] },

@@ -35,7 +35,8 @@
     }
   </style>
 <link rel="stylesheet" href="../styles/slide-support.css">
-<link rel="stylesheet" href="../styles/feeder-capstone.css"></head>
+<link rel="stylesheet" href="../styles/feeder-capstone.css">
+  <link rel="stylesheet" href="../styles/feeder-ir.css"></head>
 <body class="text-slate-800 min-h-screen flex flex-col">
 
   <!-- Top Header -->
@@ -115,7 +116,7 @@
     <section id="feeder-final" class="feeder-final" aria-labelledby="feeder-final-title" hidden>
       <div>
         <h2 id="feeder-final-title">ลองทดสอบเครื่องให้อาหารทั้งระบบ</h2>
-        <p>เลือกสภาพถังแล้วกด “ให้อาหาร Manual” ดูว่าฝาเปิดหรือระบบงดจ่าย จากนั้นลองบัง IR ตอนฝาปิดเพื่อบันทึกการมาที่ชาม</p>
+        <p>เลือกสภาพถังแล้วกด “ให้อาหาร Manual” ดูว่าฝาเปิดหรือระบบงดจ่าย จากนั้นลองให้แมวเข้าระยะ IR สะท้อนตอนฝาปิดเพื่อบันทึกการมาที่ชาม</p>
       </div>
       <div class="final-grid">
         <div class="final-controls">
@@ -130,7 +131,7 @@
           <label for="final-distance"><span>ระยะถึงผิวอาหาร <output id="final-distance-value">10 ซม.</output></span>
             <input id="final-distance" type="range" min="6" max="24" step=".5" value="10"></label>
           <p>อาหารคงเหลือ <output id="final-stock"></output> · 70% RH เป็นเกณฑ์งดจ่ายในแบบฝึก</p>
-          <label><input type="checkbox" id="final-beam"> บังลำแสง IR ที่ชาม</label>
+          <label><input type="checkbox" id="final-presence"> แมวอยู่ในระยะ IR สะท้อน</label>
           <label><input type="checkbox" id="final-wifi" checked> เครือข่ายออนไลน์ในแบบจำลอง</label>
           <div class="final-option-row">
             <button type="button" class="final-action" id="final-meal">ให้อาหาร Manual</button>
@@ -154,7 +155,11 @@
             <g class="final-grains" fill="#b96838"><circle cx="145" cy="143" r="4"/><circle cx="151" cy="155" r="4"/><circle cx="142" cy="165" r="3"/></g>
             <g class="final-beep" fill="none" stroke="#c77017" stroke-width="3" stroke-linecap="round"><path d="M218 67q13 8 0 15m8-22q24 14 0 30"/><circle cx="207" cy="75" r="4" fill="#c77017"/></g>
             <path d="M102 174h98l-13 19h-72z" fill="#79caca" stroke="#29496a" stroke-width="3"/><ellipse cx="151" cy="172" rx="50" ry="7" fill="#d0f4f1" stroke="#29496a" stroke-width="2"/>
-            <path class="final-beam-clear" d="M58 158h194" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 5"/><path class="final-beam-block" d="M58 158h153" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 5"/><rect x="51" y="150" width="11" height="16" rx="3" fill="#5275ae"/><rect x="248" y="150" width="11" height="16" rx="3" fill="#5275ae"/>
+            <path class="ir-outbound" d="M194 149l23 1m-6-4 6 4-6 4"/>
+            <path class="ir-return" d="M217 150l-23 13m5-6-5 6 8 1"/>
+            <rect x="178" y="143" width="18" height="26" rx="5" fill="#5275ae"/>
+            <circle cx="193" cy="149" r="2.7" fill="#67e8f9"/>
+            <circle class="ir-receiver" cx="193" cy="163" r="2.7" fill="#a78bfa"/>
             <g class="final-cat" fill="#64799c" stroke="#344b73" stroke-width="2"><path d="M220 175q-12-2-12-13l-5-17 13 7 12-1 14-7-4 18q2 13-18 13z"/><circle cx="218" cy="163" r="1" fill="#fff"/><circle cx="230" cy="162" r="1" fill="#fff"/></g>
           </svg>
           <p class="final-status" id="final-status" role="status">รอคำสั่งให้อาหาร · ฝาปิด</p>

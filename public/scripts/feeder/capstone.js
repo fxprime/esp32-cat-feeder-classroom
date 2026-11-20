@@ -5,7 +5,7 @@ const $ = selector => root.querySelector(selector);
 const sim = createFeeder();
 const humidity = $("#final-rh");
 const distance = $("#final-distance");
-const beam = $("#final-beam");
+const presence = $("#final-presence");
 const network = $("#final-wifi");
 const clock = $("#final-clock");
 const mealButton = $("#final-meal");
@@ -97,7 +97,7 @@ for (const button of root.querySelectorAll("[data-final-case]")) {
 for (const [control, update] of [
   [humidity, () => ({ humidity: Number(humidity.value) })],
   [distance, () => ({ distanceCm: Number(distance.value) })],
-  [beam, () => ({ catAtBowl: beam.checked })],
+  [presence, () => ({ catAtBowl: presence.checked })],
   [network, () => ({ online: network.checked })],
 ]) {
   control.addEventListener("input", () => {
@@ -122,7 +122,7 @@ $("#final-reset").addEventListener("click", () => {
   cancelAnimationFrame(frame);
   frame = previous = 0;
   sim.reset();
-  beam.checked = false;
+  presence.checked = false;
   network.checked = true;
   applyCase("normal");
 });

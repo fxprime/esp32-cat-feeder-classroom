@@ -3,11 +3,12 @@ const irToggle = document.querySelector("#feeder-ir-toggle");
 const irValue = document.querySelector("#feeder-ir-value");
 const irWave = document.querySelector("#feeder-ir-wave");
 irToggle.addEventListener("click", () => {
-  const blocked = irToggle.getAttribute("aria-pressed") !== "true";
-  ir.dataset.blocked = String(blocked);
-  irToggle.setAttribute("aria-pressed", String(blocked));
-  irValue.textContent = blocked ? "0 / LOW · ลำแสงถูกบัง" : "1 / HIGH · ลำแสงถึงตัวรับ";
-  irWave.setAttribute("d", blocked ? "M29 16H146V66H285" : "M29 66H146V16H285");
+  const detected = irToggle.getAttribute("aria-pressed") !== "true";
+  ir.dataset.irDetected = String(detected);
+  irToggle.setAttribute("aria-pressed", String(detected));
+  irValue.textContent = detected ? "0 / LOW · ตรวจพบจากแสงสะท้อน" : "1 / HIGH · ยังตรวจไม่พบ";
+  irToggle.textContent = detected ? "ให้แมวถอยออก" : "แมวเข้ามาในระยะ";
+  irWave.setAttribute("d", detected ? "M29 16H146V66H285" : "M29 66H146V16H285");
 });
 
 const piezo = document.querySelector("[data-feeder-piezo]");

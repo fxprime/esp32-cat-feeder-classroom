@@ -29,11 +29,11 @@ function timeline(kind) {
 export function feederTimingHTML() {
   return `<section class="cl-feeder-clock" aria-labelledby="cl-feeder-clock-title" data-fo-clock>
     <h3 id="cl-feeder-clock-title">ระหว่างรอปิดฝา ยังอ่าน IR ได้ไหม?</h3>
-    <p>ลองบังลำแสง GPIO${FEEDER_PINS.infrared} ชั่วครู่ระหว่างที่ฝาเปิดค้าง ${waitMs} ms ขีดบนกราฟคือจังหวะอ่านค่า แถบสีม่วงคือช่วงที่ลำแสงถูกบัง</p>
-    <label>เริ่มบังลำแสงที่ <output data-fo-clock-at>450 ms</output><input type="range" min="0" max="${waitMs}" step="50" value="450" data-fo-clock-input></label>
-    <div class="cl-feeder-clock-actions"><button type="button" class="cl-primary" data-fo-clock-run>เดินเวลาหนึ่งรอบ</button><span>บังนาน ${pulseMs} ms</span></div>
+    <p>จำลองแมวเข้าระยะ IR สะท้อนที่ GPIO${FEEDER_PINS.infrared} ชั่วครู่ระหว่างฝาเปิดค้าง ${waitMs} ms ขีดบนกราฟคือจังหวะอ่านค่า แถบสีม่วงคือช่วงที่เซนเซอร์ให้ LOW</p>
+    <label>แมวเข้าระยะที่ <output data-fo-clock-at>450 ms</output><input type="range" min="0" max="${waitMs}" step="50" value="450" data-fo-clock-input></label>
+    <div class="cl-feeder-clock-actions"><button type="button" class="cl-primary" data-fo-clock-run>เดินเวลาหนึ่งรอบ</button><span>อยู่ในระยะ ${pulseMs} ms</span></div>
     <div class="cl-feeder-clocks">${timeline('delay')}${timeline('millis')}</div>
-    <p class="cl-feeder-clock-status" data-fo-clock-status role="status">ลองตั้งให้ลำแสงหายไปก่อนครบ ${waitMs} ms แล้วเทียบกัน</p>
+    <p class="cl-feeder-clock-status" data-fo-clock-status role="status">ลองให้แมวออกจากระยะก่อนครบ ${waitMs} ms แล้วเทียบกัน</p>
     <details><summary>ดูสองคำสั่งเทียบกัน</summary>
       <p><code>delay(${waitMs}); digitalRead(${FEEDER_PINS.infrared});</code> จะกลับมาอ่านหลังรอครบ ส่วน <code>digitalRead(${FEEDER_PINS.infrared});</code> ตามด้วย <code>if (millis() - openedAt &gt;= ${waitMs})</code> อ่านได้ทุกลูปแล้วค่อยเช็กว่าจะปิดฝาหรือยัง</p>
     </details>
@@ -94,9 +94,9 @@ export function setupFeederTiming(root) {
         stop();
         status.textContent = observations.delay === null
           ? observations.millis === null
-            ? 'ทั้งสองฝั่งไม่เจอ LOW · ลองเลื่อนให้ลำแสงถูกบังระหว่างฝาเปิด'
-            : 'delay() พลาดช่วงถูกบัง · millis() ยังอ่านได้ระหว่างรอ'
-          : 'ทั้งสองฝั่งอ่านพบ LOW เพราะลำแสงยังถูกบังตอนครบเวลารอ';
+            ? 'ทั้งสองฝั่งไม่เจอ LOW · ลองเลื่อนให้แมวเข้าระยะตอนฝาเปิด'
+            : 'delay() พลาดช่วงที่ IR ให้ LOW · millis() ยังอ่านได้ระหว่างรอ'
+          : 'ทั้งสองฝั่งอ่านพบ LOW เพราะยังตรวจพบแมวตอนครบเวลารอ';
       }
     }
 

@@ -164,7 +164,7 @@ void queueTelegramAlert(const char *) {
 // ส่ง r จะลองส่งหมายเลขมื้อเดิมซ้ำโดยไม่เปิดฝาอีกครั้ง
 Servo flap;
 DebouncedInput mealButton(MEAL_PIN);
-DebouncedInput bowlBeam(IR_PIN);
+DebouncedInput bowlPresence(IR_PIN);
 enum class Phase { Idle, Beep, Dispense, Watch, Blocked };
 Phase phase = Phase::Idle;
 uint32_t phaseAt = 0;
@@ -221,7 +221,7 @@ void setup() {
   pinMode(RED_LED_PIN, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
   mealButton.begin();
-  bowlBeam.begin();
+  bowlPresence.begin();
   setupSensors();
   flap.setPeriodHertz(50);
   flap.attach(SERVO_PIN, 1000, 2000);
@@ -233,7 +233,7 @@ void setup() {
 void loop() {
   const uint32_t now = millis();
   sampleSensors(now);
-  if (bowlBeam.fell(now) && phase != Phase::Watch) report("BOWL_BEAM_BLOCKED");
+  if (bowlPresence.fell(now) && phase != Phase::Watch) report("BOWL_IR_DETECTED");
   const int command = Serial.available() ? Serial.read() : -1;
   const bool pressed = mealButton.fell(now);
   if (pressed || command == 'm') requestMeal(lastMealId + 1, now);
@@ -261,7 +261,7 @@ void loop() {
       }
       break;
     case Phase::Watch:
-      if (bowlBeam.active()) {
+      if (bowlPresence.active()) {
         report("CAT_AT_BOWL");
         phase = Phase::Idle;
       } else if (now - phaseAt >= WATCH_MS) {

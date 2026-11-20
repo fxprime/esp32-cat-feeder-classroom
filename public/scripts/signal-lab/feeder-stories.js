@@ -3,24 +3,24 @@ import { FEEDER_LIMITS, estimateFood } from "../feeder/model.js";
 const rail = (name, points) => ({ name, points });
 const inputRoute = (from, to, payload, when) => ({ from, to, payload, when });
 const pulse = (start, stop) => [[0, 0], [start, 0], [start, 1], [stop, 1], [stop, 0], [1, 0]];
-const irBlocked = time => time >= .26 && time <= .66;
+const irDetected = time => time >= .26 && time <= .66;
 
 const infrared = {
-  id: "feeder-ir", family: "Digital", tag: "IR break beam",
+  id: "feeder-ir", family: "Digital", tag: "IR สะท้อน",
   title: "มีตัวอยู่หน้าชามหรือยัง?",
-  summary: "ลำแสง IR · มองที่สถานะของตัวรับ · GPIO33",
-  wires: "IR OUT → GPIO33", device: "ลำแสงที่ชาม", range: "1 เหตุการณ์",
+  summary: "แสงสะท้อนกลับมาที่หัวเดียวกัน · อ่าน GPIO33",
+  wires: "IR OUT → GPIO33", device: "หัว IR สะท้อนที่ชาม", range: "1 เหตุการณ์",
   tracks: [rail("IR OUT", [[0, 1], [.26, 1], [.26, 0], [.66, 0], [.66, 1], [1, 1]])],
-  labels: [[.12, "โล่ง"], [.46, "บังลำแสง"], [.83, "โล่ง"]],
-  message: "เมื่อแมวบังลำแสง ตัวรับแบบนี้ส่ง LOW ให้บอร์ด ESP32 บันทึกว่าแมวมาที่ชาม",
-  note: "ตัวรับ OUT แบบ open collector ใช้ pull-up ไป 3.3 V และ GND ร่วมกัน สถานะนี้บอกว่าลำแสงถูกบัง กดปุ่ม “ให้อาหาร Manual” ที่ GPIO19 เพื่อสั่งจ่ายอาหาร",
-  source: { label: "การต่อ IR break beam · Adafruit", url: "https://learn.adafruit.com/ir-breakbeam-sensors/arduino" },
+  labels: [[.12, "ไม่พบ"], [.46, "ตรวจพบ"], [.83, "ไม่พบ"]],
+  message: "เมื่อแสงสะท้อนจากตัวแมวกลับมามากพอ เซนเซอร์ส่ง LOW ให้ ESP32 รู้ว่ามีตัวอยู่ในระยะ",
+  note: "ตัวส่งกับตัวรับอยู่ในหัวเดียวกัน เลือกรุ่น Active LOW ที่ OUT ใช้ลอจิก 3.3 V หรือลดระดับสัญญาณก่อนเข้า ESP32 รุ่นตัวอย่าง SEN0019 ใช้ไฟ 5 V และ OUT ตอน HIGH ประมาณ 4 V",
+  source: { label: "สเปก IR สะท้อน Active LOW · DFRobot", url: "https://wiki.dfrobot.com/sen0019/" },
   useCase: {
-    title: "บันทึกเวลาที่แมวมาที่ชาม", when: "เมื่อมีตัวเดินผ่านหน้าชามและบังลำแสง",
-    routes: [inputRoute("ตัวรับ IR", "ESP32 GPIO33", "LOW (0) เมื่อถูกบัง · HIGH (1) เมื่อโล่ง")],
-    result: "ESP32 บันทึกการมาที่ชามเมื่อเห็นการบังลำแสงในรอบที่กำลังเฝ้าดู",
+    title: "บันทึกเวลาที่แมวมาที่ชาม", when: "เมื่อมีตัวเข้ามาในระยะที่แสงสะท้อนถึงตัวรับ",
+    routes: [inputRoute("OUT ของหัว IR สะท้อน", "ESP32 GPIO33", "LOW (0) เมื่อตรวจพบ · HIGH (1) เมื่อไม่พบ")],
+    result: "ESP32 บันทึกว่ามีตัวมาที่ชามเมื่ออ่าน LOW ในรอบที่กำลังเฝ้าดู",
   },
-  read: time => ({ on: irBlocked(time), value: irBlocked(time) ? "0 / LOW · บังลำแสง" : "1 / HIGH · ลำแสงโล่ง" }),
+  read: time => ({ on: irDetected(time), value: irDetected(time) ? "0 / LOW · ตรวจพบจากแสงสะท้อน" : "1 / HIGH · ยังตรวจไม่พบ" }),
 };
 
 const stockBase = {

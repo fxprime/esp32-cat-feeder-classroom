@@ -55,8 +55,8 @@ function diagram({ actuator, sensors, redLed = false }) {
     put("resistor", "echoBottom", 10, 417, { value: "1800" }, 90);
     put("dht22", "air", -44, -200, { humidity: "55" });
     put("resistor", "dhtPull", 30, -152, { value: "10000" });
-    put("slide-switch", "beam", 220, -164, { value: "1", bounce: "0" });
-    put("text", "beamLabel", 174, -160, { text: "IR: left = cat at bowl" });
+    put("slide-switch", "presence", 220, -164, { value: "1", bounce: "0" });
+    put("text", "presenceLabel", 174, -160, { text: "Reflective IR: left = detected" });
     connect("stock:VCC", "esp:VIN", "red");
     connect("stock:GND", ground, "black");
     connect("stock:TRIG", pin(pins.trigger), "blue");
@@ -69,8 +69,8 @@ function diagram({ actuator, sensors, redLed = false }) {
     connect("air:SDA", pin(pins.humidity), "cyan");
     connect("dhtPull:1", "air:SDA", "cyan");
     connect("dhtPull:2", "esp:3V3", "red");
-    connect("beam:2", pin(pins.infrared), "blue");
-    connect("beam:1", ground, "black");
+    connect("presence:2", pin(pins.infrared), "blue");
+    connect("presence:1", ground, "black");
   }
 
   if (redLed) {
@@ -98,7 +98,8 @@ const sensorWiring = [
   { from: "HC-SR04 · VCC / GND", to: "VIN 5 V ใน Wokwi / GND" },
   { from: "HC-SR04 · TRIG / ECHO", to: "GPIO26 / GPIO27 ผ่านจุดกึ่งกลางตัวแบ่ง 1 kΩ และ 1.8 kΩ ลง GND" },
   { from: "DHT22 · DATA (SDA ใน Wokwi)", to: "GPIO32 · pull-up 10 kΩ ไป 3V3, VCC ไป 3V3, GND ร่วม" },
-  { from: "IR · ขา OUT หรือขากลางสวิตช์จำลอง", to: "GPIO33 · INPUT_PULLUP · LOW = ลำแสงถูกบัง · GND ร่วมและสัญญาณ 3.3 V" },
+  { from: "Wokwi · สวิตช์แทน OUT ของ IR สะท้อน", to: "ขากลาง → GPIO33, ขาซ้าย → GND · INPUT_PULLUP · ซ้าย = ตรวจพบ (LOW)" },
+  { from: "บอร์ดจริง · IR สะท้อน Active LOW", to: "OUT → GPIO33 ที่ระดับลอจิก 3.3 V และ GND ร่วม · รุ่น SEN0019 ใช้ไฟ 5 V และต้องลดระดับ OUT ก่อนเข้าบอร์ด" },
 ];
 const mission = (title, desc) => ({ title, desc });
 function lab({ libraries, ...data }) {
@@ -122,8 +123,8 @@ export const classroomLabs = {
   }),
   lab2: lab({
     title: "Lab 2 · เครื่องรู้ได้อย่างไรว่าอาหารพร้อม",
-    badge: "Ultrasonic · DHT22 · IR",
-    goal: "เปิด Serial Monitor ที่ 115200 แล้วเปลี่ยนระยะถึงผิวอาหาร ความชื้นอากาศในถัง และสถานะลำแสงที่ชามทีละอย่าง ค่าเปอร์เซ็นต์อาหารเป็นการประมาณหลังตั้งจุดเต็มและจุดหมด",
+    badge: "Ultrasonic · DHT22 · IR สะท้อน",
+    goal: "เปิด Serial Monitor ที่ 115200 แล้วเปลี่ยนระยะถึงผิวอาหาร ความชื้นอากาศในถัง และสถานะ IR สะท้อนที่ชามทีละอย่าง ค่าเปอร์เซ็นต์อาหารเป็นการประมาณหลังตั้งจุดเต็มและจุดหมด",
     wiring: sensorWiring,
     libraries: [dhtLibrary],
     ino: [dht, pinNames(...sensorNames), debounce, readings, firmware("sensors.ino")].join("\n\n"),
@@ -131,13 +132,13 @@ export const classroomLabs = {
     missions: [
       mission("เทียบถังเต็มกับถังหมด", "คลิก HC-SR04 ลองระยะ 6 ซม. แล้วเปลี่ยนเป็น 24 ซม. ดูค่าประมาณ 100% และ 0%"),
       mission("ถังชื้น", "กด DHT22 แล้วเลื่อนจาก 55% ไป 78% RH รอรอบอ่านถัดไปประมาณสองวินาที ค่าที่เปลี่ยนคือความชื้นอากาศในถัง"),
-      mission("มีตัวมาที่ชาม", "เลื่อนสวิตช์ IR ไปซ้าย ลองดู Serial ขึ้น ARRIVAL และ LOW เลื่อนไปขวาเพื่อกลับเป็น HIGH"),
+      mission("มีตัวมาที่ชาม", "เลื่อนสวิตช์ไปซ้ายแทนตอน IR รับแสงสะท้อนกลับ ดู Serial ขึ้น ARRIVAL และ LOW เลื่อนไปขวาเพื่อกลับเป็น HIGH"),
     ],
   }),
   lab3: lab({
     title: "Lab 3 · เครื่องให้อาหารแมวอัตโนมัติ",
     badge: "รวมวงจร · ทดสอบครบมื้อ",
-    goal: "รวมฝา เสียง เซนเซอร์และไฟแดงด้วยพินเดิม กด MEAL หรือพิมพ์ m เพื่อจำลองมื้อ เมื่อ RH ตั้งแต่ 70% หรืออาหารเหลือประมาณไม่เกิน 5% ให้ฝาปิดและแจ้งเหตุ IR ใช้ตรวจว่ามีตัวมาที่ชามหลังจ่าย",
+    goal: "รวมฝา เสียง เซนเซอร์และไฟแดงด้วยพินเดิม กด MEAL หรือพิมพ์ m เพื่อจำลองมื้อ เมื่อ RH ตั้งแต่ 70% หรืออาหารเหลือประมาณไม่เกิน 5% ให้ฝาปิดและแจ้งเหตุ IR สะท้อนใช้ตรวจว่ามีตัวมาที่ชามหลังจ่าย",
     wiring: [
       ...actuatorWiring, ...sensorWiring,
       { from: "LED แดง · A / K", to: "GPIO23 ผ่าน 330 Ω / GND" },
@@ -152,7 +153,7 @@ export const classroomLabs = {
     missions: [
       mission("มื้อปกติจ่ายหนึ่งรอบ", "รอ DHT22 อ่านได้ ตั้ง 55% RH กับระยะ 10 ซม. กด MEAL ดู BEEP → FLAP_OPEN → DISPENSED พิมพ์ r ใน Serial เพื่อลองส่งมื้อเดิมซ้ำ"),
       mission("ชื้นหรืออาหารหมดให้หยุด", "ตั้ง RH 78% รอรอบอ่าน แล้วกด MEAL ไฟแดงต้องติด ฝาต้องปิด และ Serial ขึ้น BLOCK_HUMIDITY ลองซ้ำที่ 55% กับระยะ 24 ซม. เพื่อหา BLOCK_EMPTY"),
-      mission("มาถึงชามแล้ว", "กลับไปที่ 55% และ 10 ซม. จ่ายหนึ่งรอบ หลังฝาปิดเลื่อน IR ไปซ้ายใน 8 วินาที ต้องเห็น CAT_AT_BOWL โดย Servo ยังปิด"),
+      mission("มาถึงชามแล้ว", "กลับไปที่ 55% และ 10 ซม. จ่ายหนึ่งรอบ หลังฝาปิดเลื่อนสวิตช์ IR สะท้อนไปซ้ายใน 8 วินาที ต้องเห็น CAT_AT_BOWL โดย Servo ยังปิด"),
     ],
   }),
 };

@@ -18,7 +18,7 @@
       <p>กดดูว่าขาไหนรับข้อมูลจากชาม ขาไหนสั่งไฟ และจุดไหนส่งข้อความถึงเจ้าของ</p>
     </header>
 
-    <section class="board-explorer" aria-label="สำรวจห้าจุดบนบอร์ด ESP32" data-selected="usb">
+    <section class="board-explorer" aria-label="สำรวจบอร์ด ESP32 และลองปุ่มให้อาหาร" data-selected="usb">
       <svg class="board-connection" aria-hidden="true">
         <defs><marker id="board-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="m1 1 8 4-8 4" fill="none" stroke="#b45309" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
         <path class="board-wire" marker-end="url(#board-arrow)"/>
@@ -78,6 +78,85 @@
         <button type="button" class="board-point" data-point="wifi" aria-controls="board-point-detail" aria-pressed="false">Wi‑Fi</button>
       </div>
 
+      <section class="button-demo" id="button-demo" aria-label="ทดลองปุ่มให้อาหาร Manual" data-on="false">
+        <p id="button-demo-instruction" class="sr-only">กดปุ่มหนึ่งครั้งเพื่อปิดหน้าสัมผัส แล้วกดอีกครั้งเพื่อปล่อย</p>
+
+        <button type="button" class="button-demo-toggle" id="button-demo-toggle" aria-pressed="false" aria-labelledby="demo-button-label" aria-describedby="button-demo-instruction">
+          <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
+            <ellipse cx="56" cy="72" rx="38" ry="5" fill="#e0f2fe"/>
+            <path d="M28 52v15h-9m65-15v15h9" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+            <rect x="21" y="35" width="70" height="25" rx="8" fill="#dbeafe" stroke="#155e75" stroke-width="2.5"/>
+            <g class="button-demo-cap">
+              <rect x="35" y="20" width="42" height="23" rx="9" stroke="#155e75" stroke-width="2.5"/>
+              <path d="M45 27h22" stroke="#fff" stroke-opacity=".65" stroke-width="2.5" stroke-linecap="round"/>
+            </g>
+          </svg>
+          <span class="button-demo-labels">
+            <strong id="demo-button-label">ให้อาหาร Manual</strong>
+            <span class="button-demo-state" id="demo-button-state" aria-hidden="true">ปล่อยอยู่</span>
+          </span>
+        </button>
+
+        <div class="button-demo-grid">
+          <div class="button-demo-node">
+            <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
+              <rect x="16" y="15" width="80" height="52" rx="9" fill="#145b6a" stroke="#084451" stroke-width="2.5"/>
+              <path d="M27 21h58m-58 40h58" stroke="#fbbf24" stroke-width="3.5" stroke-dasharray="2 6"/>
+              <rect x="32" y="29" width="35" height="24" rx="4" fill="#cedce5"/>
+              <path d="M39 35h18m-18 5h13" stroke="#7898aa" stroke-width="2" stroke-linecap="round"/>
+              <path d="M75 30h11v9H75v8h11" stroke="#a5f3fc" stroke-width="2"/>
+              <path d="M12 33h11v16H12z" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+              <circle class="button-demo-indicator" cx="80" cy="53" r="3.6"/>
+            </svg>
+            <strong>GPIO19</strong>
+            <span class="button-demo-state" id="demo-board-state">HIGH (1) · ปล่อย</span>
+          </div>
+
+          <svg class="button-demo-arrow" viewBox="0 0 46 20" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10h35m-5-5 5 5-5 5" stroke-width="2.5"/>
+            <path class="button-demo-packet" d="M3 10h35" stroke-width="5"/>
+          </svg>
+
+          <div class="button-demo-node">
+            <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
+              <path d="M48 51v23m16-23v17" stroke="#64748b" stroke-width="3.5" stroke-linecap="round"/>
+              <path class="button-demo-lens" d="M39 51V36a17 17 0 0 1 34 0v15z" stroke="#475569" stroke-width="2.5"/>
+              <path d="M37 51h38" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+              <path class="button-demo-rays" d="M56 7v5m24 3-4 5m16 17h-7m-53-22 4 5m-16 17h7" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <strong>LED</strong>
+            <span class="button-demo-state" id="demo-led-state">ไฟดับ</span>
+          </div>
+        </div>
+
+        <details class="button-demo-diagram">
+          <summary>ดูวงจร GPIO19</summary>
+          <div class="button-demo-wiring">
+            <svg viewBox="0 0 560 178" role="img" aria-labelledby="ff-button-title ff-button-desc">
+              <title id="ff-button-title">วงจรปุ่มให้อาหาร Manual ที่ GPIO19</title>
+              <desc id="ff-button-desc">ตัวต้านทานภายใน ESP32 ดึงขา GPIO19 ไปที่ 3V3 เมื่อปล่อยปุ่ม เมื่อกด ปุ่มต่อ GPIO19 เข้ากับ GND</desc>
+              <rect x="19" y="12" width="293" height="150" rx="15" fill="#fff" stroke="#bfdbeb" stroke-width="2"/>
+              <text x="34" y="40" class="button-wire-label">ภายใน ESP32</text>
+              <text x="34" y="77" class="button-wire-label">3V3</text>
+              <path d="M77 71h35l6-9 9 18 9-18 9 18 9-18 9 18 6-9h114v29H375" fill="none" stroke="#0e7490" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="107" y="111" class="button-wire-label">ตัวต้านทาน Pull-up</text>
+              <text x="257" y="128" class="button-wire-label">GPIO19</text>
+              <circle cx="283" cy="100" r="5" fill="#0e7490"/>
+              <circle cx="375" cy="100" r="5" fill="#0e7490"/>
+              <circle cx="441" cy="100" r="5" fill="#0e7490"/>
+              <path class="button-wire-open" d="M375 100l63-27" stroke="#b45309" stroke-width="4" stroke-linecap="round"/>
+              <path class="button-wire-closed" d="M375 100h66" stroke="#0e7490" stroke-width="4" stroke-linecap="round"/>
+              <path d="M441 100h62v18m-16 0h32m-25 7h18m-13 7h8" fill="none" stroke="#3c4d62" stroke-width="3" stroke-linecap="round"/>
+              <text x="408" y="54" text-anchor="middle" class="button-wire-label">ให้อาหาร Manual</text>
+              <text x="485" y="157" class="button-wire-label">GND</text>
+            </svg>
+            <div><p><code>INPUT_PULLUP</code> ดึง GPIO19 ขึ้นไปที่ 3.3 V ตอนปล่อย ผลคือ <strong>HIGH (1)</strong></p><p>พอกดปุ่ม ขานี้ต่อถึง GND ผลคือ <strong>LOW (0)</strong></p></div>
+          </div>
+          <p class="button-demo-note">ไฟในภาพติดเพื่อให้เห็นผลจากการกดปุ่ม ตอนรวมเครื่อง GPIO23 จะสั่งไฟแดงเมื่อเครื่องงดจ่ายอาหาร</p>
+        </details>
+        <p class="sr-only" id="button-demo-status" role="status"></p>
+      </section>
+
       <div class="board-detail" id="board-point-detail" role="status">
         <p class="board-function" id="board-function">ไฟเข้าบอร์ด</p>
         <h2 id="board-point-title">USB</h2>
@@ -90,6 +169,7 @@
     const explorer = document.querySelector('.board-explorer');
     const figure = explorer.querySelector('.board-figure');
     const detail = explorer.querySelector('.board-detail');
+    const manual = explorer.querySelector('.button-demo');
     const buttons = explorer.querySelectorAll('[data-point]');
     const connection = explorer.querySelector('.board-connection');
     const wire = connection.querySelector('.board-wire');
@@ -118,7 +198,7 @@
       gpio: {
         name: 'GPIO',
         purpose: 'รับหรือส่งสัญญาณ',
-        description: 'ในเครื่องนี้ GPIO23 ที่ไฮไลต์เป็น Output สั่ง LED แดง ส่วน GPIO33 เป็น Input อ่านว่าลำแสง IR ข้างชามถูกบังหรือยัง',
+        description: 'GPIO23 ที่ไฮไลต์ใช้สั่ง LED แดง ส่วน GPIO33 อ่าน IR สะท้อนที่ชาม และ GPIO19 อ่านปุ่มให้อาหาร Manual ใต้บอร์ด',
       },
       wifi: {
         name: 'Wi‑Fi 2.4 GHz',
@@ -142,12 +222,14 @@
       const stacked = panel.top >= board.bottom;
       let path;
 
-      if (stacked && selected === 'usb') {
-        path = `M${x(label.left + label.width / 2)} ${y(label.bottom)} V${y(panel.top + 7)}`;
-      } else if (stacked) {
-        const lane = leftLabel ? board.left + 4 : board.right - 4;
+      if (stacked) {
+        const manualBox = manual.getBoundingClientRect();
+        const lane = leftLabel ? Math.min(board.left, manualBox.left) - 4 : Math.max(board.right, manualBox.right) + 4;
         const entry = panel.left + panel.width * (leftLabel ? .2 : .8);
-        path = `M${labelX} ${labelY} H${x(lane)} V${y(panel.top - 8)} H${x(entry)} V${y(panel.top + 7)}`;
+        const start = selected === 'usb'
+          ? `M${x(label.left + label.width / 2)} ${y(label.bottom)} V${y((label.bottom + manualBox.top) / 2)}`
+          : `M${labelX} ${labelY}`;
+        path = `${start} H${x(lane)} V${y(panel.top - 6)} H${x(entry)} V${y(panel.top + 7)}`;
       } else {
         const bend = x((board.right + panel.left) / 2);
         const panelY = y(panel.top + panel.height / 2);
@@ -160,7 +242,7 @@
     }
 
     const wireLayout = new ResizeObserver(positionWire);
-    for (const element of [explorer, figure, detail]) wireLayout.observe(element);
+    for (const element of [explorer, figure, manual, detail]) wireLayout.observe(element);
 
     buttons.forEach(button => {
       button.addEventListener('click', () => {
@@ -183,6 +265,25 @@
         }
       });
     });
+
+    (() => {
+      const demo = manual;
+      const button = document.getElementById('button-demo-toggle');
+      const inputState = document.getElementById('demo-button-state');
+      const boardState = document.getElementById('demo-board-state');
+      const ledState = document.getElementById('demo-led-state');
+      const status = document.getElementById('button-demo-status');
+
+      button.addEventListener('click', () => {
+        const pressed = button.getAttribute('aria-pressed') === 'false';
+        button.setAttribute('aria-pressed', String(pressed));
+        demo.dataset.on = String(pressed);
+        inputState.textContent = pressed ? 'กดอยู่ · กดอีกครั้งเพื่อปล่อย' : 'ปล่อยอยู่';
+        boardState.textContent = pressed ? 'LOW (0) · กด' : 'HIGH (1) · ปล่อย';
+        ledState.textContent = pressed ? 'ไฟติด' : 'ไฟดับ';
+        status.textContent = `ESP32 ${boardState.textContent} · LED ${ledState.textContent}`;
+      });
+    })();
   </script>
   <script src="../scripts/slide-support.js"></script>
 </body>

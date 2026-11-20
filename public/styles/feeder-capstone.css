@@ -46,8 +46,6 @@
 .final-flap { transform-origin: 160px 129px; }
 [data-open="true"] .final-flap { transform: rotate(-90deg); }
 .final-grains, .final-cat, .final-beep { opacity: .14; }
-.final-beam-block, [data-cat="true"] .final-beam-clear { display: none; }
-[data-cat="true"] .final-beam-block { display: block; }
 [data-open="true"] .final-grains, [data-cat="true"] .final-cat, [data-beep="true"] .final-beep { opacity: 1; }
 .final-led { fill: #cbd5e1; }
 [data-red="true"] .final-led { fill: #ef4444; filter: drop-shadow(0 0 4px #f87171); }

@@ -128,93 +128,6 @@
       from { opacity: 0; transform: translateY(var(--stagger-distance)); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    .button-demo {
-      margin-block-end: 1.25rem;
-      padding: clamp(.85rem, 2.6vw, 1.5rem);
-      border: 1px solid #bae6fd;
-      border-radius: 1.5rem;
-      background: linear-gradient(135deg, #fff 20%, #f0f9ff 62%, #fffbeb);
-      box-shadow: 0 9px 22px #33415512;
-      text-align: center;
-    }
-    .button-demo h2 {
-      color: #0c4a6e;
-      font-size: clamp(1.14rem, 3vw, 1.52rem);
-      font-weight: 800;
-    }
-    .button-demo-instruction, .button-demo-note {
-      color: #475569;
-      font-size: .82rem;
-    }
-    .button-demo-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) clamp(.85rem, 5vw, 3.2rem) minmax(0, 1fr) clamp(.85rem, 5vw, 3.2rem) minmax(0, 1fr);
-      align-items: center;
-      gap: clamp(.15rem, 1vw, .55rem);
-      max-inline-size: 41rem;
-      margin: .85rem auto .7rem;
-    }
-    .button-demo-node {
-      display: grid;
-      justify-items: center;
-      align-content: start;
-      gap: .2rem;
-      min-inline-size: 0;
-      padding: .42rem 0;
-    }
-    .button-demo-node > svg {
-      display: block;
-      inline-size: min(100%, 6.4rem);
-      block-size: auto;
-      overflow: visible;
-    }
-    .button-demo-node strong { color: #1e3a5f; font-weight: 800; font-size: clamp(.85rem, 2vw, 1rem); }
-    .button-demo-state { color: #475569; font-size: clamp(.7rem, 1.65vw, .85rem); }
-    .button-demo-toggle {
-      color: #075985;
-      background: #f0f9ff;
-      border: 2px solid #7dd3fc;
-      border-radius: 1rem;
-      cursor: pointer;
-      inline-size: 100%;
-    }
-    .button-demo-toggle:hover { background: #e0f2fe; border-color: #0284c7; }
-    .button-demo-toggle:focus-visible { outline: 3px solid #0369a1; outline-offset: 3px; }
-    .button-demo-toggle[aria-pressed="true"] { background: #e0f2fe; border-color: #0284c7; }
-    .button-demo-cap { fill: #38bdf8; }
-    .button-demo[data-on="true"] .button-demo-cap { transform: translateY(6px); fill: #0284c7; }
-    .button-demo-arrow { display: block; inline-size: 100%; overflow: visible; fill: none; stroke: #64748b; }
-    .button-demo-arrow .button-demo-packet { stroke: #0284c7; stroke-dasharray: 1 36; stroke-dashoffset: 1; opacity: 0; }
-    .button-demo-indicator { fill: #cbd5e1; }
-    .button-demo[data-on="true"] .button-demo-indicator { fill: #4ade80; }
-    .button-demo-lens { fill: #e2e8f0; }
-    .button-demo-rays { opacity: 0; }
-    .button-demo[data-on="true"] .button-demo-lens { fill: #fbbf24; }
-    .button-demo[data-on="true"] .button-demo-rays { opacity: 1; }
-    .button-demo[data-on="true"] #demo-led-state { color: #92400e; font-weight: 700; }
-
-    @media (prefers-reduced-motion: no-preference) {
-      .button-demo-cap { transition: transform 130ms ease-out, fill 130ms ease-out; }
-      .button-demo-indicator { transition: fill 120ms ease-out 160ms; }
-      .button-demo-lens { transition: fill 160ms ease-out 380ms; }
-      .button-demo-rays { transition: opacity 160ms ease-out 380ms; }
-      .button-demo[data-on="true"] .button-demo-packet { animation: button-demo-send 200ms ease-in-out; }
-      .button-demo[data-on="true"] .button-demo-arrow--output .button-demo-packet { animation-delay: 220ms; }
-    }
-
-    @keyframes button-demo-send {
-      0% { opacity: 0; stroke-dashoffset: 1; }
-      20%, 80% { opacity: 1; }
-      100% { opacity: 0; stroke-dashoffset: -35; }
-    }
-    .button-demo-wiring { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr); align-items: center; gap: .8rem; max-inline-size: 53rem; margin: .65rem auto; padding: .55rem; text-align: start; background: #f5fbff; border: 1px solid #cfe4f4; border-radius: .8rem; }
-    .button-demo-wiring svg { display: block; inline-size: 100%; block-size: auto; min-inline-size: 0; }
-    .button-demo-wiring p { margin: .25rem .2rem; color: #405568; font-size: .83rem; line-height: 1.65; }
-    .button-wire-label { fill: #345675; font-size: 15px; font-weight: 700; }
-    .button-wire-closed, [data-on="true"] .button-wire-open { opacity: 0; }
-    [data-on="true"] .button-wire-closed { opacity: 1; }
-    @media (max-width: 40rem) { .button-demo-wiring { grid-template-columns: minmax(0,1fr); } }
   </style>
 <link rel="stylesheet" href="../styles/slide-support.css"></head>
 <body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
@@ -417,85 +330,6 @@
         <span>ถอด USB ก่อนเปลี่ยนสาย</span>
       </li>
     </ul>
-    <section class="button-demo" id="button-demo" aria-labelledby="button-demo-title" data-on="false">
-      <h2 id="button-demo-title">ปุ่ม “ให้อาหาร Manual” ส่งเลขอะไรให้ ESP32?</h2>
-      <p id="button-demo-instruction" class="button-demo-instruction">กดปุ่มหนึ่งครั้งเพื่อปิดหน้าสัมผัส แล้วกดอีกครั้งเพื่อปล่อย</p>
-
-      <div class="button-demo-grid">
-        <button type="button" class="button-demo-node button-demo-toggle" id="button-demo-toggle" aria-pressed="false" aria-labelledby="demo-button-label" aria-describedby="button-demo-instruction">
-          <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
-            <ellipse cx="56" cy="72" rx="38" ry="5" fill="#e0f2fe"/>
-            <path d="M28 52v15h-9m65-15v15h9" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
-            <rect x="21" y="35" width="70" height="25" rx="8" fill="#dbeafe" stroke="#155e75" stroke-width="2.5"/>
-            <g class="button-demo-cap">
-              <rect x="35" y="20" width="42" height="23" rx="9" stroke="#155e75" stroke-width="2.5"/>
-              <path d="M45 27h22" stroke="#fff" stroke-opacity=".65" stroke-width="2.5" stroke-linecap="round"/>
-            </g>
-          </svg>
-          <strong id="demo-button-label">ให้อาหาร Manual</strong>
-          <span class="button-demo-state" id="demo-button-state" aria-hidden="true">ปล่อยอยู่</span>
-        </button>
-
-        <svg class="button-demo-arrow" viewBox="0 0 46 20" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 10h35m-5-5 5 5-5 5" stroke-width="2.5"/>
-          <path class="button-demo-packet" d="M3 10h35" stroke-width="5"/>
-        </svg>
-
-        <div class="button-demo-node">
-          <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
-            <rect x="16" y="15" width="80" height="52" rx="9" fill="#145b6a" stroke="#084451" stroke-width="2.5"/>
-            <path d="M27 21h58m-58 40h58" stroke="#fbbf24" stroke-width="3.5" stroke-dasharray="2 6"/>
-            <rect x="32" y="29" width="35" height="24" rx="4" fill="#cedce5"/>
-            <path d="M39 35h18m-18 5h13" stroke="#7898aa" stroke-width="2" stroke-linecap="round"/>
-            <path d="M75 30h11v9H75v8h11" stroke="#a5f3fc" stroke-width="2"/>
-            <path d="M12 33h11v16H12z" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
-            <circle class="button-demo-indicator" cx="80" cy="53" r="3.6"/>
-          </svg>
-          <strong>ESP32</strong>
-          <span class="button-demo-state" id="demo-board-state">HIGH (1) · ปล่อย</span>
-        </div>
-
-        <svg class="button-demo-arrow button-demo-arrow--output" viewBox="0 0 46 20" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 10h35m-5-5 5 5-5 5" stroke-width="2.5"/>
-          <path class="button-demo-packet" d="M3 10h35" stroke-width="5"/>
-        </svg>
-
-        <div class="button-demo-node">
-          <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
-            <path d="M48 51v23m16-23v17" stroke="#64748b" stroke-width="3.5" stroke-linecap="round"/>
-            <path class="button-demo-lens" d="M39 51V36a17 17 0 0 1 34 0v15z" stroke="#475569" stroke-width="2.5"/>
-            <path d="M37 51h38" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-            <path class="button-demo-rays" d="M56 7v5m24 3-4 5m16 17h-7m-53-22 4 5m-16 17h7" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          <strong>LED</strong>
-          <span class="button-demo-state" id="demo-led-state">ไฟดับ</span>
-        </div>
-      </div>
-
-      <div class="button-demo-wiring">
-        <svg viewBox="0 0 560 178" role="img" aria-labelledby="ff-button-title ff-button-desc">
-          <title id="ff-button-title">วงจรปุ่มให้อาหาร Manual ที่ GPIO19</title>
-          <desc id="ff-button-desc">ตัวต้านทานภายใน ESP32 ดึงขา GPIO19 ไปที่ 3V3 เมื่อปล่อยปุ่ม เมื่อกด ปุ่มต่อ GPIO19 เข้ากับ GND</desc>
-          <rect x="19" y="12" width="293" height="150" rx="15" fill="#fff" stroke="#bfdbeb" stroke-width="2"/>
-          <text x="34" y="40" class="button-wire-label">ภายใน ESP32</text>
-          <text x="34" y="77" class="button-wire-label">3V3</text>
-          <path d="M77 71h35l6-9 9 18 9-18 9 18 9-18 9 18 6-9h114v29H375" fill="none" stroke="#0e7490" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <text x="107" y="111" class="button-wire-label">ตัวต้านทาน Pull-up</text>
-          <text x="257" y="128" class="button-wire-label">GPIO19</text>
-          <circle cx="283" cy="100" r="5" fill="#0e7490"/>
-          <circle cx="375" cy="100" r="5" fill="#0e7490"/>
-          <circle cx="441" cy="100" r="5" fill="#0e7490"/>
-          <path class="button-wire-open" d="M375 100l63-27" stroke="#b45309" stroke-width="4" stroke-linecap="round"/>
-          <path class="button-wire-closed" d="M375 100h66" stroke="#0e7490" stroke-width="4" stroke-linecap="round"/>
-          <path d="M441 100h62v18m-16 0h32m-25 7h18m-13 7h8" fill="none" stroke="#3c4d62" stroke-width="3" stroke-linecap="round"/>
-          <text x="408" y="54" text-anchor="middle" class="button-wire-label">ให้อาหาร Manual</text>
-          <text x="485" y="157" class="button-wire-label">GND</text>
-        </svg>
-        <div><p><code>INPUT_PULLUP</code> ดึง GPIO19 ขึ้นไปที่ 3.3 V ตอนปล่อย ผลคือ <strong>HIGH (1)</strong></p><p>พอกดปุ่ม ขานี้ต่อถึง GND ผลคือ <strong>LOW (0)</strong></p></div>
-      </div>
-      <p class="button-demo-note">ไฟในภาพติดเพื่อให้เห็นผลจากการกดปุ่ม ตอนรวมเครื่อง GPIO23 จะสั่งไฟแดงเมื่อเครื่องงดจ่ายอาหาร</p>
-      <p class="sr-only" id="button-demo-status" role="status"></p>
-    </section>
   </main>
 
   <script>
@@ -588,24 +422,6 @@
       }
     })();
 
-    (() => {
-      const demo = document.getElementById('button-demo');
-      const button = document.getElementById('button-demo-toggle');
-      const inputState = document.getElementById('demo-button-state');
-      const boardState = document.getElementById('demo-board-state');
-      const ledState = document.getElementById('demo-led-state');
-      const status = document.getElementById('button-demo-status');
-
-      button.addEventListener('click', () => {
-        const pressed = button.getAttribute('aria-pressed') === 'false';
-        button.setAttribute('aria-pressed', String(pressed));
-        demo.dataset.on = String(pressed);
-        inputState.textContent = pressed ? 'กดอยู่' : 'ปล่อยอยู่';
-        boardState.textContent = pressed ? 'LOW (0) · กด' : 'HIGH (1) · ปล่อย';
-        ledState.textContent = pressed ? 'ไฟติด' : 'ไฟดับ';
-        status.textContent = `ESP32 ${boardState.textContent} · LED ${ledState.textContent}`;
-      });
-    })();
   </script>
 
   <!-- Embed Mode Handler & Navigation Key Forwarder -->

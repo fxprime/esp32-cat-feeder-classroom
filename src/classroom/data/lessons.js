@@ -77,7 +77,7 @@ export const LESSONS = [
     fullName: "3. รู้จักบอร์ด ESP32 DevKit V1",
     subtitle: "กดดู USB, 3V3, GND, GPIO และเสาอากาศ Wi‑Fi",
     description:
-      "กดตำแหน่งบนบอร์ดเพื่อดูขาไฟและขาสัญญาณ แล้วดูว่า Wi‑Fi ในตัวส่งสถานะเครื่องไปที่มือถือได้อย่างไร",
+      "สำรวจขาไฟ ขาสัญญาณ และ Wi‑Fi แล้วลองกดปุ่มให้อาหาร Manual ใต้บอร์ดเพื่อดูว่า GPIO19 อ่านค่าอะไร",
     file: "lesson-3.html",
     tag: "สำรวจบอร์ดเสมือน",
     icon: "Layers",
@@ -94,7 +94,7 @@ export const LESSONS = [
     fullName: "4. กฎเหล็กเรื่องไฟฟ้า",
     subtitle: "2 กฎเหล็กกันบอร์ดพังสำหรับมือใหม่",
     description:
-      "เทียบวงจร LED ที่มีตัวต้านทานกับภาพจำลองลัดวงจร แล้วกดปุ่ม MEAL GPIO19 ให้ ESP32 อ่าน LOW",
+      "เทียบวงจร LED ที่มีตัวต้านทานกับวงจรลัด แล้วดูกฎการต่อไฟที่ใช้กับ ESP32",
     file: "lesson-4.html",
     tag: "ทดลองความปลอดภัย",
     icon: "Zap",
@@ -141,10 +141,10 @@ export const LESSONS = [
     slideNum: 7,
     phaseId: 1,
     title: "Digital / Analog · IR กับ Piezo",
-    fullName: "7. ลำแสงขาดกับเม็ดอาหารกระทบ",
-    subtitle: "เปรียบเทียบบัง IR กับกราฟแรงดันจาก Piezo",
+    fullName: "7. แสงสะท้อนกับเม็ดอาหารกระทบ",
+    subtitle: "เทียบสัญญาณจาก IR สะท้อนกับกราฟแรงดันจาก Piezo",
     description:
-      "บังลำแสงดูสถานะ 0/1 แล้วดูแผ่น Piezo ที่สั่นเมื่อเม็ดตก เปิดเรื่อง ADC และ PWM เพิ่มได้",
+      "ให้แมวเข้าระยะ IR สะท้อนแล้วดูสถานะ 0/1 แล้วดูแผ่น Piezo ที่สั่นเมื่อเม็ดตก เปิดเรื่อง ADC และ PWM เพิ่มได้",
     file: "lesson-6.html",
     tag: "กราฟคลื่น & สไลเดอร์",
     icon: "Activity",

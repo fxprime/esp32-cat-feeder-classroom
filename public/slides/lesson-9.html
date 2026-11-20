@@ -83,9 +83,9 @@
   <div class="cl-example-heading"><h2 id="timing-menu-title">ทดลองจับเวลาใน loop()</h2></div>
   <section class="cl-feeder-clock" aria-labelledby="cl-feeder-clock-title" data-fo-clock>
     <h3 id="cl-feeder-clock-title">ระหว่างรอปิดฝา ยังอ่าน IR ได้ไหม?</h3>
-    <p>ลองบังลำแสง GPIO33 ชั่วครู่ระหว่างที่ฝาเปิดค้าง 1100 ms ขีดบนกราฟคือจังหวะอ่านค่า แถบสีม่วงคือช่วงที่ลำแสงถูกบัง</p>
-    <label>เริ่มบังลำแสงที่ <output data-fo-clock-at>450 ms</output><input type="range" min="0" max="1100" step="50" value="450" data-fo-clock-input></label>
-    <div class="cl-feeder-clock-actions"><button type="button" class="cl-primary" data-fo-clock-run>เดินเวลาหนึ่งรอบ</button><span>บังนาน 240 ms</span></div>
+    <p>จำลองแมวเข้าระยะ IR สะท้อนที่ GPIO33 ชั่วครู่ระหว่างฝาเปิดค้าง 1100 ms ขีดบนกราฟคือจังหวะอ่านค่า แถบสีม่วงคือช่วงที่เซนเซอร์ให้ LOW</p>
+    <label>แมวเข้าระยะที่ <output data-fo-clock-at>450 ms</output><input type="range" min="0" max="1100" step="50" value="450" data-fo-clock-input></label>
+    <div class="cl-feeder-clock-actions"><button type="button" class="cl-primary" data-fo-clock-run>เดินเวลาหนึ่งรอบ</button><span>อยู่ในระยะ 240 ms</span></div>
     <div class="cl-feeder-clocks"><article class="cl-feeder-clock-lane">
     <h3><code>delay()</code> · พักลูปก่อนอ่าน</h3>
     <div class="cl-feeder-clock-rail" aria-hidden="true">
@@ -105,7 +105,7 @@
     </div>
     <p data-fo-clock-result="millis">ยังไม่ได้ทดลอง</p>
   </article></div>
-    <p class="cl-feeder-clock-status" data-fo-clock-status role="status">ลองตั้งให้ลำแสงหายไปก่อนครบ 1100 ms แล้วเทียบกัน</p>
+    <p class="cl-feeder-clock-status" data-fo-clock-status role="status">ลองให้แมวออกจากระยะก่อนครบ 1100 ms แล้วเทียบกัน</p>
     <details><summary>ดูสองคำสั่งเทียบกัน</summary>
       <p><code>delay(1100); digitalRead(33);</code> จะกลับมาอ่านหลังรอครบ ส่วน <code>digitalRead(33);</code> ตามด้วย <code>if (millis() - openedAt &gt;= 1100)</code> อ่านได้ทุกลูปแล้วค่อยเช็กว่าจะปิดฝาหรือยัง</p>
     </details>

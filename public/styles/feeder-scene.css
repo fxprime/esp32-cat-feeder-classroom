@@ -55,7 +55,6 @@
 .fs-lab[data-stage="refilling"] .fs-refill-stream,
 .fs-serving ellipse[data-airborne], .fs-bowl-food ellipse[data-present],
 .fs-lab[data-phase="beeping"] .fs-beep { opacity: 1; }
-.fs-lab[data-cat-at-bowl="true"] .fs-ir-beam { opacity: .12; }
 .fs-gate { transform-origin: 274px 337px; }
 .fs-lab[data-servo="open"] .fs-gate { transform: rotate(90deg); }
 .fs-lab[data-fault="true"] .fs-lamp { fill: #dc314e; stroke: #ffdee5; filter: drop-shadow(0 0 5px #f2677f); }

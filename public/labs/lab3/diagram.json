@@ -84,7 +84,7 @@
     },
     {
       "type": "wokwi-slide-switch",
-      "id": "beam",
+      "id": "presence",
       "top": 220,
       "left": -164,
       "attrs": {
@@ -94,11 +94,11 @@
     },
     {
       "type": "wokwi-text",
-      "id": "beamLabel",
+      "id": "presenceLabel",
       "top": 174,
       "left": -160,
       "attrs": {
-        "text": "IR: left = cat at bowl"
+        "text": "Reflective IR: left = detected"
       }
     },
     {
@@ -236,13 +236,13 @@
       []
     ],
     [
-      "beam:2",
+      "presence:2",
       "esp:D33",
       "blue",
       []
     ],
     [
-      "beam:1",
+      "presence:1",
       "esp:GND.1",
       "black",
       []

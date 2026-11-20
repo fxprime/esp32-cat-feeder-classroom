@@ -328,8 +328,8 @@ function mountFeederScene(lab) {
     if (finishedEating) return ['กินหมดชามแล้ว', refillReady
       ? `ถังยังมีอาหาร ${state.foodPercent}% ลากกล่องไปเติมสำรอง หรือรอมื้อ ${dueLabel()}`
       : `เครื่องรอมื้อ ${dueLabel()}`];
-    if (latest?.type === 'arrival') return ['IR บันทึกว่ามีตัวมาที่ชามแล้ว', 'ลองลากแมวถอยออกเพื่อดูลำแสงกลับมา หรือลากเมฆเพื่อทดสอบถังชื้น'];
-    if (atBowl()) return ['แมวบังลำแสง · IR อ่าน LOW', `เครื่องใช้เวลานัดจ่ายอาหาร มื้อถัดไป ${dueLabel()}`];
+    if (latest?.type === 'arrival') return ['IR บันทึกว่ามีตัวมาที่ชามแล้ว', 'ลองลากแมวถอยออกจากระยะแล้วดู IR กลับเป็น HIGH หรือลากเมฆเพื่อทดสอบถังชื้น'];
+    if (atBowl()) return ['แมวอยู่ในระยะ · IR อ่าน LOW', `เครื่องใช้เวลานัดจ่ายอาหาร มื้อถัดไป ${dueLabel()}`];
     if (bowlPieces > 0) return ['มีอาหารอยู่ในชาม', 'ลากแมวมาที่ชามเพื่อให้กินทีละเม็ด'];
     if (latest?.type === 'no-arrival') return ['รอบเฝ้าดูชามจบแล้ว', `หมุนเข็มไปที่มื้อ ${dueLabel()} แล้วลองลากแมวมาที่ชามหลังฝาปิด`];
     return [`มื้อถัดไป ${dueLabel()}`, 'หมุนเข็มไปที่ขีดสีส้มแล้วปล่อย เส้นสีฟ้าใช้ลองปรับระดับอาหาร'];
@@ -401,7 +401,7 @@ function mountFeederScene(lab) {
     const distance = shownDistance.toFixed(1);
     attr(actors.level, 'aria-valuetext', `${shownPercent} เปอร์เซ็นต์ ระยะ ${distance} เซนติเมตร`);
 
-    text(fields.ir, state.catAtBowl ? 'LOW · ถูกบัง' : 'HIGH');
+    text(fields.ir, state.catAtBowl ? 'LOW · ตรวจพบ' : 'HIGH');
     text(fields.food, `${shownPercent}%`);
     text(fields.distance, `${distance} ซม.`);
     text(fields.humidity, `${rh}% RH`);

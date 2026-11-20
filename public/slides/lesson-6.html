@@ -56,7 +56,8 @@
       cursor: pointer;
     }
   </style>
-<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/signal-lab.css"><link rel="stylesheet" href="../styles/adc-tutorial.css"><link rel="stylesheet" href="../styles/adc-origin.css"><link rel="stylesheet" href="../styles/feeder-signals.css"></head>
+<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/signal-lab.css"><link rel="stylesheet" href="../styles/adc-tutorial.css"><link rel="stylesheet" href="../styles/adc-origin.css"><link rel="stylesheet" href="../styles/feeder-signals.css">
+  <link rel="stylesheet" href="../styles/feeder-ir.css"></head>
 <body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
 
   <!-- Top Progress Bar -->
@@ -76,47 +77,51 @@
     <section class="text-center">
       <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-1">
         <span class="bg-gradient-to-r from-sky-600 via-violet-600 to-amber-500 bg-clip-text text-transparent">
-          ลำแสงขาด กับเม็ดอาหารกระทบ
+          แสงสะท้อน กับเม็ดอาหารกระทบ
         </span>
       </h1>
       <p class="text-xs sm:text-sm font-semibold text-slate-600">
-        บังลำแสง IR แล้วลองเคาะแผ่น Piezo เทียบสิ่งที่ ESP32 อ่านได้จากสองขา
+        ให้แมวเข้ามาในระยะ IR แล้วลองเคาะแผ่น Piezo เทียบสิ่งที่ ESP32 อ่านได้จากสองขา
       </p>
     </section>
 
     <section class="feeder-signal-compare" aria-label="ทดลองสัญญาณสองแบบ">
       <article class="feeder-signal-card feeder-signal-card--ir" data-feeder-ir>
         <span class="feeder-signal-tag">DIGITAL INPUT · GPIO33</span>
-        <h2>บังลำแสงที่ชาม</h2>
-        <p>ตัวส่ง IR ยิงไปหาตัวรับ เมื่อแมวมาบัง สถานะที่ ESP32 อ่านจะเปลี่ยนจาก 1 เป็น 0</p>
+        <h2>IR สะท้อนตรวจที่ชาม</h2>
+        <p>ตัวส่งกับตัวรับอยู่ในหัวเดียวกัน พอแสง IR สะท้อนจากตัวแมวกลับมามากพอ ขา OUT ของรุ่น Active LOW จะเปลี่ยนจาก 1 เป็น 0</p>
         <svg class="feeder-sensor-art" viewBox="0 0 320 132" aria-hidden="true">
           <path d="M24 107h273" stroke="#c0d8e7" stroke-width="2"/>
-          <rect x="29" y="43" width="38" height="52" rx="9" fill="#1e6192"/>
-          <rect x="253" y="43" width="38" height="52" rx="9" fill="#1e6192"/>
-          <path d="M67 61h186" class="feeder-ir-beam" stroke="#0ea5e9" stroke-width="4" stroke-dasharray="5 6"/>
-          <circle cx="62" cy="61" r="5" fill="#a5f3fc"/><circle cx="258" cy="61" r="5" fill="#a5f3fc"/>
+          <path d="M70 38 179 24v71L70 79Z" fill="#ccecfb" opacity=".58"/>
+          <rect x="29" y="38" width="46" height="51" rx="9" fill="#1e6192"/>
+          <path class="ir-outbound" d="M66 50l82 8m-9-6 9 6-10 4"/>
+          <path class="ir-return" d="M148 58 66 73m10-7-10 7 12 3"/>
+          <circle cx="67" cy="50" r="5" fill="#67e8f9"/>
+          <circle class="ir-receiver" cx="67" cy="73" r="5" fill="#a78bfa"/>
+          <text x="110" y="39" text-anchor="middle">แสงออก</text>
+          <text class="feeder-reflection-label" x="115" y="89" text-anchor="middle">สะท้อนกลับ</text>
           <g class="feeder-ir-cat">
             <path d="M147 57l2-22 16 13q8-3 16 0l15-13 1 22q6 11-5 19-12 9-33 4-17-6-12-23Z" fill="#ffc780" stroke="#975719" stroke-width="2"/>
             <path d="M151 88q-21 10-29 0" fill="none" stroke="#975719" stroke-width="8" stroke-linecap="round"/>
             <path d="M159 64h2m19 0h2m-13 6h3" stroke="#81411a" stroke-width="2" stroke-linecap="round"/>
           </g>
           <path d="M119 91h81l-9 16h-63Z" fill="#99dbed" stroke="#24749d" stroke-width="2"/>
-          <text x="48" y="125" text-anchor="middle">ตัวส่ง</text><text x="272" y="125" text-anchor="middle">ตัวรับ</text>
+          <text x="32" y="124">ตัวส่ง + ตัวรับ</text><text x="170" y="124" text-anchor="middle">ชาม</text>
         </svg>
         <div class="feeder-signal-action">
-          <button type="button" class="feeder-action" id="feeder-ir-toggle" aria-pressed="false">บังลำแสง IR</button>
-          <output id="feeder-ir-value" aria-live="polite">1 / HIGH · ลำแสงถึงตัวรับ</output>
+          <button type="button" class="feeder-action" id="feeder-ir-toggle" aria-pressed="false">แมวเข้ามาในระยะ</button>
+          <output id="feeder-ir-value" aria-live="polite">1 / HIGH · ยังตรวจไม่พบ</output>
         </div>
         <figure class="feeder-wave">
           <figcaption>สถานะที่ขา GPIO33 · การเปลี่ยนครั้งล่าสุด</figcaption>
-          <svg viewBox="0 0 300 88" role="img" aria-label="กราฟระดับ Digital 0 และ 1 ก่อนและหลังบังลำแสง">
+          <svg viewBox="0 0 300 88" role="img" aria-label="กราฟระดับ Digital 0 และ 1 เมื่อแมวเข้าและออกจากระยะตรวจจับ">
             <path d="M29 16h256M29 66h256" class="feeder-wave-grid"/>
             <text x="8" y="20">1</text><text x="8" y="69">0</text>
             <text x="284" y="83" text-anchor="end">เวลา →</text>
             <path id="feeder-ir-wave" d="M29 16H285" class="feeder-wave-trace"/>
           </svg>
         </figure>
-        <p class="feeder-signal-guide">ลองบังแล้วปล่อย เทียบขั้นที่กราฟเปลี่ยน ลำแสงขาดบอกว่ามีตัวอยู่หน้าชาม ปุ่ม “ให้อาหาร Manual” ใช้สั่งจ่ายอาหาร</p>
+        <p class="feeder-signal-guide">ลองให้แมวเข้าและออกจากระยะ แล้วดูขอบขาลงกับขาขึ้นบนกราฟ สัญญาณนี้บอกว่าตรวจพบวัตถุในระยะ ปุ่ม “ให้อาหาร Manual” ใช้สั่งจ่ายอาหาร</p>
       </article>
       <article class="feeder-signal-card feeder-signal-card--piezo" data-feeder-piezo>
         <span class="feeder-signal-tag">ANALOG INPUT · ADC1 / GPIO34</span>

@@ -101,7 +101,8 @@
     .flow-arrow { transition: color 0.25s ease, transform 0.25s ease; }
     .flow-arrow.is-lit { transform: translateY(1px); }
   </style>
-<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/feeder-foundations.css"></head>
+<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/feeder-foundations.css">
+  <link rel="stylesheet" href="../styles/feeder-ir.css"></head>
 <body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
 
   <header class="w-full max-w-6xl mx-auto px-4 pt-3 pb-1 flex flex-wrap items-center justify-between gap-3">
@@ -125,7 +126,7 @@
       <div class="ff-scene">
         <svg viewBox="0 0 640 405" role="img" aria-labelledby="feeder-art-title feeder-art-description">
           <title id="feeder-art-title">เครื่องให้อาหารแมวในภาพจำลอง</title>
-          <desc id="feeder-art-description">Ultrasonic วัดระดับอาหารในถัง DHT22 วัดความชื้น Servo เปิดฝาราง และลำแสง IR อยู่ข้างชาม</desc>
+          <desc id="feeder-art-description">Ultrasonic วัดระดับอาหารในถัง DHT22 วัดความชื้น Servo เปิดฝาราง และหัว IR สะท้อนตรวจจับวัตถุข้างชาม</desc>
           <defs>
             <linearGradient id="ff-tank" x2="0" y2="1">
               <stop stop-color="#e0f2fe"/><stop offset="1" stop-color="#bae6fd"/>
@@ -162,10 +163,12 @@
           <path d="M120 317q74-15 149 0l-15 29H136z" fill="#3184ba" stroke="#276895" stroke-width="3"/>
           <ellipse cx="195" cy="317" rx="75" ry="10" fill="#a0d3ef" stroke="#276895" stroke-width="2"/>
           <ellipse class="ff-served-kibble" cx="193" cy="318" rx="42" ry="6.5" fill="url(#ff-pellets)"/>
-          <rect x="126" y="305" width="9" height="16" rx="3" fill="#344e6a"/>
-          <rect x="256" y="305" width="9" height="16" rx="3" fill="#344e6a"/>
-          <path class="ff-beam" d="M136 309H255" stroke="#0e7490" stroke-width="2" stroke-dasharray="4 4"/>
-          <text x="141" y="375" class="ff-svg-label">IR ข้างชามอาหาร</text>
+          <path class="ir-outbound" d="M217 287l37-3m-8-4 8 4-7 5"/>
+          <path class="ir-return" d="M254 284l-37 14m7-7-7 7 10 1"/>
+          <rect x="194" y="279" width="24" height="28" rx="6" fill="#344e6a" stroke="#b9def0" stroke-width="2"/>
+          <circle cx="214" cy="287" r="3.2" fill="#67e8f9"/>
+          <circle class="ir-receiver" cx="214" cy="298" r="3.2" fill="#a78bfa"/>
+          <text x="141" y="375" class="ff-svg-label">IR สะท้อนที่ชาม</text>
           <g class="ff-cat">
             <path d="M471 319q41 30 71 2t-12-49" fill="none" stroke="#7e4530" stroke-width="13" stroke-linecap="round"/>
             <ellipse cx="450" cy="310" rx="44" ry="32" fill="#d98d4e" stroke="#85482e" stroke-width="3"/>
@@ -204,7 +207,7 @@
           <button type="button" class="ff-quiet" data-feeder-reset>เริ่มใหม่</button>
         </div>
         <div class="ff-feedback" role="status"><strong data-feeder-result>รอคำสั่งให้อาหาร · ฝาปิด</strong><span data-feeder-detail>ลองกด “ให้อาหาร Manual” ในสภาพถังปกติ</span></div>
-        <p class="ff-clue">เกณฑ์ทดลอง 70% RH · การบัง IR บันทึกว่ามาที่ชาม</p>
+        <p class="ff-clue">เกณฑ์ทดลอง 70% RH · IR สะท้อนใช้สังเกตว่ามีตัวมาที่ชาม</p>
       </div>
     </section>
     <details class="ff-extra">

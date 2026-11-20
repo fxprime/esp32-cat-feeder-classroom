@@ -49,7 +49,6 @@
 [data-fault="true"] .ff-fault-lamp { fill: #dc2626; }
 .ff-cat { transform: translateX(0); }
 [data-cat-at-bowl="true"] .ff-cat { transform: translateX(-150px); }
-[data-cat-at-bowl="true"] .ff-beam { opacity: .2; }
 .ff-desk { display: grid; gap: .66rem; align-content: start; }
 .ff-options {
   display: flex;
@@ -133,7 +132,7 @@
 .ff-power p.ff-power-status { min-block-size: 3.8rem; margin: 0; border: 1px solid #cfe2ed; background: #f2faff; color: #254663; border-radius: .78rem; padding: .45rem .55rem; font-weight: 700; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .ff-flap, .ff-cat, .ff-test-arm, .ff-fault-lamp, .ff-beam, .ff-power-wire { transition: transform 210ms ease-out, fill 160ms ease, opacity 160ms ease, stroke 160ms ease; }
+  .ff-flap, .ff-cat, .ff-test-arm, .ff-fault-lamp, .ff-power-wire { transition: transform 210ms ease-out, fill 160ms ease, opacity 160ms ease, stroke 160ms ease; }
   [data-phase="dispensing"] .ff-drop { animation: ff-drops .55s linear infinite; }
 }
 @keyframes ff-drops { from { transform: translateY(-6px); } to { transform: translateY(23px); } }

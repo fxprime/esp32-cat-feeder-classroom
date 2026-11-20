@@ -1,0 +1,17 @@
+.ir-outbound, .ir-return {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ir-outbound { stroke: #087eaa; opacity: .55; }
+.ir-return { stroke: #7c3aed; stroke-dasharray: 5 3; opacity: 0; }
+:is([data-cat-at-bowl="true"], [data-ir-detected="true"], [data-presence="true"], [data-cat="true"], .story-device[data-on="true"]) .ir-outbound,
+:is([data-cat-at-bowl="true"], [data-ir-detected="true"], [data-presence="true"], [data-cat="true"], .story-device[data-on="true"]) .ir-return { opacity: 1; }
+:is([data-cat-at-bowl="true"], [data-ir-detected="true"], [data-presence="true"], [data-cat="true"], .story-device[data-on="true"]) .ir-receiver {
+  fill: #e9d5ff;
+  filter: drop-shadow(0 0 3px #a78bfa);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ir-outbound, .ir-return { transition: opacity 160ms ease; }
+}

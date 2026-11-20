@@ -10,8 +10,12 @@ const sensor = (image, color) => svg(`
 
 export const storyArt = {
   "feeder-ir": svg(`
-    <rect x="28" y="36" width="30" height="62" rx="8" fill="#1e6192"/><rect x="166" y="36" width="30" height="62" rx="8" fill="#1e6192"/>
-    <path class="story-ir-beam" d="M58 52h108" stroke="#0284c7" stroke-width="3" stroke-dasharray="5 4"/>
+    <path d="M57 44 94 28v56L57 74Z" fill="#d9f1ff"/>
+    <rect x="28" y="35" width="33" height="49" rx="8" fill="#1e6192"/>
+    <path class="ir-outbound" d="M56 47l31 6m-6-5 6 5-8 4"/>
+    <path class="ir-return" d="M87 53 56 70m7-1-7 1 4-6"/>
+    <circle cx="56" cy="47" r="4" fill="#67e8f9"/>
+    <circle class="ir-receiver" cx="56" cy="70" r="4" fill="#a78bfa"/>
     <g class="story-cat-arrival"><path d="M87 56l1-23 15 11q10-4 20 0l15-11 2 24q9 24-28 25-31-3-25-26Z" fill="#ffce93" stroke="#a16228" stroke-width="2"/><path d="M99 60h1m25 0h1m-15 8h3" stroke="#72411a" stroke-width="2.5" stroke-linecap="round"/></g>
     <path d="M74 95h76l-9 16H83Z" fill="#a5eafa" stroke="#28779e" stroke-width="2"/>
   `),

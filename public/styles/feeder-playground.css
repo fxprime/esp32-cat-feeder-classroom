@@ -32,7 +32,6 @@
 .fp-conditions[data-phase=dispensing] .fp-flap { transform: rotate(75deg); }
 .fp-conditions[data-phase=dispensing] .fp-food, .fp-conditions[data-phase=beeping] .fp-buzzer { opacity: 1; }
 .fp-conditions[data-red=true] .fp-led { fill: #dc2626; stroke: #991b1b; }
-.fp-conditions[data-presence=true] .fp-beam { stroke: #7c3aed; stroke-dasharray: 4 6; }
 .fp-conditions[data-presence=true] .fp-cat { opacity: 1; }
 .fp-cat { opacity: 0; }
 .fp-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block-start: .85rem; }

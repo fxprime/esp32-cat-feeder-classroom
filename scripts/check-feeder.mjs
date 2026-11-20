@@ -69,7 +69,7 @@ for (const [from, to] of connections) {
 }
 for (const [gpio, pinName, connector] of [
   [FEEDER_PINS.meal, "MEAL_PIN", "meal:1.l"],
-  [FEEDER_PINS.infrared, "IR_PIN", "beam:2"],
+  [FEEDER_PINS.infrared, "IR_PIN", "presence:2"],
   [FEEDER_PINS.servo, "SERVO_PIN", "flap:PWM"],
   [FEEDER_PINS.trigger, "TRIG_PIN", "stock:TRIG"],
   [FEEDER_PINS.echo, "ECHO_PIN", "echoTop:2"],
