@@ -1,4 +1,4 @@
-import { createFeeder, estimateFood, FEEDER_LIMITS } from './feeder/model.js';
+import { createFeeder } from './feeder/model.js';
 
 function setText(node, value) {
   if (node.textContent !== value) node.textContent = value;
@@ -126,97 +126,6 @@ function mountFeederDemo(section) {
   update();
 }
 
-function mountFeederIpo(section) {
-  const select = selector => section.querySelector(selector);
-  const condition = select('[data-ipo-condition]');
-  const run = select('[data-ipo-run]');
-  const choices = [...section.querySelectorAll('[data-ipo-sensor]')];
-  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  let selected = 'humidity';
-  let sequence = null;
-  const topics = {
-    humidity: {
-      condition: 'จำลองความชื้นเกินเกณฑ์',
-      reading: ['55% RH', '78% RH'],
-      rules: [
-        `ถึงมื้อแล้วเช็กว่าความชื้นต่ำกว่า ${FEEDER_LIMITS.humidity}% RH และมีอาหารพอ`,
-        'ถึงมื้อแล้วพบ 78% RH เครื่องจึงเลือกงดจ่ายมื้อนี้',
-      ],
-      actions: ['บี๊บ → ฝาเปิดและปิด', 'ไฟแดง + แจ้งเตือนจำลอง'],
-      details: ['ปล่อยอาหารหนึ่งรอบแล้วเฝ้าดูที่ชาม', 'บอกเจ้าของว่าถังชื้นเกินเกณฑ์ ฝายังคงปิด'],
-    },
-    distance: {
-      condition: 'จำลองอาหารหมด',
-      reading: [`10 ซม. · อาหารประมาณ ${estimateFood(10)}%`, `${FEEDER_LIMITS.emptyCm} ซม. · ถังหมด`],
-      rules: [
-        `เทียบระยะกับถังเต็ม ${FEEDER_LIMITS.fullCm} ซม. และถังหมด ${FEEDER_LIMITS.emptyCm} ซม. ค่ามากแปลว่าผิวอาหารอยู่ลึกลงไป`,
-        `ถึงมื้อแล้วพบอาหารเหลือไม่เกิน ${FEEDER_LIMITS.emptyPercent}% เครื่องตัดสินใจงดจ่าย`,
-      ],
-      actions: ['จ่ายได้เมื่อเงื่อนไขอื่นผ่าน', 'ไฟแดง + แจ้งเตือนจำลอง'],
-      details: ['ระยะถึงผิวอาหารใช้ประมาณระดับในถัง', 'บอกเจ้าของให้เติมอาหาร ฝายังคงปิด'],
-    },
-    arrival: {
-      condition: 'จำลองแมวบังลำแสงหลังจ่ายแล้ว',
-      reading: ['IR ไม่ถูกบัง · HIGH', 'IR ถูกบัง · LOW'],
-      rules: [
-        'เครื่องเฝ้าดูหลังจ่ายอาหาร ตอนนี้ยังไม่พบสิ่งที่บังลำแสง',
-        'ลำแสงถูกบังขณะเฝ้าดู เครื่องบันทึกการมาถึงชามหนึ่งครั้ง',
-      ],
-      actions: ['รอสังเกตที่ชาม', 'บันทึกว่ามีตัวมาที่ชาม'],
-      details: ['Servo คงฝาไว้ที่ตำแหน่งปิด', 'IR บอกว่ามีสิ่งมาบังลำแสง ส่วนฝายังคงปิด'],
-    },
-  };
-
-  function paint() {
-    const data = topics[selected];
-    const index = Number(condition.checked);
-    for (const button of choices) button.setAttribute('aria-pressed', String(selected === button.dataset.ipoSensor));
-    setText(select('[data-ipo-condition-label]'), data.condition);
-    setText(select('[data-ipo-reading]'), data.reading[index]);
-    setText(select('[data-ipo-rule]'), data.rules[index]);
-    setText(select('[data-ipo-output]'), data.actions[index]);
-    setText(select('[data-ipo-output-detail]'), data.details[index]);
-  }
-
-  function resetWalk() {
-    clearTimeout(sequence);
-    sequence = null;
-    delete section.dataset.walk;
-    setText(select('[data-ipo-status]'), 'พร้อมเดินสัญญาณจากค่าที่เลือก');
-  }
-
-  for (const button of choices) {
-    button.addEventListener('click', () => {
-      selected = button.dataset.ipoSensor;
-      condition.checked = false;
-      resetWalk();
-      paint();
-    });
-  }
-  condition.addEventListener('change', () => {
-    resetWalk();
-    paint();
-  });
-  run.addEventListener('click', () => {
-    resetWalk();
-    const topic = topics[selected];
-    const index = Number(condition.checked);
-    const steps = [
-      ['input', `รับเข้า · ${topic.reading[index]}`],
-      ['process', `ESP32 ตัดสินใจ · ${topic.rules[index]}`],
-      ['output', `ผลลัพธ์ · ${topic.actions[index]}`],
-    ];
-    const show = i => {
-      const [step, message] = steps[i];
-      section.dataset.walk = step;
-      setText(select('[data-ipo-status]'), message);
-      if (i + 1 < steps.length) sequence = setTimeout(() => show(i + 1), 600);
-    };
-    show(reducedMotion.matches ? 2 : 0);
-  });
-  paint();
-}
-
 function mountPowerDemo(section) {
   const buttons = [...section.querySelectorAll('[data-feeder-wire]')];
   const status = section.querySelector('[data-feeder-power-status]');
@@ -247,8 +156,6 @@ function mountPowerDemo(section) {
 }
 
 const demo = document.querySelector('[data-feeder-demo]');
-const ipo = document.querySelector('[data-feeder-ipo]');
 const power = document.querySelector('[data-feeder-power]');
 if (demo) mountFeederDemo(demo);
-if (ipo) mountFeederIpo(ipo);
 if (power) mountPowerDemo(power);

@@ -130,7 +130,7 @@
       opacity: 0.28;
     }
   </style>
-<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/feeder-foundations.css"></head>
+<link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/feeder-foundations.css"><link rel="stylesheet" href="../styles/feeder-scene.css"></head>
 <body class="text-slate-800 flex flex-col justify-between min-h-screen select-none">
 
   <header class="w-full max-w-6xl mx-auto px-4 pt-3 pb-1 flex flex-wrap items-center justify-between gap-3">
@@ -156,40 +156,258 @@
       </p>
     </section>
 
-    <section class="ff-card ff-ipo" data-feeder-ipo aria-labelledby="ff-ipo-title">
-      <div class="ff-ipo-head">
-        <div>
-          <h2 id="ff-ipo-title">สัญญาณเดินไปทางไหน?</h2>
-          <p>เลือกอุปกรณ์ฝั่ง Input แล้วอ่านกติกาของ ESP32 ตรงกลาง</p>
-        </div>
-        <button type="button" class="ff-primary" data-ipo-run>เดินสัญญาณ</button>
+    <section class="ff-card fs-lab" data-feeder-scene data-stage="ready" aria-labelledby="fs-title">
+      <div class="fs-intro">
+        <h2 id="fs-title">ลองกับเครื่องให้อาหารแมว</h2>
+        <p id="fs-instructions">ลากแมวไปที่ชาม ลากเส้นระดับอาหารขึ้นลง หรือเลื่อนเมฆมาเหนือถัง</p>
       </div>
-      <div class="ff-ipo-lanes">
-        <div class="ff-ipo-node ff-ipo-input">
-          <p class="ff-ipo-kind">Input</p>
-          <fieldset class="ff-ipo-switches">
-            <legend>เลือกสิ่งที่บอร์ดจะอ่าน</legend>
-            <button type="button" data-ipo-sensor="humidity" aria-pressed="true">ความชื้น <span>DHT22</span></button>
-            <button type="button" data-ipo-sensor="distance" aria-pressed="false">ระยะถึงผิวอาหาร <span>Ultrasonic</span></button>
-            <button type="button" data-ipo-sensor="arrival" aria-pressed="false">มาถึงชามหรือยัง <span>IR</span></button>
-          </fieldset>
-          <label class="ff-ipo-condition"><input type="checkbox" data-ipo-condition> <span data-ipo-condition-label>จำลองความชื้นเกินเกณฑ์</span></label>
-          <strong data-ipo-reading>55% RH</strong>
+      <div class="fs-layout">
+        <div class="fs-scene" data-scene>
+          <svg class="fs-art" viewBox="0 0 600 480" aria-hidden="true">
+            <defs>
+              <linearGradient id="fs-glass" x2="0" y2="1" gradientUnits="objectBoundingBox">
+                <stop stop-color="#e0f2fe"/><stop offset="1" stop-color="#fff"/>
+              </linearGradient>
+              <linearGradient id="fs-base" x2="0" y2="1" gradientUnits="objectBoundingBox">
+                <stop stop-color="#b5ddff"/><stop offset="1" stop-color="#8bbbe9"/>
+              </linearGradient>
+              <clipPath id="fs-tank-cut"><path d="M239 155h166v140l-31 37H270l-31-37z"/></clipPath>
+              <clipPath id="fs-food-cut"><rect data-food-mask x="239" y="211" width="166" height="121"/></clipPath>
+              <pattern id="fs-kibble-pattern" viewBox="0 0 43 32" width="43" height="32" patternUnits="userSpaceOnUse">
+                <rect width="43" height="32" fill="#f6cd8f"/>
+                <ellipse cx="9" cy="8" rx="6.5" ry="4" fill="#c97b38" transform="rotate(-14 9 8)"/>
+                <ellipse cx="25" cy="6" rx="6" ry="3.6" fill="#a55f35" transform="rotate(21 25 6)"/>
+                <ellipse cx="37" cy="16" rx="6" ry="4.2" fill="#dd9a50" transform="rotate(-25 37 16)"/>
+                <ellipse cx="17" cy="22" rx="7" ry="4.4" fill="#bc743d" transform="rotate(21 17 22)"/>
+                <ellipse cx="29" cy="29" rx="5.7" ry="3.7" fill="#ae6336"/>
+                <ellipse cx="3" cy="26" rx="5" ry="3" fill="#df9c55"/>
+              </pattern>
+              <marker id="fs-arrow" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="m0 0 7 4-7 4 2-4z" fill="#6a94b8"/>
+              </marker>
+              <path id="fs-drop-shape" d="M0-9c-3 5-6 8-6 11a6 6 0 0 0 12 0c0-3-3-6-6-11z"/>
+            </defs>
+
+            <path d="M0 446h600v34H0z" fill="#deedf6"/>
+            <path d="M0 446h600" stroke="#b9d5e7" stroke-width="2"/>
+            <ellipse cx="320" cy="448" rx="141" ry="16" fill="#b4d2e6" opacity=".50"/>
+            <ellipse cx="518" cy="445" rx="62" ry="11" fill="#b4d2e6" opacity=".44"/>
+            <path class="fs-guide fs-cloud-guide" d="M155 70h111" marker-end="url(#fs-arrow)"/>
+            <path class="fs-guide fs-cat-guide" d="M126 421q43 20 81 3" marker-end="url(#fs-arrow)"/>
+            <path class="fs-guide fs-dump-guide" d="M392 303q55 20 94 65" marker-end="url(#fs-arrow)"/>
+            <path class="fs-guide fs-fill-guide" d="M469 122q-56-45-104 5" marker-end="url(#fs-arrow)"/>
+            <ellipse class="fs-cloud-target" cx="319" cy="70" rx="47" ry="31"/>
+            <path class="fs-pour-target" d="M247 145q76-25 151 0"/>
+
+            <path d="M264 315h116v111H264z" fill="#e4effb" stroke="#6e9dbc" stroke-width="2.5"/>
+            <path d="M283 325h78v94h-78z" fill="#bfd9ef" opacity=".55"/>
+            <path d="M239 155h166v140l-31 37H270l-31-37z" fill="url(#fs-glass)" stroke="#668dad" stroke-width="3.5"/>
+            <g clip-path="url(#fs-tank-cut)">
+              <g clip-path="url(#fs-food-cut)">
+                <rect x="239" y="178" width="166" height="154" fill="url(#fs-kibble-pattern)"/>
+                <rect class="fs-wet-wash" x="239" y="178" width="166" height="154" fill="#759ad0"/>
+              </g>
+              <g class="fs-mist" fill="#55a9dc" stroke="#f6fbff" stroke-width="1.6">
+                <ellipse cx="314" cy="210" rx="61" ry="39" fill="#a0d7f3" stroke="none" opacity=".35"/>
+                <use href="#fs-drop-shape" x="263" y="185"/>
+                <use href="#fs-drop-shape" x="302" y="199"/>
+                <use href="#fs-drop-shape" x="353" y="188"/>
+                <use href="#fs-drop-shape" x="384" y="214"/>
+                <use href="#fs-drop-shape" x="277" y="223"/>
+                <use href="#fs-drop-shape" x="327" y="237"/>
+                <use href="#fs-drop-shape" x="372" y="249"/>
+                <use href="#fs-drop-shape" x="262" y="266"/>
+                <use href="#fs-drop-shape" x="302" y="282"/>
+                <use href="#fs-drop-shape" x="390" y="287"/>
+              </g>
+              <path d="M249 169v109M395 176v95" stroke="#fff" stroke-width="4" opacity=".52" stroke-linecap="round"/>
+            </g>
+            <path d="M234 154q88-22 176 0l-12 11H247z" fill="#b4daf0" stroke="#668dad" stroke-width="2.5"/>
+            <path d="M248 153q73-14 147 0" fill="none" stroke="#f8fcff" stroke-width="3" stroke-linecap="round"/>
+
+            <g class="fs-rain" fill="#3599d5" data-rain-art>
+              <use href="#fs-drop-shape" x="296" y="92"/>
+              <use href="#fs-drop-shape" x="317" y="103"/>
+              <use href="#fs-drop-shape" x="339" y="88"/>
+              <use href="#fs-drop-shape" x="359" y="105"/>
+            </g>
+            <g class="fs-refill-stream" fill="#b86b35">
+              <ellipse cx="327" cy="120" rx="5" ry="3.5"/>
+              <ellipse cx="337" cy="131" rx="6" ry="3.5"/>
+              <ellipse cx="320" cy="145" rx="5" ry="3.5"/>
+              <ellipse cx="346" cy="159" rx="6" ry="4"/>
+            </g>
+
+            <g class="fs-distance">
+              <path data-distance-line d="M321 180V211" stroke="#137eba" stroke-width="2.5" stroke-dasharray="4 4" marker-end="url(#fs-arrow)"/>
+              <rect x="300" y="162" width="42" height="20" rx="6" fill="#176d88" stroke="#f4faff" stroke-width="1.5"/>
+              <circle cx="311" cy="172" r="6.3" fill="#d9f4fb"/>
+              <circle cx="331" cy="172" r="6.3" fill="#d9f4fb"/>
+              <circle cx="311" cy="172" r="2.7" fill="#517797"/>
+              <circle cx="331" cy="172" r="2.7" fill="#517797"/>
+            </g>
+            <g class="fs-art-reading" transform="translate(422 193)">
+              <rect width="144" height="51" rx="13" fill="#f9fdff" stroke="#bfd8eb" stroke-width="1.7"/>
+              <text x="13" y="20">Ultrasonic</text>
+              <text x="13" y="40" class="fs-art-number" data-art-food>10.0 ซม. · 78%</text>
+            </g>
+            <g class="fs-art-reading fs-art-humidity" transform="translate(35 135)">
+              <rect width="122" height="51" rx="13" fill="#f9fdff" stroke="#bfd8eb" stroke-width="1.7"/>
+              <text x="13" y="20">DHT22</text>
+              <text x="13" y="40" class="fs-art-number" data-art-humidity>55% RH</text>
+            </g>
+            <g transform="translate(245 165)" class="fs-dht">
+              <rect width="27" height="23" rx="4" fill="#437dba" stroke="#fff" stroke-width="1.5"/>
+              <path d="M7 6h13M7 11h13M7 16h13" stroke="#c3edff" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <g class="fs-level-art" data-level-art transform="translate(0 211)">
+              <path d="M238 0h165" stroke="#f8fcff" stroke-width="6"/>
+              <path d="M238 0h165" stroke="#0e78ae" stroke-width="2.4" stroke-dasharray="7 4"/>
+              <rect x="376" y="-13" width="32" height="26" rx="7" fill="#0879b5" stroke="#fff" stroke-width="2"/>
+              <path d="m388-4 4-4 4 4m-8 8 4 4 4-4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+
+            <g class="fs-servo">
+              <path d="M259 352h-31m31 8h-36" stroke="#6d91ad" stroke-width="2.5" stroke-linecap="round"/>
+              <rect x="221" y="334" width="55" height="37" rx="9" fill="#2470b7" stroke="#194f87" stroke-width="3"/>
+              <path d="M229 344h19m-19 7h11" stroke="#96daf7" stroke-width="3" stroke-linecap="round"/>
+              <rect x="250" y="338" width="27" height="23" rx="7" fill="#92c5fa"/>
+              <g class="fs-gate">
+                <path d="M274 337h97" stroke="#24466e" stroke-width="13" stroke-linecap="round"/>
+                <path d="M278 335h88" stroke="#6fa6d3" stroke-width="5" stroke-linecap="round"/>
+              </g>
+              <circle cx="274" cy="337" r="7.5" fill="#f9fcff" stroke="#24466e" stroke-width="3"/>
+            </g>
+            <g class="fs-serving" fill="#b96f32">
+              <ellipse cx="318" cy="350" rx="6" ry="3.5"/>
+              <ellipse cx="333" cy="362" rx="6" ry="4"/>
+              <ellipse cx="311" cy="375" rx="5.2" ry="3.4"/>
+              <ellipse cx="340" cy="385" rx="5.6" ry="3.2"/>
+            </g>
+
+            <path d="M259 412h123l-12 26q-49 17-98 0z" fill="url(#fs-base)" stroke="#587eaa" stroke-width="3"/>
+            <ellipse cx="320" cy="413" rx="62" ry="13" fill="#e5f3fb" stroke="#587eaa" stroke-width="3"/>
+            <g class="fs-bowl-food" fill="#b77039">
+              <ellipse cx="297" cy="414" rx="9" ry="3.4"/><ellipse cx="313" cy="409" rx="8" ry="3.7"/>
+              <ellipse cx="329" cy="415" rx="10" ry="3.4"/><ellipse cx="345" cy="411" rx="7" ry="3.8"/>
+            </g>
+            <text x="321" y="435" class="fs-art-label" text-anchor="middle">ชาม</text>
+            <g class="fs-ir">
+              <path d="M231 395h49" stroke="#d54967" stroke-dasharray="4 4" stroke-width="3" stroke-linecap="round" class="fs-ir-beam"/>
+              <rect x="272" y="386" width="21" height="18" rx="5" fill="#314771" stroke="#e0ebf9" stroke-width="2"/>
+              <circle cx="277" cy="395" r="3.1" fill="#f9879f"/>
+            </g>
+
+            <g transform="translate(431 288)">
+              <rect width="63" height="59" rx="11" fill="#ebf5fd" stroke="#a5c8e2" stroke-width="2"/>
+              <circle class="fs-lamp" cx="19" cy="18" r="7.5" fill="#b0bfd0" stroke="#fff" stroke-width="2"/>
+              <path d="M39 19h8m-4-4v8" stroke="#7b98b5" stroke-width="2" stroke-linecap="round"/>
+              <path d="M15 37h33m-29 7h24" stroke="#8eabc4" stroke-width="2.5" stroke-linecap="round"/>
+            </g>
+            <g class="fs-beep" fill="none" stroke="#2078ae" stroke-width="3" stroke-linecap="round">
+              <path d="M498 301q10 10 0 20m9-26q16 16 0 32m10-37q22 22 0 42"/>
+            </g>
+
+            <g class="fs-bin" transform="translate(513 407)">
+              <ellipse class="fs-bin-highlight" rx="52" ry="47" cy="-3"/>
+              <path d="m-33-24 7 57q26 12 52 0l7-57z" fill="#e0e9f4" stroke="#7794b4" stroke-width="3"/>
+              <ellipse cy="-24" rx="33" ry="10" fill="#acbcd1" stroke="#7794b4" stroke-width="3"/>
+              <path d="M-10-5v22M0-4v24m10-25v22" stroke="#9aacc6" stroke-width="2.5" stroke-linecap="round"/>
+              <g class="fs-dumped" fill="#917e5f">
+                <ellipse cx="-10" cy="-26" rx="7" ry="4"/><ellipse cx="2" cy="-29" rx="8" ry="4"/><ellipse cx="14" cy="-25" rx="7" ry="4"/>
+              </g>
+              <text y="58" class="fs-art-label" text-anchor="middle">ถังทิ้งอาหาร</text>
+            </g>
+          </svg>
+
+          <button type="button" class="fs-actor fs-cat" data-actor="cat"
+            aria-label="แมว ขยับเข้าหาชามหรือถอยด้วยลูกศรซ้ายขวา" aria-pressed="false">
+            <svg viewBox="0 0 120 94" aria-hidden="true">
+              <ellipse cx="64" cy="84" rx="48" ry="8" fill="#b4d2e6" opacity=".68"/>
+              <path d="M42 68C16 76 8 61 16 48" fill="none" stroke="#98512e" stroke-width="10" stroke-linecap="round"/>
+              <path d="M42 68C16 76 8 61 16 48" fill="none" stroke="#e89b59" stroke-width="6" stroke-linecap="round"/>
+              <path d="M36 56c10-9 32-8 48 3l10 19c-1 10-10 10-15 5H50c-8 4-15 0-17-9z" fill="#f6b975" stroke="#98512e" stroke-width="3"/>
+              <path d="M67 39 66 13q1-5 5-2l18 15 19-14q5-1 4 4l-3 26c8 24-7 37-25 34-17-1-30-12-17-37z" fill="#f8bf7d" stroke="#98512e" stroke-width="3" stroke-linejoin="round"/>
+              <path d="m71 18 12 12-11 4zm35 0-12 12 10 4z" fill="#ed9389"/>
+              <path d="M88 31v11m-7-10 2 8m12-8-2 8M42 59l7 9m-1-12 8 8" stroke="#ce7844" stroke-width="3" stroke-linecap="round"/>
+              <path d="M75 58q13-10 27 0-3 12-14 12-10-1-13-12z" fill="#ffe4b7"/>
+              <circle cx="78" cy="50" r="3" fill="#493123"/><circle cx="100" cy="50" r="3" fill="#493123"/>
+              <path d="m86 56 6 0-3 3z" fill="#9b4a59"/>
+              <path d="M89 59v3m-4 1q3 1 4-1 2 2 5 1m-22-9-7-2m7 7-8 1m42-6 8-2m-8 7 8 1" fill="none" stroke="#885135" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <span aria-hidden="true">ลากแมว</span>
+          </button>
+
+          <button type="button" class="fs-actor fs-cloud" data-actor="cloud"
+            aria-label="เมฆฝน ขยับเข้าหาถังหรือออกด้วยลูกศรซ้ายขวา" aria-pressed="false">
+            <svg viewBox="0 0 120 73" aria-hidden="true">
+              <path d="M25 55C7 55 8 35 25 33c-1-14 15-23 27-17 11-18 39-13 43 7 19-1 25 31 3 32z" fill="#dcebf9" stroke="#4d779e" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M22 44c6 8 15 7 25 7h50c7-1 12-8 9-15" fill="none" stroke="#b4cde5" stroke-width="4" stroke-linecap="round"/>
+              <path d="m40 60-3 7m24-7-3 7m24-7-3 7" stroke="#268ac3" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <span aria-hidden="true">ลากเมฆฝน</span>
+          </button>
+
+          <div class="fs-level-control" data-actor="level" role="slider" tabindex="0" aria-orientation="vertical"
+            aria-label="ระดับอาหาร ลากเส้นขึ้นลงหรือใช้ลูกศร" aria-valuemin="0" aria-valuemax="100" aria-valuenow="78" aria-valuetext="78 เปอร์เซ็นต์ ระยะ 10 เซนติเมตร"></div>
+
+          <button type="button" class="fs-actor fs-box" data-actor="box" aria-label="กล่องอาหารใหม่ ลากไปที่ปากถัง หรือกดเพื่อเติม"
+            aria-disabled="true">
+            <svg viewBox="0 0 100 102" aria-hidden="true">
+              <path d="M22 26 35 11h46l-3 16-9 9H28z" fill="#ffdfac" stroke="#986430" stroke-width="3" stroke-linejoin="round"/>
+              <path d="m22 27 46 5 13-11v60L68 93l-46-5z" fill="#ffc978" stroke="#986430" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M68 32v61l13-12V21z" fill="#e7a459" stroke="#986430" stroke-width="2.5"/>
+              <path d="m22 27 46 5 13-11-44-4z" fill="#fff1d0" stroke="#986430" stroke-width="2.5" stroke-linejoin="round"/>
+              <ellipse cx="44" cy="63" rx="16" ry="16" fill="#fff0cc"/>
+              <path d="M36 69q-4-4 2-7l6-4 6 4q6 3 2 7c-3 2-5-1-8-1s-5 3-8 1z" fill="#ad6935"/>
+              <circle cx="37" cy="55" r="2.7" fill="#ad6935"/><circle cx="44" cy="52" r="2.7" fill="#ad6935"/>
+              <circle cx="51" cy="55" r="2.7" fill="#ad6935"/>
+            </svg>
+            <span aria-hidden="true">อาหารใหม่</span>
+          </button>
+
+          <button type="button" class="fs-actor fs-old" data-actor="old" aria-label="อาหารชื้น ลากไปถังทิ้ง หรือกดเพื่อเททิ้ง" hidden>
+            <svg viewBox="0 0 80 60" aria-hidden="true">
+              <path d="M11 35q8-9 18-5l3-11 14 2 5 10q12-4 18 8l-7 9H17z" fill="#d3a879" stroke="#775b54" stroke-width="2.5"/>
+              <g fill="#946c54"><ellipse cx="27" cy="37" rx="7" ry="4"/><ellipse cx="40" cy="30" rx="7" ry="4"/><ellipse cx="53" cy="37" rx="7" ry="4"/></g>
+              <path d="M18 13c-3 4-5 6-5 9a5 5 0 0 0 10 0c0-3-2-5-5-9zm44-3c-3 4-5 6-5 9a5 5 0 0 0 10 0c0-3-2-5-5-9z" fill="#65b7e4" stroke="#e5f7ff" stroke-width="1.4"/>
+            </svg>
+            <span aria-hidden="true">อาหารชื้น</span>
+          </button>
+
+          <div class="fs-scene-alert" aria-hidden="true" data-scene-alert hidden>
+            <span>✉</span><strong>แจ้งเจ้าของแล้ว</strong>
+            <small>Telegram จำลอง</small>
+          </div>
+          <noscript><p>เปิด JavaScript เพื่อทดลองลากอุปกรณ์ในฉาก</p></noscript>
         </div>
-        <div class="ff-link" aria-hidden="true"><span></span></div>
-        <div class="ff-ipo-node ff-ipo-process">
-          <p class="ff-ipo-kind">Process</p>
-          <h3>ESP32</h3>
-          <p data-ipo-rule>เทียบกับ 70% RH และตรวจว่ามีอาหารพอ เมื่อถึงมื้อจึงเริ่มจ่าย</p>
-        </div>
-        <div class="ff-link" aria-hidden="true"><span></span></div>
-        <div class="ff-ipo-node ff-ipo-output">
-          <p class="ff-ipo-kind">Output</p>
-          <h3 data-ipo-output>บี๊บ → ฝาเปิดและปิด</h3>
-          <p data-ipo-output-detail>เมื่อตรวจเงื่อนไขการจ่ายผ่าน</p>
+
+        <div class="fs-desk">
+          <div class="fs-node" data-node="input">
+            <h3>Input <span>เซนเซอร์อ่านค่า</span></h3>
+            <dl class="fs-readings">
+              <div data-sensor="ir"><dt><b>IR</b> ที่ชาม</dt><dd data-value="ir">HIGH</dd></div>
+              <div data-sensor="level"><dt><b>Ultrasonic</b> ถึงผิวอาหาร</dt><dd><span data-value="distance">10.0 ซม.</span><span data-value="food">78%</span></dd></div>
+              <div data-sensor="humidity"><dt><b>DHT22</b> ในถัง</dt><dd data-value="humidity">55% RH</dd></div>
+            </dl>
+          </div>
+          <div class="fs-flow" aria-hidden="true"><i></i></div>
+          <div class="fs-node" data-node="process">
+            <h3>Process <span>ESP32 ตัดสินใจ</span></h3>
+            <p data-process>รอถึงมื้อ · เช็กความชื้นกับระดับอาหารก่อนเปิดฝา</p>
+          </div>
+          <div class="fs-flow" aria-hidden="true"><i></i></div>
+          <div class="fs-node" data-node="output">
+            <h3>Output <span data-servo-state>ฝาปิด · 0°</span></h3>
+            <code data-command>servo.write(0);</code>
+            <p data-output>รอคำสั่งจ่ายอาหาร</p>
+          </div>
         </div>
       </div>
-      <p class="ff-ipo-status" role="status" data-ipo-status>เลือกอุปกรณ์หรือเปลี่ยนเงื่อนไข แล้วลองเดินสัญญาณ</p>
+      <div class="fs-next" role="status">
+        <strong data-task-title>ลองให้อาหารหนึ่งมื้อ</strong>
+        <span data-task-detail>ลากเส้นสีฟ้าบนถังให้มีอาหาร แล้วปล่อยเส้นเพื่อจำลองถึงมื้อ</span>
+      </div>
     </section>
     <details class="ff-extra"><summary>ดูตัวอย่างเดิมเทียบกับการทำงานของร่างกาย</summary>
     <!-- 3 Pillar Cards -->
@@ -632,5 +850,5 @@
     })();
   </script>
 
-<script type="module" src="../scripts/feeder-foundations.js"></script><script src="../scripts/slide-support.js"></script></body>
+<script type="module" src="../scripts/feeder-scene.js"></script><script src="../scripts/slide-support.js"></script></body>
 </html>
