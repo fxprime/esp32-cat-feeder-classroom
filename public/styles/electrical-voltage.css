@@ -1,3 +1,26 @@
+.electrical-intro {
+  --electrical-reveal-duration: 500ms;
+  --electrical-reveal-gap: 460ms;
+  --electrical-reveal-ease: cubic-bezier(.22, 1, .36, 1);
+}
+.electrical-intro-lead {
+  margin-block: 0 .23rem;
+  color: #6d4832;
+  font-size: clamp(.94rem, 2vw, 1.24rem);
+  font-weight: 700;
+}
+.electrical-intro-title { text-wrap: balance; }
+@media (prefers-reduced-motion: no-preference) {
+  .electrical-intro-lead, .electrical-intro-title {
+    animation: electrical-line-enter var(--electrical-reveal-duration) var(--electrical-reveal-ease) backwards;
+  }
+  .electrical-intro-title { animation-delay: var(--electrical-reveal-gap); }
+}
+@keyframes electrical-line-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .safety-mode-voltage, .voltage-actions button {
   min-block-size: 44px;
   padding: .38rem .75rem;

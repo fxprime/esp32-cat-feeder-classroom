@@ -1,290 +1,197 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>รู้จักบอร์ด ESP32 DevKit V1 · ESP32 Classroom</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap">
-  <link rel="stylesheet" href="../styles/classroom.css">
-  <link rel="stylesheet" href="../styles/slide-support.css">
-  <link rel="stylesheet" href="../styles/board-intro.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สไลด์ 3: รู้จักบอร์ด ESP32 DevKit V1 (30 Pin) — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
+  <link rel="stylesheet" href="../styles/classroom.css" />
+  <link rel="stylesheet" href="../styles/slide-support.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/board-intro.css" />
 </head>
-<body class="board-intro">
-  <main class="board-lesson">
-    <header class="board-heading">
-      <h1>รู้จักบอร์ด ESP32 DevKit V1</h1>
-      <p>กดดูว่าขาไหนรับข้อมูลจากชาม ขาไหนสั่งไฟ และจุดไหนส่งข้อความถึงเจ้าของ</p>
-    </header>
+<body class="text-slate-800 flex flex-col justify-between min-h-screen">
 
-    <section class="board-explorer" aria-label="สำรวจบอร์ด ESP32 และลองปุ่มให้อาหาร" data-selected="usb">
-      <svg class="board-connection" aria-hidden="true">
-        <defs><marker id="board-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="m1 1 8 4-8 4" fill="none" stroke="#b45309" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-        <path class="board-wire" marker-end="url(#board-arrow)"/>
-        <path class="board-wire-pulse" pathLength="1"/>
-      </svg>
-      <div class="board-figure" role="group" aria-label="เลือก USB, 3V3, GND, GPIO หรือ Wi-Fi">
-        <svg class="board-drawing" viewBox="0 0 480 510" aria-hidden="true">
-          <rect x="150" y="18" width="180" height="409" rx="17" fill="#12685c" stroke="#0c443e" stroke-width="3"/>
-          <path d="M150 35v358m180-358v358" stroke="#afccc1" stroke-width="16" stroke-dasharray="8 17"/>
-          <circle cx="165" cy="27" r="4" fill="#c5e1d8"/>
-          <circle cx="315" cy="27" r="4" fill="#c5e1d8"/>
-          <rect x="186" y="31" width="108" height="83" rx="5" fill="#164339"/>
-          <path d="M197 94V42h13v39h14V42h14v39h14V42h14v39h14" fill="none" stroke="#e8c171" stroke-width="4"/>
-          <rect x="186" y="119" width="108" height="104" rx="6" fill="#c7d6d3" stroke="#effaf5" stroke-width="2"/>
-          <text x="240" y="166" text-anchor="middle" fill="#17413b" font-size="23" font-weight="800">ESP32</text>
-          <text x="240" y="189" text-anchor="middle" fill="#36544f" font-size="13" font-weight="600">WROOM-32</text>
-          <path d="M171 240v56h27m111-56v56h-27M181 361h37v-35h53v34h27" fill="none" stroke="#66a998" stroke-width="2"/>
-          <rect x="220" y="262" width="45" height="55" rx="5" fill="#23343e"/>
-          <path d="M215 270h-8m8 12h-8m8 12h-8m8 12h-8m63-36h8m-8 12h8m-8 12h8m-8 12h8" stroke="#b7c8bd" stroke-width="3"/>
-          <rect x="172" y="385" width="19" height="14" rx="3" fill="#afccc1"/>
-          <rect x="289" y="385" width="19" height="14" rx="3" fill="#afccc1"/>
-          <rect x="212" y="399" width="56" height="41" rx="6" fill="#bbc9ce" stroke="#536470" stroke-width="3"/>
-          <rect x="222" y="411" width="36" height="15" rx="4" fill="#243a43"/>
+  <!-- Top Progress Bar -->
+  <header class="l3-header w-full max-w-6xl mx-auto px-4 pt-3 pb-1 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2.5">
+      <span class="l3-badge-teal inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-600 text-white text-xs sm:text-sm font-bold shadow-sm">
+        ESP32 ม.4 • คาบที่ 1
+      </span>
+      <span class="l3-badge-slide text-xs sm:text-sm font-semibold text-slate-600 bg-white/80 backdrop-blur px-3 py-1 rounded-full border border-slate-200">
+        สไลด์ที่ 3 / 17
+      </span>
+    </div>
 
-          <g class="board-mark" data-mark="usb">
-            <path d="M240 439v37"/>
-            <rect class="board-target board-target-frame" x="210" y="397" width="60" height="45" rx="7"/>
-          </g>
-          <g class="board-mark" data-mark="3v3">
-            <path d="M330 389h30v-28h43"/>
-            <circle class="board-target" cx="330" cy="389" r="8"/>
-          </g>
-          <g class="board-mark" data-mark="gnd">
-            <path d="M150 364h-29v-26H76"/>
-            <circle class="board-target" cx="150" cy="364" r="8"/>
-          </g>
-          <g class="board-mark" data-mark="gpio">
-            <path d="M330 39h30v36h43"/>
-            <circle class="board-target" cx="330" cy="39" r="8"/>
-            <text x="313" y="44" text-anchor="end">23</text>
-          </g>
-          <g class="board-mark" data-mark="wifi">
-            <path d="M184 75H76"/>
-            <rect class="board-target board-target-frame" x="184" y="29" width="112" height="87" rx="7"/>
-          </g>
-        </svg>
+    <button id="resetBoardBtn" type="button"
+      class="l3-reset-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-white hover:bg-teal-50 text-teal-700 border-2 border-teal-500 shadow-sm transition active:scale-95 cursor-pointer">
+      <span>🔄</span>
+      <span>แสดงภาพรวมทั้งบอร์ด</span>
+    </button>
+  </header>
 
-        <button type="button" class="board-hotspot" data-point="usb" tabindex="-1" aria-label="พอร์ต USB บนบอร์ด" aria-controls="board-point-detail" aria-pressed="true"></button>
-        <button type="button" class="board-hotspot" data-point="3v3" tabindex="-1" aria-label="ขา 3V3 บนบอร์ด" aria-controls="board-point-detail" aria-pressed="false"></button>
-        <button type="button" class="board-hotspot" data-point="gnd" tabindex="-1" aria-label="ขา GND บนบอร์ด" aria-controls="board-point-detail" aria-pressed="false"></button>
-        <button type="button" class="board-hotspot" data-point="gpio" tabindex="-1" aria-label="ขา GPIO23 บนบอร์ด" aria-controls="board-point-detail" aria-pressed="false"></button>
-        <button type="button" class="board-hotspot" data-point="wifi" tabindex="-1" aria-label="เสาอากาศ Wi-Fi บนบอร์ด" aria-controls="board-point-detail" aria-pressed="false"></button>
-        <button type="button" class="board-point" data-point="usb" aria-controls="board-point-detail" aria-pressed="true">USB</button>
-        <button type="button" class="board-point" data-point="3v3" aria-controls="board-point-detail" aria-pressed="false">3V3</button>
-        <button type="button" class="board-point" data-point="gnd" aria-controls="board-point-detail" aria-pressed="false">GND</button>
-        <button type="button" class="board-point" data-point="gpio" aria-controls="board-point-detail" aria-pressed="false">GPIO</button>
-        <button type="button" class="board-point" data-point="wifi" aria-controls="board-point-detail" aria-pressed="false">Wi‑Fi</button>
-      </div>
+  <main class="l3-shell flex-1">
+    <section class="l3-hero text-center mb-3">
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-1">
+        <span class="bg-gradient-to-r from-teal-700 via-cyan-600 to-blue-600 bg-clip-text text-transparent">
+          รู้จักบอร์ด ESP32 DevKit V1 (30 Pin)
+        </span>
+      </h1>
+      <p class="text-xs sm:text-base font-semibold text-slate-600">
+        คลิกเลือก 4 โซนหลัก หรือแตะขาและชิ้นส่วนบนบอร์ดเพื่อดูหน้าที่
+      </p>
+    </section>
 
-      <section class="button-demo" id="button-demo" aria-label="ทดลองปุ่มให้อาหาร Manual" data-on="false">
-        <p id="button-demo-instruction" class="sr-only">กดปุ่มหนึ่งครั้งเพื่อปิดหน้าสัมผัส แล้วกดอีกครั้งเพื่อปล่อย</p>
+    <!-- Main 2-Column Interactive Explorer -->
+    <section class="l3-grid">
 
-        <button type="button" class="button-demo-toggle" id="button-demo-toggle" aria-pressed="false" aria-labelledby="demo-button-label" aria-describedby="button-demo-instruction">
-          <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
-            <ellipse cx="56" cy="72" rx="38" ry="5" fill="#e0f2fe"/>
-            <path d="M28 52v15h-9m65-15v15h9" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
-            <rect x="21" y="35" width="70" height="25" rx="8" fill="#dbeafe" stroke="#155e75" stroke-width="2.5"/>
-            <g class="button-demo-cap">
-              <rect x="35" y="20" width="42" height="23" rx="9" stroke="#155e75" stroke-width="2.5"/>
-              <path d="M45 27h22" stroke="#fff" stroke-opacity=".65" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- LEFT: Realistic ESP32 DevKit V1 (30-Pin) SVG Board -->
+      <div class="l3-board-card bg-white/95 backdrop-blur-md rounded-3xl p-3 sm:p-4 shadow-xl border-2 border-teal-200">
+        <div class="board-stage" id="boardStage">
+          <svg class="esp-svg" viewBox="0 0 600 540" role="img" aria-label="แผนภาพบอร์ด ESP32 DevKit V1 30 ขาแบบโต้ตอบได้">
+            <!-- Zone Pointer Banner (Top) -->
+            <g id="zoneBanner" class="zone-banner">
+              <rect x="130" y="6" width="340" height="24" rx="12" fill="#0284c7" />
+              <text id="zoneBannerText" x="300" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">⬇ คลิกที่ขา Pin เพื่อดูรายละเอียด</text>
+            </g>
+
+            <!-- Signal Trace Line from Selected Pin to Right Panel -->
+            <path id="inspectorTrace" class="inspector-trace" d="M 405 250 H 596" />
+
+            <!-- Realistic ESP32 PCB Board centered at x=195, y=38 (width=210, height=480) -->
+            <g id="pcbGroup" transform="translate(195, 38)">
+              <!-- PCB Body -->
+              <rect width="210" height="480" rx="18" fill="#12685c" stroke="#0c443e" stroke-width="3" />
+              <!-- Mounting Holes -->
+              <circle cx="18" cy="18" r="5" fill="#f8fafc" stroke="#d4af37" stroke-width="2" />
+              <circle cx="192" cy="18" r="5" fill="#f8fafc" stroke="#d4af37" stroke-width="2" />
+              <circle cx="18" cy="462" r="5" fill="#f8fafc" stroke="#d4af37" stroke-width="2" />
+              <circle cx="192" cy="462" r="5" fill="#f8fafc" stroke="#d4af37" stroke-width="2" />
+
+              <!-- Wi-Fi Meander Antenna + ESP32-WROOM-32 Metal Shield (Clickable) -->
+              <g class="hw-node" data-pin="wifi">
+                <rect x="40" y="14" width="130" height="238" rx="7" fill="transparent" class="hw-outline" />
+                <rect x="42" y="16" width="126" height="100" rx="4" fill="#164339" />
+                <path d="M50 75V30h15v40h15V30h15v40h15V30h15v40h15V30h20v45" fill="none" stroke="#d8c187" stroke-width="4" />
+                <rect x="38" y="124" width="134" height="127" rx="7" fill="#b8c9c8" stroke="#edf6f4" stroke-width="2" />
+                <text x="105" y="164" text-anchor="middle" font-size="23" fill="#21433f" font-weight="800">ESP32</text>
+                <text x="105" y="190" text-anchor="middle" font-size="14" fill="#21433f" font-weight="700">WROOM-32</text>
+                <text x="105" y="215" text-anchor="middle" font-size="10" fill="#21433f" font-weight="600">2.4 GHz · Wi-Fi / BT</text>
+              </g>
+
+              <!-- USB-UART Bridge Chip -->
+              <rect x="77" y="299" width="56" height="61" rx="4" fill="#23343e" />
+              <path d="M70 307h-8m8 12h-8m8 12h-8m8 12h-8m78-36h8m-8 12h8m-8 12h8m-8 12h8" stroke="#b7c8bd" stroke-width="3" />
+              <text x="105" y="333" text-anchor="middle" font-size="8.5" fill="#94a3b8" font-weight="700">CP2102</text>
+
+              <!-- Onboard Power & GPIO2 LEDs (Clickable) -->
+              <g class="hw-node" data-pin="leds">
+                <rect x="52" y="370" width="106" height="22" rx="6" fill="rgba(0,0,0,0.22)" class="hw-outline" />
+                <circle cx="72" cy="381" r="4.5" fill="#ef4444" />
+                <text x="81" y="384" font-size="8" font-weight="700" fill="#fecaca">PWR</text>
+                <circle cx="124" cy="381" r="4.5" fill="#38bdf8" />
+                <text x="133" y="384" font-size="8" font-weight="700" fill="#bae6fd">IO2</text>
+              </g>
+
+              <!-- EN (Reset) Tactile Button (Clickable) -->
+              <g class="hw-node" data-pin="btn_en">
+                <rect x="46" y="394" width="24" height="24" rx="6" fill="#334155" stroke="#94a3b8" stroke-width="1.5" class="hw-outline" />
+                <circle cx="58" cy="406" r="7" fill="#e2e8f0" />
+                <text x="58" y="429" text-anchor="middle" font-size="9.5" font-weight="700" fill="#ffffff">EN</text>
+              </g>
+
+              <!-- BOOT Tactile Button (Clickable) -->
+              <g class="hw-node" data-pin="btn_boot">
+                <rect x="140" y="394" width="24" height="24" rx="6" fill="#334155" stroke="#94a3b8" stroke-width="1.5" class="hw-outline" />
+                <circle cx="152" cy="406" r="7" fill="#e2e8f0" />
+                <text x="152" y="429" text-anchor="middle" font-size="9.5" font-weight="700" fill="#ffffff">BOOT</text>
+              </g>
+
+              <!-- Micro-USB Port (Clickable) -->
+              <g class="hw-node" data-pin="usb">
+                <rect x="76" y="445" width="58" height="40" rx="5" fill="#bac6cc" stroke="#536470" stroke-width="3" class="hw-outline" />
+                <rect x="86" y="453" width="38" height="17" rx="3" fill="#334152" />
+                <text x="105" y="479" text-anchor="middle" font-size="7.5" font-weight="800" fill="#1e293b">Micro-USB</text>
+              </g>
+
+              <!-- Dynamic Pins & Feeder Tags Container (populated by JS with exact 30-pin order) -->
+              <g id="pinsLayer"></g>
+
+              <!-- Pulse Ring Overlay -->
+              <circle id="pinPulseRing" class="pin-pulse-ring" cx="0" cy="0" r="13" fill="none" stroke="#facc15" stroke-width="3" />
             </g>
           </svg>
-          <span class="button-demo-labels">
-            <strong id="demo-button-label">ให้อาหาร Manual</strong>
-            <span class="button-demo-state" id="demo-button-state" aria-hidden="true">ปล่อยอยู่</span>
+        </div>
+        <div class="l3-picker">
+          <label for="boardPartPicker">เลือกขาหรือชิ้นส่วน</label>
+          <select id="boardPartPicker" aria-controls="inspectorCard"></select>
+        </div>
+      </div>
+
+      <!-- RIGHT: Zone controls and inspector -->
+      <div class="l3-right-col flex flex-col gap-3">
+        <!-- Cat feeder project pin highlight -->
+        <button id="feederHighlightBtn" type="button" aria-pressed="false"
+          class="l3-feeder-btn w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-md transition active:scale-98 cursor-pointer">
+          <span class="flex items-center gap-2">
+            <span>🐱</span>
+            <span>ไฮไลต์ขาที่ใช้ในเครื่องให้อาหารแมว <span id="feederPinCount"></span></span>
           </span>
+          <span id="feederModeBadge" class="px-2.5 py-0.5 rounded-full text-[11px] bg-white/20">ปิดอยู่</span>
         </button>
 
-        <div class="button-demo-grid">
-          <div class="button-demo-node">
-            <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
-              <rect x="16" y="15" width="80" height="52" rx="9" fill="#145b6a" stroke="#084451" stroke-width="2.5"/>
-              <path d="M27 21h58m-58 40h58" stroke="#fbbf24" stroke-width="3.5" stroke-dasharray="2 6"/>
-              <rect x="32" y="29" width="35" height="24" rx="4" fill="#cedce5"/>
-              <path d="M39 35h18m-18 5h13" stroke="#7898aa" stroke-width="2" stroke-linecap="round"/>
-              <path d="M75 30h11v9H75v8h11" stroke="#a5f3fc" stroke-width="2"/>
-              <path d="M12 33h11v16H12z" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
-              <circle class="button-demo-indicator" cx="80" cy="53" r="3.6"/>
-            </svg>
-            <strong>GPIO19</strong>
-            <span class="button-demo-state" id="demo-board-state">HIGH (1) · ปล่อย</span>
+        <!-- 4 Main Zone Buttons -->
+        <div class="l3-zones-grid grid grid-cols-2 gap-2" role="group" aria-label="เลือกโซนขา ESP32">
+          <button type="button" class="zone-btn border-rose-200 hover:border-rose-400" data-zone="power">
+            <div class="text-xs sm:text-sm font-extrabold text-rose-700">1. Power &amp; Control</div>
+            <div class="text-[11px] text-slate-500 font-semibold">EN, VIN, 3V3, GND</div>
+          </button>
+          <button type="button" class="zone-btn border-sky-200 hover:border-sky-400" data-zone="input_only">
+            <div class="text-xs sm:text-sm font-extrabold text-sky-700">2. Input-Only</div>
+            <div class="text-[11px] text-slate-500 font-semibold">GPIO 34, 35, 36, 39</div>
+          </button>
+          <button type="button" class="zone-btn border-emerald-200 hover:border-emerald-400" data-zone="safe">
+            <div class="text-xs sm:text-sm font-extrabold text-emerald-700">3. Safe GPIO</div>
+            <div class="text-[11px] text-slate-500 font-semibold">I/O, PWM, ADC, I²C</div>
+          </button>
+          <button type="button" class="zone-btn border-amber-200 hover:border-amber-400" data-zone="caution">
+            <div class="text-xs sm:text-sm font-extrabold text-amber-800">4. Caution (ระวัง)</div>
+            <div class="text-[11px] text-slate-500 font-semibold">Strapping &amp; UART0</div>
+          </button>
+        </div>
+
+        <!-- Pin / Part Inspector Card -->
+        <div id="inspectorCard" class="l3-inspector-card rounded-3xl p-4 bg-white/95 border-2 border-teal-300 shadow-lg flex flex-col gap-2" role="status" aria-atomic="true">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span id="inspZoneBadge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-teal-100 text-teal-800">ภาพรวมบอร์ด</span>
+            <span id="inspElecBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">30-Pin DevKit V1</span>
           </div>
 
-          <svg class="button-demo-arrow" viewBox="0 0 46 20" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 10h35m-5-5 5 5-5 5" stroke-width="2.5"/>
-            <path class="button-demo-packet" d="M3 10h35" stroke-width="5"/>
-          </svg>
+          <!-- Project Usage Highlight Banner (visible only when pin is used in Cat Feeder) -->
+          <div id="inspFeederBanner" class="hidden items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-bold">
+            <span>🐱</span>
+            <span id="inspFeederText">ใช้ในโครงงานเครื่องให้อาหารแมว</span>
+          </div>
 
-          <div class="button-demo-node">
-            <svg viewBox="0 0 112 82" aria-hidden="true" fill="none">
-              <path d="M48 51v23m16-23v17" stroke="#64748b" stroke-width="3.5" stroke-linecap="round"/>
-              <path class="button-demo-lens" d="M39 51V36a17 17 0 0 1 34 0v15z" stroke="#475569" stroke-width="2.5"/>
-              <path d="M37 51h38" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
-              <path class="button-demo-rays" d="M56 7v5m24 3-4 5m16 17h-7m-53-22 4 5m-16 17h7" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-            <strong>LED</strong>
-            <span class="button-demo-state" id="demo-led-state">ไฟดับ</span>
+          <h2 id="inspTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
+            บอร์ด ESP32 DevKit V1 (30 ขา)
+          </h2>
+
+          <p id="inspDesc" class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+            เลือกขาหรือชิ้นส่วน เช่น Micro-USB, Wi‑Fi, EN, BOOT และ LED เพื่อดูหน้าที่และจุดที่ต้องระวัง
+          </p>
+
+          <div class="pt-2 border-t border-slate-100">
+            <p class="text-[11px] font-bold text-slate-500 mb-1.5">🔌 ตัวอย่างอุปกรณ์ / การใช้งาน:</p>
+            <div id="inspChips" class="l3-chips flex flex-wrap gap-1.5"></div>
           </div>
         </div>
 
-        <details class="button-demo-diagram">
-          <summary>ดูวงจร GPIO19</summary>
-          <div class="button-demo-wiring">
-            <svg viewBox="0 0 560 178" role="img" aria-labelledby="ff-button-title ff-button-desc">
-              <title id="ff-button-title">วงจรปุ่มให้อาหาร Manual ที่ GPIO19</title>
-              <desc id="ff-button-desc">ตัวต้านทานภายใน ESP32 ดึงขา GPIO19 ไปที่ 3V3 เมื่อปล่อยปุ่ม เมื่อกด ปุ่มต่อ GPIO19 เข้ากับ GND</desc>
-              <rect x="19" y="12" width="293" height="150" rx="15" fill="#fff" stroke="#bfdbeb" stroke-width="2"/>
-              <text x="34" y="40" class="button-wire-label">ภายใน ESP32</text>
-              <text x="34" y="77" class="button-wire-label">3V3</text>
-              <path d="M77 71h35l6-9 9 18 9-18 9 18 9-18 9 18 6-9h114v29H375" fill="none" stroke="#0e7490" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              <text x="107" y="111" class="button-wire-label">ตัวต้านทาน Pull-up</text>
-              <text x="257" y="128" class="button-wire-label">GPIO19</text>
-              <circle cx="283" cy="100" r="5" fill="#0e7490"/>
-              <circle cx="375" cy="100" r="5" fill="#0e7490"/>
-              <circle cx="441" cy="100" r="5" fill="#0e7490"/>
-              <path class="button-wire-open" d="M375 100l63-27" stroke="#b45309" stroke-width="4" stroke-linecap="round"/>
-              <path class="button-wire-closed" d="M375 100h66" stroke="#0e7490" stroke-width="4" stroke-linecap="round"/>
-              <path d="M441 100h62v18m-16 0h32m-25 7h18m-13 7h8" fill="none" stroke="#3c4d62" stroke-width="3" stroke-linecap="round"/>
-              <text x="408" y="54" text-anchor="middle" class="button-wire-label">ให้อาหาร Manual</text>
-              <text x="485" y="157" class="button-wire-label">GND</text>
-            </svg>
-            <div><p><code>INPUT_PULLUP</code> ดึง GPIO19 ขึ้นไปที่ 3.3 V ตอนปล่อย ผลคือ <strong>HIGH (1)</strong></p><p>พอกดปุ่ม ขานี้ต่อถึง GND ผลคือ <strong>LOW (0)</strong></p></div>
-          </div>
-          <p class="button-demo-note">ไฟในภาพติดเพื่อให้เห็นผลจากการกดปุ่ม ตอนรวมเครื่อง GPIO23 จะสั่งไฟแดงเมื่อเครื่องงดจ่ายอาหาร</p>
-        </details>
-        <p class="sr-only" id="button-demo-status" role="status"></p>
-      </section>
-
-      <div class="board-detail" id="board-point-detail" role="status">
-        <p class="board-function" id="board-function">ไฟเข้าบอร์ด</p>
-        <h2 id="board-point-title">USB</h2>
-        <p id="board-point-description">เสียบสาย USB เพื่อเลี้ยงบอร์ดและอัปโหลดโค้ดจากคอมพิวเตอร์ ส่วน Servo ของฝามีไฟเลี้ยงของตัวเอง ใช้ GND ร่วมกับบอร์ด</p>
       </div>
     </section>
   </main>
-
-  <script type="module">
-    const explorer = document.querySelector('.board-explorer');
-    const figure = explorer.querySelector('.board-figure');
-    const detail = explorer.querySelector('.board-detail');
-    const manual = explorer.querySelector('.button-demo');
-    const buttons = explorer.querySelectorAll('[data-point]');
-    const connection = explorer.querySelector('.board-connection');
-    const wire = connection.querySelector('.board-wire');
-    const pulse = connection.querySelector('.board-wire-pulse');
-    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-    let pulseAnimation;
-    const functionLabel = document.getElementById('board-function');
-    const title = document.getElementById('board-point-title');
-    const description = document.getElementById('board-point-description');
-    const points = {
-      usb: {
-        name: 'USB',
-        purpose: 'ไฟเข้าบอร์ด',
-        description: 'เสียบสาย USB เพื่อเลี้ยงบอร์ดและอัปโหลดโค้ดจากคอมพิวเตอร์ ส่วน Servo ของฝามีไฟเลี้ยงของตัวเอง ใช้ GND ร่วมกับบอร์ด',
-      },
-      '3v3': {
-        name: '3V3',
-        purpose: 'จ่ายไฟให้อุปกรณ์',
-        description: 'ขานี้จ่ายไฟ 3.3 V ให้เซนเซอร์ที่รองรับ เช่น HTU21D ในวงจรที่เราจะต่อ',
-      },
-      gnd: {
-        name: 'GND',
-        purpose: 'กราวด์',
-        description: 'เป็นจุดอ้างอิง 0 V ของสัญญาณและทางกลับของกระแส ให้ ESP32 กับแหล่งจ่าย Servo ใช้ GND ร่วมกัน',
-      },
-      gpio: {
-        name: 'GPIO',
-        purpose: 'รับหรือส่งสัญญาณ',
-        description: 'GPIO23 ที่ไฮไลต์ใช้สั่ง LED แดง ส่วน GPIO33 อ่าน IR สะท้อนที่ชาม และ GPIO19 อ่านปุ่มให้อาหาร Manual ใต้บอร์ด',
-      },
-      wifi: {
-        name: 'Wi‑Fi 2.4 GHz',
-        purpose: 'จุดเด่นของบอร์ด · IoT',
-        description: 'ESP32 ต่อ Wi‑Fi 2.4 GHz ผ่านเสาอากาศด้านบน เครื่องให้อาหารจึงส่งข้อความถึงโทรศัพท์ได้ เช่น “งดจ่ายมื้อนี้ ถังชื้นเกินเกณฑ์”',
-      },
-    };
-
-    function positionWire() {
-      const { selected } = explorer.dataset;
-      const label = figure.querySelector(`.board-point[data-point="${selected}"]`).getBoundingClientRect();
-      const board = figure.getBoundingClientRect();
-      const panel = detail.getBoundingClientRect();
-      const origin = connection.getBoundingClientRect();
-      if (!origin.width || !origin.height) return;
-      const x = value => value - origin.left;
-      const y = value => value - origin.top;
-      const leftLabel = selected === 'gnd' || selected === 'wifi';
-      const labelY = y(label.top + label.height / 2);
-      const labelX = x(leftLabel ? label.left : label.right);
-      const stacked = panel.top >= board.bottom;
-      let path;
-
-      if (stacked) {
-        const manualBox = manual.getBoundingClientRect();
-        const lane = leftLabel ? Math.min(board.left, manualBox.left) - 4 : Math.max(board.right, manualBox.right) + 4;
-        const entry = panel.left + panel.width * (leftLabel ? .2 : .8);
-        const start = selected === 'usb'
-          ? `M${x(label.left + label.width / 2)} ${y(label.bottom)} V${y((label.bottom + manualBox.top) / 2)}`
-          : `M${labelX} ${labelY}`;
-        path = `${start} H${x(lane)} V${y(panel.top - 6)} H${x(entry)} V${y(panel.top + 7)}`;
-      } else {
-        const bend = x((board.right + panel.left) / 2);
-        const panelY = y(panel.top + panel.height / 2);
-        const aroundBoard = selected === 'wifi' ? board.top + 4 : board.bottom - 4;
-        const approach = leftLabel ? `H${x(board.left + 4)} V${y(aroundBoard)}` : '';
-        path = `M${labelX} ${labelY} ${approach} H${bend} V${panelY} H${x(panel.left + 9)}`;
-      }
-      wire.setAttribute('d', path);
-      pulse.setAttribute('d', path);
-    }
-
-    const wireLayout = new ResizeObserver(positionWire);
-    for (const element of [explorer, figure, manual, detail]) wireLayout.observe(element);
-
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        const key = button.dataset.point;
-        const point = points[key];
-        explorer.dataset.selected = key;
-        buttons.forEach(item => item.setAttribute('aria-pressed', String(item.dataset.point === key)));
-        functionLabel.textContent = point.purpose;
-        title.textContent = point.name;
-        description.textContent = point.description;
-        positionWire();
-        pulseAnimation?.cancel();
-        if (!reducedMotion.matches) {
-          pulseAnimation = pulse.animate([
-            { opacity: 0, strokeDashoffset: '.12', offset: 0 },
-            { opacity: 1, offset: .13 },
-            { opacity: 1, offset: .84 },
-            { opacity: 0, strokeDashoffset: '-1', offset: 1 },
-          ], { duration: 620, easing: 'ease-in-out' });
-        }
-      });
-    });
-
-    (() => {
-      const demo = manual;
-      const button = document.getElementById('button-demo-toggle');
-      const inputState = document.getElementById('demo-button-state');
-      const boardState = document.getElementById('demo-board-state');
-      const ledState = document.getElementById('demo-led-state');
-      const status = document.getElementById('button-demo-status');
-
-      button.addEventListener('click', () => {
-        const pressed = button.getAttribute('aria-pressed') === 'false';
-        button.setAttribute('aria-pressed', String(pressed));
-        demo.dataset.on = String(pressed);
-        inputState.textContent = pressed ? 'กดอยู่ · กดอีกครั้งเพื่อปล่อย' : 'ปล่อยอยู่';
-        boardState.textContent = pressed ? 'LOW (0) · กด' : 'HIGH (1) · ปล่อย';
-        ledState.textContent = pressed ? 'ไฟติด' : 'ไฟดับ';
-        status.textContent = `ESP32 ${boardState.textContent} · LED ${ledState.textContent}`;
-      });
-    })();
-  </script>
-  <script src="../scripts/slide-support.js"></script>
+  <script type="module" src="../scripts/board-intro.js"></script>
+  <script defer src="../scripts/slide-support.js"></script>
 </body>
 </html>
