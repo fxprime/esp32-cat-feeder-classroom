@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./components/Dashboard";
 import SlideViewer from "./components/SlideViewer";
 import ResetModal from "./components/ResetModal";
-import { LESSONS } from "./data/lessons";
+import { COURSE_TITLE, LESSONS } from "./data/lessons";
 import { STORAGE_KEY, PREVIOUS_STORAGE_KEY, LEGACY_STORAGE_KEY, readProgress } from "./data/progress";
 
 function slideFromHash() {
@@ -45,7 +45,7 @@ export default function App() {
   useEffect(() => {
     document.title = currentSlideId
       ? `${LESSONS.find((l) => l.id === currentSlideId)?.title} | ESP32 Classroom`
-      : "ESP32 ม.4 · เครื่องให้อาหารแมว";
+      : COURSE_TITLE;
   }, [currentSlideId]);
 
   // Update hash when slide changes

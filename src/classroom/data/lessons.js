@@ -1,4 +1,6 @@
+export const COURSE_TITLE = "ค่ายอบรมบอร์ดสมองกลเพื่อพัฒนาสิ่งประดิษฐ์";
 export const FEEDER_LAB_URL = "https://esp32-cat-feeder-lab.modulemore.chatgpt.site/";
+export const CLASSROOM_GAME_URL = "https://classroomgame-student.modulemore.chatgpt.site/";
 
 export const PHASES = [
   {

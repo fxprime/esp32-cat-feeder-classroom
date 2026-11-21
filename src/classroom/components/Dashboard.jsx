@@ -20,7 +20,7 @@ import {
   Flame,
   Award,
 } from "lucide-react";
-import { FEEDER_LAB_URL, LESSONS, PHASES } from "../data/lessons";
+import { CLASSROOM_GAME_URL, COURSE_TITLE, FEEDER_LAB_URL, LESSONS, PHASES } from "../data/lessons";
 
 // Icon mapping helper
 const ICONS = {
@@ -84,26 +84,15 @@ export default function Dashboard({
           {/* Main Title Banner */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="px-3 py-1 rounded-xl bg-cyan-500/20 text-cyan-300 font-extrabold text-sm border border-cyan-500/30">
-                  ESP32 M.4
-                </span>
-                <span className="text-slate-400 text-xs sm:text-sm font-medium">
-                  โปรเจกต์จบวัน
-                </span>
-              </div>
-
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight">
-                ประกอบเครื่องให้อาหารแมว{" "}
-                <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
-                  ESP32 ม.4
-                </span>{" "}
-               
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight text-balance">
+                {COURSE_TITLE}
               </h1>
 
-              <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed mb-6 font-normal">
-                ลองให้เครื่องจ่ายอาหารหนึ่งมื้อ จากนั้นต่อไฟแดง สั่งฝาและเสียง
-                อ่านเซนเซอร์ แล้วเอาวงจรกับโค้ดกลับมารวมเป็นเครื่องเดียวใน Lab สุดท้าย
+              <p className="text-base sm:text-lg text-cyan-300 leading-relaxed font-semibold">
+                คอร์สเรียนรู้ ESP32 แบบ Project-Based Learning
+              </p>
+              <p className="text-sm sm:text-base text-slate-300 leading-relaxed mt-1 mb-6">
+                โดย วิทยากร ธนบดี บุหลันศรีชาติ
               </p>
 
               {/* Action Buttons */}
@@ -313,10 +302,17 @@ export default function Dashboard({
       <footer className="mt-16 py-8 border-t border-slate-800 text-center text-xs text-slate-500">
         <section className="max-w-xl mx-auto px-4 mb-5" aria-labelledby="course-references">
           <h2 id="course-references" className="mb-1.5 text-sm font-bold text-slate-300">แหล่งอ้างอิง</h2>
-          <a href={FEEDER_LAB_URL} target="_blank" rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center px-3 font-semibold text-cyan-300 hover:text-cyan-200 underline underline-offset-4">
-            ESP32 Feeder Lab <span aria-hidden="true" className="ml-1">↗</span>
-          </a>
+          <div className="flex flex-col items-center">
+            {[
+              { href: FEEDER_LAB_URL, label: "ESP32 Feeder Lab" },
+              { href: CLASSROOM_GAME_URL, label: "ClassroomGame สำหรับนักเรียน" },
+            ].map(({ href, label }) => (
+              <a key={href} href={href} target="_blank" rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center px-3 font-semibold text-cyan-300 hover:text-cyan-200 underline underline-offset-4">
+                {label}
+              </a>
+            ))}
+          </div>
         </section>
         <p className="max-w-xl mx-auto px-4">
           สื่อการเรียนรู้เชิงปฏิบัติการสำหรับนักเรียนชั้นมัธยมศึกษาปีที่ 4 •
