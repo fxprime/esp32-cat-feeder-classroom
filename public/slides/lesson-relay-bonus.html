@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แถม · รีเลย์และแล็บบัดกรี 3D</title>
+  <title>แถม · แล็บและบทเรียน ESP32 เพิ่มเติม</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -14,10 +14,11 @@
     main { display: grid; min-block-size: 100dvh; place-items: center; padding: 1rem; }
     .bonus-card { inline-size: min(100%, 42rem); padding: clamp(1.35rem, 5vw, 3.5rem); border: 1px solid #bfd9ee; border-radius: 1.6rem; background: #fff; box-shadow: 0 1rem 2.8rem #17456c1a; text-align: center; }
     .bonus-card h1 { margin: 0 0 .45rem; color: #244ba3; font-size: clamp(2.3rem, 7vw, 4rem); font-weight: 800; line-height: 1.15; }
-    .bonus-links { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-block-start: 1.35rem; }
+    .bonus-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: .75rem; margin-block-start: 1.35rem; }
     .bonus-card p { margin: .85rem 0 0; font-size: .9rem; }
     .bonus-card a { display: inline-flex; align-items: center; justify-content: center; min-block-size: 48px; max-inline-size: 100%; padding: .58rem 1rem; border-radius: .8rem; background: #0369a1; color: #fff; font-weight: 700; text-decoration: none; }
     .bonus-card a:hover { background: #07527f; }
+    .bonus-card a:focus-visible { outline: 3px solid #075985; outline-offset: 3px; }
   </style>
 </head>
 <body>
@@ -27,6 +28,8 @@
       <div class="bonus-links">
         <a href="https://esp32-relay-workbench.modulemore.chatgpt.site/" target="_blank" rel="noopener noreferrer">ESP32 Relay Workbench</a>
         <a href="https://soldering-lab-3d.modulemore.chatgpt.site/" target="_blank" rel="noopener noreferrer">แล็บบัดกรี 3D</a>
+        <a href="https://roverkit.vercel.app/" target="_blank" rel="noopener noreferrer">RoverKit</a>
+        <a href="https://learn-esp32.vercel.app/#board" target="_blank" rel="noopener noreferrer">Learn ESP32 · รู้จักบอร์ด</a>
       </div>
       <p>ลิงก์เปิดในแท็บใหม่</p>
     </article>
