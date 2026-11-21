@@ -5,7 +5,7 @@ import { labs } from "../src/content.js";
 const root = fileURLToPath(new URL("../public/labs/", import.meta.url));
 for (const lab of labs) {
   const parts = [
-    { type: "wokwi-esp32-devkit-v1", id: "esp", top: 30, left: 0, attrs: {} },
+    { type: "board-esp32-devkit-c-v4", id: "esp", top: 30, left: 0, attrs: {} },
   ];
   const connections = [];
   if (lab.id !== "wifi") {
@@ -27,7 +27,7 @@ for (const lab of labs) {
       },
     );
     connections.push(
-      ["esp:D23", "r1:1", "green", []],
+      ["esp:23", "r1:1", "green", []],
       ["r1:2", "led:A", "green", []],
       ["led:C", "esp:GND.1", "black", []],
     );
@@ -43,7 +43,7 @@ for (const lab of labs) {
     connections.push(
       ["pot:VCC", "esp:3V3", "red", []],
       ["pot:GND", "esp:GND.2", "black", []],
-      ["pot:SIG", "esp:D34", "blue", []],
+      ["pot:SIG", "esp:34", "blue", []],
     );
   }
   const diagram = {

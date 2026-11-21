@@ -1,3 +1,4 @@
+import {leftHeader, rightHeader} from '../pinout/data.js';
 export function makeTableModels(T) {
   const v = (x, y, z) => new T.Vector3(x, y, z);
   const material = (color, metalness = 0, roughness = 0.65) =>
@@ -254,10 +255,14 @@ export function makeTableModels(T) {
       box(model, surface, 0.026, 0.007, 1.89, x, 0.214, 0, false);
     }
     slab(model, teal, 1.12, 0.09, 1.63, 0.062, -0.55, 0.30, 0.045);
-    for (const x of [-1.04, -0.065]) {
-      box(model, seam, 0.12, 0.068, 1.39, x, 0.331, 0.043);
-      const pins = Array.from({ length: 11 }, (_, i) => [x, 0.379, -0.56 + i * 0.121]);
-      instances(model, boxGeometry, gold, [0.061, 0.026, 0.059], pins);
+    const pinZ = index => -.62 + index * .073;
+    for (const [x, header] of [[-1.04, leftHeader], [-.065, rightHeader]]) {
+      box(model, seam, .12, .068, 1.42, x, .331, .04);
+      const contacts = header.map((id, index) => ({ id, position: [x, .379, pinZ(index)] }));
+      for (const [material, select] of [[gold, id => id !== '5V' && id !== 'GND'], [red, id => id === '5V'], [steel, id => id === 'GND']]) {
+        instances(model, boxGeometry, material, [.061, .026, .041], contacts
+          .filter(({ id }) => select(id)).map(({ position }) => position));
+      }
     }
     slab(model, navy, 0.72, 0.035, 1.03, 0.036, -0.56, 0.36, -0.19);
     box(model, steel, 0.64, 0.055, 0.69, -0.56, 0.407, -0.038);
@@ -275,8 +280,8 @@ export function makeTableModels(T) {
       cylinder(model, steel, 0.033, 0.013, x, 0.415, 0.68, "y", false);
     }
     frontPort(model, steel, 0.34, 0.16, 0.24, -0.56, 0.391, 0.795);
-    wire(model, red, [[0.03, 0.38, 0.46], [0.39, 0.69, 0.50], [0.79, 0.52, 0.38], [0.91, 0.222, 0.27]]);
-    wire(model, navy, [[0.03, 0.376, 0.67], [0.40, 0.54, 0.81], [0.74, 0.52, 0.83], [1.25, 0.222, 0.77]]);
+    wire(model, red, [[-1.04, .38, pinZ(leftHeader.indexOf("3V3"))], [-.57, .69, -.47], [0.79, 0.52, 0.38], [0.91, 0.222, 0.27]]);
+    wire(model, navy, [[-.065, .379, pinZ(rightHeader.lastIndexOf("GND"))], [.40, .54, .45], [0.74, 0.52, 0.83], [1.25, 0.222, 0.77]]);
     const indicatorSurface = new T.MeshStandardMaterial({
       color: 0xbe3b32, emissive: 0xef301e, emissiveIntensity: 0.13, roughness: 0.38,
     });

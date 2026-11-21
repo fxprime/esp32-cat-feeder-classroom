@@ -4,7 +4,7 @@
   "editor": "wokwi",
   "parts": [
     {
-      "type": "wokwi-esp32-devkit-v1",
+      "type": "board-esp32-devkit-c-v4",
       "id": "esp",
       "top": 100,
       "left": 0,
@@ -88,7 +88,7 @@
   "connections": [
     [
       "stock:VCC",
-      "esp:VIN",
+      "esp:5V",
       "red",
       []
     ],
@@ -100,7 +100,7 @@
     ],
     [
       "stock:TRIG",
-      "esp:D26",
+      "esp:26",
       "blue",
       []
     ],
@@ -118,7 +118,7 @@
     ],
     [
       "echoTop:2",
-      "esp:D27",
+      "esp:27",
       "green",
       []
     ],
@@ -142,13 +142,13 @@
     ],
     [
       "air:SDA",
-      "esp:D21",
+      "esp:21",
       "cyan",
       []
     ],
     [
       "air:SCL",
-      "esp:D22",
+      "esp:22",
       "purple",
       []
     ],
@@ -178,7 +178,7 @@
     ],
     [
       "presence:2",
-      "esp:D33",
+      "esp:33",
       "blue",
       []
     ],

@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
 import { recipes, pins } from '../public/scripts/pinout/data.js';
 import { circuitSVG } from '../public/scripts/pinout/diagrams.js';
-assert.equal(pins.length,30);
-assert.equal(new Set(pins.map(p=>p.key)).size,30);
+assert.equal(pins.length,38);
+assert.equal(new Set(pins.map(p=>p.key)).size,38);
+assert.deepEqual(pins.filter(p=>p.side===0).map(p=>p.id),['3V3','EN','36','39','34','35','32','33','25','26','27','14','12','GND','13','9','10','11','5V']);
+assert.deepEqual(pins.filter(p=>p.side===1).map(p=>p.id),['GND','23','22','1','3','21','GND','19','18','5','17','16','4','0','2','15','8','7','6']);
+assert.deepEqual(pins.filter(p=>p.risk==='flash').map(p=>p.label),['D2','D3','CMD','D1','D0','CLK']);
 assert.equal(recipes.length,16);
 assert.deepEqual(pins.filter(p=>p.inputOnly).map(p=>p.id).sort(),['34','35','36','39']);
 assert.deepEqual(pins.filter(p=>p.caps.includes('dac')).map(p=>p.id).sort(),['25','26']);
@@ -10,7 +13,7 @@ const has=(r,from,to)=>r.wires.some(w=>(w.from===from&&w.to===to)||(w.from===to&
 for(const r of recipes){
  // Rendering resolves every terminal: a typo in wiring must fail the build.
  const svg=circuitSVG(r);assert(svg.includes('</svg>'));
- assert(!r.wires.some(w=>w.from==='esp.VIN'||w.to==='esp.VIN'),`${r.id}: USB + external positive must not join`);
+ assert(!r.wires.some(w=>w.from==='esp.5V'||w.to==='esp.5V'),`${r.id}: USB + external positive must not join`);
  for(const w of r.wires){
   if(/^esp\.(\d+)$/.test(w.from))assert(Number(w.from.slice(4))<34,`${r.id}: input-only GPIO driving a signal`);
  }
@@ -41,4 +44,4 @@ assert(has(recipe('esc'),'supply.plus','device.BAT+'));
 for(const id of ['active','passive']){assert(has(recipe(id),'diode.K','rail.plus'));assert(has(recipe(id),'diode.A','transistor.C'));}
 assert(has(recipe('uart'),'esp.17','device.RX16'));
 assert(has(recipe('uart'),'device.TX17','esp.16'));
-console.log('Pinout checks passed: 30 headers, 16 resolved circuits, power separation, input-only pins, Echo divider, BTL outputs and crossed UART.');
+console.log('Pinout checks passed: 38 headers, 16 resolved circuits, power separation, input-only pins, Echo divider, BTL outputs and crossed UART.');

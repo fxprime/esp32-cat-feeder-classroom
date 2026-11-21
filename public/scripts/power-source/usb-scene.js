@@ -32,15 +32,9 @@ export const usbScene = `
     <text x="120" y="262" text-anchor="middle" class="scene-small">พอร์ตตัวอย่าง 500mA</text>
   </g>
   <g>
-    <rect x="376" y="58" width="125" height="169" rx="11" fill="#14655d" stroke="#0b423d" stroke-width="3"/>
-    <rect x="401" y="72" width="75" height="77" rx="7" fill="#d8e1e9" stroke="#9baabd" stroke-width="2"/>
-    <path d="M410 82h49v8h-41v8h34" stroke="#9baabd" stroke-width="2" fill="none"/>
-    <text x="439" y="132" class="scene-chip" text-anchor="middle">ESP32</text>
-    <path d="M387 86v115m103-115v115" stroke="#e3be70" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 12"/>
-    <rect x="418" y="162" width="40" height="32" rx="4" fill="#162f39"/>
-    <rect x="419" y="202" width="38" height="24" rx="4" fill="#c7d5e3" stroke="#778da7" stroke-width="2"/>
+    <image x="384" y="57" width="110" height="169" preserveAspectRatio="none" href="../assets/esp32-devkitc-v4.svg"/>
     <circle class="board-power" cx="472" cy="183" r="5" fill="#94a3b8"/>
-    <text x="439" y="39" text-anchor="middle" class="scene-label">ESP32 DevKit</text>
+    <text x="439" y="39" text-anchor="middle" class="scene-label">ESP32-DevKitC V4</text>
   </g>
   <path class="cable-return" d="${returnPath}"/>
   <path class="usb-cable" d="${usbCable}"/>

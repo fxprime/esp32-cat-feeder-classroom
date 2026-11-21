@@ -1,20 +1,20 @@
-import { pins, pinAdvice } from './pinout/data.js';
+import { pins, pinAdvice, pinY } from './pinout/data.js';
 import { escapeHTML } from './pinout/diagrams.js';
 import { FEEDER_PINS as feeder } from './feeder/model.js';
 
 const byId = id => document.getElementById(id);
 const zones = {
   overview: {
-    theme: 'teal', badge: 'ภาพรวมบอร์ด', spec: '30-Pin DevKit V1',
-    title: 'บอร์ด ESP32 DevKit V1 (30 ขา)',
+    theme: 'teal', badge: 'ภาพรวมบอร์ด', spec: 'DevKitC V4 · 38 ขา',
+    title: 'บอร์ด ESP32-DevKitC V4 (38 ขา)',
     description: 'เลือกขาหรือชิ้นส่วน เช่น Micro-USB, Wi‑Fi, EN, BOOT และ LED เพื่อดูหน้าที่และจุดที่ต้องระวัง',
-    chips: ['15 ขาซ้าย + 15 ขาขวา', 'ลอจิก 3.3 V', 'Wi‑Fi ในตัว'],
+    chips: ['19 ขาซ้าย + 19 ขาขวา', 'ลอจิก 3.3 V', 'Wi‑Fi ในตัว'],
   },
   power: {
     theme: 'rose', color: '#f29a9a', badge: 'โซน 1 · Power & Control', spec: 'ไฟเลี้ยงและรีเซ็ต',
     title: 'ขาไฟเลี้ยงและควบคุม',
-    description: '3V3 ใช้เลี้ยงเซนเซอร์แรงดัน 3.3 V, GND เป็นจุดอ้างอิงร่วม, VIN ใช้กับไฟ 5 V ตามวงจรของบอร์ด และ EN ใช้รีเซ็ต',
-    chips: ['3V3 · 3.3 V', 'VIN · 5 V', 'GND · 0 V', 'EN · Reset'],
+    description: '3V3 ใช้เลี้ยงเซนเซอร์แรงดัน 3.3 V, GND เป็นจุดอ้างอิงร่วม, ขาล่างสุดซ้ายคือ 5V สำหรับไฟเลี้ยง และ EN ใช้รีเซ็ต',
+    chips: ['3V3 · 3.3 V', '5V · ขาล่างสุดซ้าย', 'GND · 0 V', 'EN · Reset'],
   },
   input_only: {
     theme: 'sky', color: '#a4d6f0', badge: 'โซน 2 · Input-Only', spec: 'รับสัญญาณอย่างเดียว',
@@ -29,10 +29,10 @@ const zones = {
     chips: ['GPIO18 · Servo', 'GPIO21 / 22 · I²C', 'GPIO23 · LED', 'GPIO33 · IR'],
   },
   caution: {
-    theme: 'amber', color: '#e9b884', badge: 'โซน 4 · Caution', spec: 'ขาบูตและ UART0',
+    theme: 'amber', color: '#e9b884', badge: 'โซน 4 · Caution', spec: 'ขาบูต · UART0 · Flash',
     title: 'ขาที่ต้องระวังเวลาเลือกใช้',
-    description: 'ระดับสัญญาณของ GPIO 2, 5, 12 และ 15 มีผลตอนบูต ส่วน TX0/RX0 ใช้สื่อสารกับคอมพิวเตอร์ผ่าน USB เลือกขาอื่นก่อนถ้ายังมีขาว่าง',
-    chips: ['GPIO12 · หลีกเลี่ยง HIGH ตอนบูต', 'GPIO2 · LED บางรุ่น', 'TX0 / RX0 · USB Serial'],
+    description: 'ระดับสัญญาณของ GPIO 0, 2, 5, 12 และ 15 มีผลตอนบูต ส่วน TX0/RX0 ใช้สื่อสารกับคอมพิวเตอร์ผ่าน USB เลือกขาอื่นก่อนถ้ายังมีขาว่าง ขา D0–D3, CMD และ CLK ใช้กับ SPI Flash',
+    chips: ['GPIO12 · หลีกเลี่ยง HIGH ตอนบูต', 'GPIO0 · BOOT', 'TX0 / RX0 · USB Serial'],
   },
 };
 
@@ -57,10 +57,10 @@ const hardwareParts = {
     chips: ['Wi‑Fi 2.4 GHz', 'Bluetooth / BLE', 'Telegram ในโครงงาน'],
   },
   leds: {
-    theme: 'sky', badge: 'ไฟสถานะบนบอร์ด', spec: 'PWR และ IO2',
+    theme: 'sky', badge: 'ไฟสถานะบนบอร์ด', spec: 'ไฟ PWR',
     title: 'ไฟ LED บนบอร์ด',
-    description: 'ไฟ PWR ติดเมื่อบอร์ดได้รับไฟ บอร์ดตัวอย่างมีไฟ IO2 สำหรับลองโปรแกรม Blink สีและการต่อ LED อาจต่างกันตามรุ่น',
-    chips: ['PWR · ไฟเข้าบอร์ด', 'IO2 · ไฟทดสอบ'],
+    description: 'ไฟ PWR ติดเมื่อบอร์ดได้รับไฟ ถ้าจะลอง Blink ให้ต่อ LED ภายนอกผ่านตัวต้านทาน',
+    chips: ['PWR · ไฟเข้าบอร์ด', 'Blink · ใช้ LED ภายนอก'],
   },
   btn_en: {
     theme: 'rose', badge: 'ปุ่มบนบอร์ด', spec: 'Reset · Active LOW',
@@ -85,7 +85,7 @@ const partTraceStarts = {
   wifi: [365, 118], leds: [353, 419], btn_en: [265, 444], btn_boot: [359, 444], usb: [329, 500],
 };
 const examples = {
-  EN: ['ปุ่มรีเซ็ตภายนอก'], VIN: ['แหล่งจ่าย 5 V ตามวงจรบอร์ด'],
+  EN: ['ปุ่มรีเซ็ตภายนอก'], '5V': ['J2 ขาที่ 19 · อยู่ซ้ายล่าง'],
   GND: ['GND ร่วมกับเซนเซอร์และแหล่งจ่าย Servo'], '3V3': ['เลี้ยง HTU21D'],
   '16': ['UART2 RX · รับข้อมูล'], '17': ['UART2 TX · ส่งข้อมูล'],
 };
@@ -99,10 +99,10 @@ const themes = {
   slate: ['border-slate-400 bg-slate-50', 'bg-slate-200 text-slate-800'],
 };
 const normalize = p => {
-  const key = p.id === 'GND' ? (p.side ? 'gnd_r' : 'gnd_l') : p.id.toLowerCase();
-  const zone = p.inputOnly ? 'input_only' : p.risk === 'strap' || p.risk === 'usb'
+  const key = p.id === 'GND' ? p.key : p.id.toLowerCase();
+  const zone = p.inputOnly ? 'input_only' : ['strap', 'usb', 'flash'].includes(p.risk)
     ? 'caution' : p.caps.includes('power') ? 'power' : 'safe';
-  return { ...p, key, zone, cx: p.side ? 210 : 0, cy: 25 + p.index * 29 };
+  return { ...p, key, zone, cx: p.side ? 210 : 0, cy: pinY(p.index) };
 };
 const boardPins = pins.map(normalize);
 const pinMap = new Map(boardPins.map(pin => [pin.key, pin]));
@@ -113,7 +113,7 @@ const picker = byId('boardPartPicker');
 const feederButton = byId('feederHighlightBtn');
 const zoneButtons = [...document.querySelectorAll('[data-zone].zone-btn')];
 const overviewOption = new Option('ภาพรวมทั้งบอร์ด', '');
-const gpioLabel = pin => /^\d+$/.test(pin.id) ? (pin.label === pin.id ? `GPIO${pin.id}` : pin.label) : pin.label;
+const gpioLabel = pin => pin.id === 'GND' ? 'GND · ขาที่ ' + (pin.index + 1) : /^\d+$/.test(pin.id) ? (pin.label === pin.id ? `GPIO${pin.id}` : pin.label) : pin.label;
 
 function pinMarkup(pin) {
   const { key, zone, cx, cy, side } = pin;
@@ -126,8 +126,8 @@ function pinMarkup(pin) {
     <text x="${x + 64}" y="${cy + 3.5}" text-anchor="middle" font-size="10" font-weight="800" fill="#92400e">${escapeHTML(projectName)}</text>
   </g>` : '';
   return `<g class="pin-node" data-pin="${key}" data-zone="${zone}"${projectName ? ' data-feeder="1"' : ''}>
-    <rect x="${side ? 180 : -24}" y="${cy - 14}" width="56" height="28" fill="transparent"/>
-    <rect class="pin-pad" x="${cx - 10}" y="${cy - 7}" width="20" height="14" rx="3" fill="${zones[zone].color}" stroke="#263d43" stroke-width="1.2"/>
+    <rect x="${side ? 180 : -24}" y="${cy - 11}" width="56" height="22" fill="transparent"/>
+    <rect class="pin-pad" x="${cx - 10}" y="${cy - 7}" width="20" height="14" rx="3" fill="${pin.id === 'GND' ? '#aebbc5' : zones[zone].color}" stroke="#263d43" stroke-width="1.2"/>
     <text x="${labelPosition}" y="${cy + 4}" text-anchor="${side ? 'end' : 'start'}" font-size="11" font-weight="700" fill="#fff">${escapeHTML(pin.label)}</text>
     ${projectTag}
   </g>`;
@@ -159,7 +159,7 @@ function pinInfo(pin) {
   const advice = pinAdvice(pin);
   const capabilities = ['adc1', 'adc2', 'dac', 'touch'].filter(cap => pin.caps.includes(cap)).map(cap => cap.toUpperCase());
   const spec = pin.inputOnly ? 'Input-Only · ADC1' : ({
-    EN: 'Reset · Active LOW', GND: 'Ground · 0 V', VIN: 'ไฟ 5 V', '3V3': 'ไฟ 3.3 V',
+    EN: 'Reset · Active LOW', GND: '0 V · J' + (pin.side + 2) + ' ขาที่ ' + (pin.index + 1), '5V': 'ไฟ 5 V · อยู่ซ้ายล่าง', '3V3': 'ไฟ 3.3 V',
   })[pin.id] || (pin.risk === 'usb' ? 'UART0 · USB Serial' : pin.risk === 'strap'
     ? 'Strapping pin' : ['21', '22'].includes(pin.id) ? 'GPIO · I²C' : ['Digital I/O', ...capabilities].join(' · '));
   const chips = projectName ? [projectName] : examples[pin.id] ?? (

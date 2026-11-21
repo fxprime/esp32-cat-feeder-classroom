@@ -130,7 +130,7 @@ function renderStep() {
 
   for (const [key, node] of Object.entries(nodes)) {
     const [icon, title, detail] = step[key];
-    node.querySelector('use').setAttribute('href', `../assets/feeder-flow.svg?v=manual-feed#${icon}`);
+    node.querySelector('use').setAttribute('href', `../assets/feeder-flow.svg?v=devkitc-v4#${icon}`);
     node.querySelector('[data-flow-text]').textContent = title;
     node.querySelector('[data-flow-detail]').textContent = detail;
   }

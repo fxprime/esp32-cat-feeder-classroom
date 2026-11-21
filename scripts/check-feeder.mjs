@@ -78,7 +78,7 @@ for (const [gpio, pinName, connector] of [
   [FEEDER_PINS.buzzer, "BUZZER_PIN", "beep:2"],
   [FEEDER_PINS.led, "RED_LED_PIN", "ledR:1"],
 ]) {
-  const target = `esp:D${gpio}`;
+  const target = `esp:${gpio}`;
   assert(capstone.ino.includes(`constexpr int ${pinName} = ${gpio};`));
   assert(connections.some(([a, b]) => (a === target && b === connector) || (b === target && a === connector)));
 }

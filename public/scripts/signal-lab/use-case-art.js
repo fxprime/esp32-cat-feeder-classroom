@@ -10,15 +10,7 @@ const paper = "#fff";
 const scene = drawing => `<svg viewBox="8 10 128 82" aria-hidden="true" focusable="false"><g stroke="${ink}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${drawing}</g></svg>`;
 
 function board(x, y, scale = 1) {
-  return `<g transform="translate(${x} ${y}) scale(${scale})">
-    <rect width="53" height="43" rx="7" fill="${blue}"/>
-    <path d="M8 8v27M46 8v27" stroke="${amber}" stroke-width="4" stroke-dasharray="1 5"/>
-    <rect x="16" y="7" width="21" height="14" rx="2" fill="#b8d9ec"/>
-    <path d="M20 13h13m-13 4h10" stroke="#6686a3" stroke-width="1.5"/>
-    <rect x="16" y="25" width="11" height="8" rx="2" fill="${ink}"/>
-    <circle cx="34" cy="29" r="2.5" fill="${mint}" stroke="none"/>
-    <path d="M20 38h13v8H20z" fill="${paper}"/>
-  </g>`;
+  return `<g transform="translate(${x} ${y}) scale(${scale})"><image href="../assets/esp32-devkitc-v4.svg" x="6" width="41" height="46" preserveAspectRatio="none"/></g>`;
 }
 
 function clock(x, y) {

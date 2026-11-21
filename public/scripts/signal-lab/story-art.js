@@ -51,9 +51,7 @@ export const storyArt = {
     <path d="M43 80v25h89V75" fill="none" stroke="#1976b6" stroke-width="3"/>
     <rect x="21" y="62" width="57" height="26" rx="5" fill="#dbeafe" stroke="#284664" stroke-width="2"/>
     <rect class="story-button-cap" x="34" y="43" width="31" height="25" rx="6" fill="#38bdf8" stroke="#284664" stroke-width="2"/>
-    <rect x="116" y="32" width="76" height="67" rx="9" fill="#145b6a"/>
-    <rect x="135" y="44" width="38" height="26" rx="3" fill="#cedce5"/>
-    <text x="154" y="61" text-anchor="middle" font-size="10" fill="#284664">ESP32</text>
+    <image x="123" y="24" width="61" height="89" preserveAspectRatio="none" href="../assets/esp32-devkitc-v4.svg"/>
     <circle class="story-input-state" cx="154" cy="84" r="7"/>
   `),
   pir: svg(`
@@ -62,9 +60,7 @@ export const storyArt = {
     <path d="M66 63a25 25 0 0 1 49 0z" fill="#f8fafc" stroke="#70909f" stroke-width="2"/>
     <path d="M78 61q0-25 13-25t13 25M66 54h49M91 37v25" fill="none" stroke="#bdcfdd" stroke-width="1.5"/>
     <path d="M111 81h31" stroke="#1976b6" stroke-width="3"/>
-    <rect x="142" y="39" width="67" height="62" rx="7" fill="#145b6a"/>
-    <rect x="157" y="50" width="37" height="24" rx="3" fill="#cedce5"/>
-    <text x="175" y="65" text-anchor="middle" font-size="9" fill="#284664">ESP32</text><circle class="story-input-state" cx="175" cy="87" r="6"/>
+    <image x="150" y="29" width="52" height="81" preserveAspectRatio="none" href="../assets/esp32-devkitc-v4.svg"/><circle class="story-input-state" cx="175" cy="87" r="6"/>
   `),
   gpio: svg(`
     <path d="M12 82h28m-28 21h28m87-12v22h34m18 0h24V60h-10M153 91V70h22V61" fill="none" stroke="#64748b" stroke-width="4" stroke-linejoin="round"/>

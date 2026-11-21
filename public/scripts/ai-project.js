@@ -32,7 +32,7 @@ const presets = {
     goal: 'เช็กความชื้นและอาหารในถังก่อนจ่ายหนึ่งรอบ แล้วดูว่ามีตัวมาที่ชามหรือยัง',
     budget: '',
     time: 'ช่วง Lab ตอนท้ายวัน',
-    tools: 'ESP32 DevKit V1, HTU21D, Ultrasonic, IR สะท้อน Active LOW, Servo, buzzer, LED แดง, Breadboard และ Wokwi',
+    tools: 'ESP32-DevKitC V4, HTU21D, Ultrasonic, IR สะท้อน Active LOW, Servo, buzzer, LED แดง, Breadboard และ Wokwi',
     limits: 'มีปุ่มให้อาหาร Manual ใช้เกณฑ์ความชื้นเพื่อสาธิต เปิดฝาทีละมื้อ และตรวจค่าที่เห็นจริงใน Lab',
   },
   plant: {
@@ -40,7 +40,7 @@ const presets = {
     goal: 'เมื่อดินแห้งให้ LED ติด เมื่อดินชื้นให้ LED ดับ และดูค่าเซนเซอร์ผ่าน Serial Monitor',
     budget: 350,
     time: '2 สัปดาห์ คาบละ 50 นาที รวม 3 คาบ',
-    tools: 'มี ESP32 DevKit V1, breadboard, LED, ตัวต้านทาน, สายจัมเปอร์และสาย USB ใช้ Arduino IDE กับ Wokwi',
+    tools: 'มี ESP32-DevKitC V4, breadboard, LED, ตัวต้านทาน, สายจัมเปอร์และสาย USB ใช้ Arduino IDE กับ Wokwi',
     limits: 'เพิ่งหัดเขียนโค้ด ใช้ไฟจาก USB ยังไม่มีเซนเซอร์วัดความชื้นดิน',
   },
   locker: {
@@ -48,7 +48,7 @@ const presets = {
     goal: 'เปิดประตูตู้เกิน 10 วินาทีแล้วให้มีเสียงเตือน พอปิดประตูเสียงหยุด',
     budget: 300,
     time: '3 คาบ คาบละ 50 นาที',
-    tools: 'มี ESP32 DevKit V1, breadboard, สายจัมเปอร์และสาย USB ใช้ Arduino IDE กับบอร์ดจริง',
+    tools: 'มี ESP32-DevKitC V4, breadboard, สายจัมเปอร์และสาย USB ใช้ Arduino IDE กับบอร์ดจริง',
     limits: 'กลุ่มมี 3 คน ต้องใช้ตู้กระดาษสำหรับสาธิต ยังไม่มีตัวตรวจประตูหรือ buzzer',
   },
   desk: {
@@ -56,7 +56,7 @@ const presets = {
     goal: 'เอามือบังเซนเซอร์แล้วไฟติด เอามือออกแล้วไฟดับ ลองซ้ำได้อย่างน้อย 3 ครั้ง',
     budget: 250,
     time: '1 สัปดาห์ รวม 2 คาบ',
-    tools: 'มี ESP32 DevKit V1, breadboard, LED, ตัวต้านทาน และสาย USB ใช้ Arduino IDE กับ Wokwi',
+    tools: 'มี ESP32-DevKitC V4, breadboard, LED, ตัวต้านทาน และสาย USB ใช้ Arduino IDE กับ Wokwi',
     limits: 'ใช้ LED ดวงเล็กกับไฟ USB และทำบน breadboard',
   },
 };

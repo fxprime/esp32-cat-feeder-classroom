@@ -92,9 +92,9 @@ export const LESSONS = [
     id: 3,
     slideNum: 4,
     phaseId: 1,
-    title: "รู้จักบอร์ด ESP32 DevKit V1",
-    fullName: "4. รู้จักบอร์ด ESP32 DevKit V1",
-    subtitle: "แตะดูบอร์ด 30 ขา แยกตาม 4 โซน หรือไฮไลต์ขาของโครงงาน",
+    title: "รู้จักบอร์ด ESP32-DevKitC V4",
+    fullName: "4. รู้จักบอร์ด ESP32-DevKitC V4",
+    subtitle: "แตะดูบอร์ด 38 ขา แยกตาม 4 โซน หรือไฮไลต์ขาของโครงงาน",
     description:
       "เลือกขาหรือชิ้นส่วนบนบอร์ดเพื่อดูหน้าที่ ข้อควรระวัง และการใช้งานในเครื่องให้อาหารแมว",
     file: "lesson-3.html",

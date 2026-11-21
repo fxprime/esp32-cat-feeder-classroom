@@ -1,3 +1,4 @@
+import {boardSVG, boardTerminal} from '../pinout/diagrams.js';
 import {getCase} from './model.js';
 import {modeNames} from './cases.js';
 import {parkedProbes,probeTail,parkedJacks,meterJacks,connectorPosition,jackTail} from './probes.js';
@@ -26,10 +27,13 @@ function circuit(id,s,reading){
   out+=text(610,365,'ภาพขยายเส้นทางใต้ Breadboard','text-anchor="middle"');
  }
  if(c.kind==='ground'){
-  out+='<rect x="375" y="130" width="190" height="130" rx="16" fill="#145e59"/><rect x="675" y="130" width="170" height="130" rx="16" fill="#334155"/>';
-  out+=text(470,178,'ESP32','fill="#fff" text-anchor="middle"')+text(760,178,'Servo','fill="#fff" text-anchor="middle"')+text(760,210,'+ แหล่งจ่าย 5 V','fill="#fff" text-anchor="middle"');
-  out+=wire('M465 240V265M755 240V265');
-  out+=wire('M565 192H675','#0284c7',3)+text(620,175,'SIG 18','text-anchor="middle"');
+  const board={x:420,y:122,width:92,height:137};
+  const [groundX,groundY]=boardTerminal('GND',board,0);
+  const [signalX,signalY]=boardTerminal(18,board);
+  out+=boardSVG({...board,used:['GND','18']})+'<rect x="675" y="130" width="170" height="130" rx="16" fill="#334155"/>';
+  out+=text(466,112,'ESP32-DevKitC V4','text-anchor="middle"')+text(760,178,'Servo','fill="#fff" text-anchor="middle"')+text(760,210,'+ แหล่งจ่าย 5 V','fill="#fff" text-anchor="middle"');
+  out+=wire(`M${groundX} ${groundY}H397V265H465M755 240V265`);
+  out+=wire(`M${signalX} ${signalY}H580V192H675`,'#0284c7',3)+text(620,175,'SIG 18','text-anchor="middle"');
   if(!s.fault)out+=wire('M465 265V310H755V265','#334155',5);
   out+=text(610,350,s.fault?'ยังไม่มี GND ร่วม':'มีเส้นทาง GND เชื่อมแล้ว','text-anchor="middle"');
  }

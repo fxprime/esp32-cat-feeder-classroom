@@ -21,12 +21,12 @@ const servo = "#include <ESP32Servo.h>";
 const debounce = firmware("debounce.txt");
 const readings = firmware("readings.txt");
 
-const pin = gpio => `esp:D${gpio}`;
+const pin = gpio => `esp:${gpio}`;
 const ground = "esp:GND.1";
 const wire = (from, to, color) => [from, to, color, []];
 
 function diagram({ actuator, sensors, redLed = false }) {
-  const parts = [{ type: "wokwi-esp32-devkit-v1", id: "esp", top: 100, left: 0, attrs: {} }];
+  const parts = [{ type: "board-esp32-devkit-c-v4", id: "esp", top: 100, left: 0, attrs: {} }];
   const connections = [];
   function put(type, id, top, left, attrs = {}, rotate) {
     parts.push({ type: `wokwi-${type}`, id, top, left, attrs, ...(rotate === undefined ? {} : { rotate }) });
@@ -39,7 +39,7 @@ function diagram({ actuator, sensors, redLed = false }) {
     put("servo", "flap", 120, 355);
     put("buzzer", "beep", 255, 365, { volume: "0.15" });
     put("pushbutton", "meal", 290, 175, { color: "blue", label: "MEAL" });
-    connect("flap:V+", "esp:VIN", "red");
+    connect("flap:V+", "esp:5V", "red");
     connect("flap:GND", ground, "black");
     connect("flap:PWM", pin(pins.servo), "orange");
     connect("beep:2", pin(pins.buzzer), "violet");
@@ -57,7 +57,7 @@ function diagram({ actuator, sensors, redLed = false }) {
     put("resistor", "sclPull", 61, -168, { value: "4700" });
     put("slide-switch", "presence", 220, -164, { value: "1", bounce: "0" });
     put("text", "presenceLabel", 174, -160, { text: "Reflective IR: left = detected" });
-    connect("stock:VCC", "esp:VIN", "red");
+    connect("stock:VCC", "esp:5V", "red");
     connect("stock:GND", ground, "black");
     connect("stock:TRIG", pin(pins.trigger), "blue");
     connect("stock:ECHO", "echoTop:1", "green");
@@ -94,11 +94,11 @@ function diagram({ actuator, sensors, redLed = false }) {
 const actuatorWiring = [
   { from: "MEAL · หน้าสัมผัส 1 / 2", to: "GPIO19 / GND · INPUT_PULLUP" },
   { from: "Servo · SIG", to: "GPIO18 · 0° ปิด / 90° เปิด" },
-  { from: "Servo · V+ / GND", to: "VIN ใน Wokwi · บอร์ดจริงใช้แหล่งจ่าย 5 V ที่เหมาะกับ Servo และต่อ GND ร่วม" },
+  { from: "Servo · V+ / GND", to: "ขา 5V ใน Wokwi · บอร์ดจริงใช้แหล่งจ่าย 5 V ที่เหมาะกับ Servo และต่อ GND ร่วม" },
   { from: "Passive buzzer · + / −", to: "GPIO25 / GND" },
 ];
 const sensorWiring = [
-  { from: "HC-SR04 · VCC / GND", to: "VIN 5 V ใน Wokwi / GND" },
+  { from: "HC-SR04 · VCC / GND", to: "ขา 5V ใน Wokwi / GND" },
   { from: "HC-SR04 · TRIG / ECHO", to: "GPIO26 / GPIO27 ผ่านจุดกึ่งกลางตัวแบ่ง 1 kΩ และ 1.8 kΩ ลง GND" },
   { from: "HTU21D · VCC / GND", to: "3V3 / GND" },
   { from: "HTU21D · SDA / SCL", to: "GPIO21 / GPIO22 · I²C 0x40, ใช้ pull-up 4.7 kΩ ต่อเส้นถ้าโมดูลไม่มีมาให้" },

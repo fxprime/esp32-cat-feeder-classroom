@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>สไลด์ 3: รู้จักบอร์ด ESP32 DevKit V1 (30 Pin) — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
+  <title>สไลด์ 3: รู้จักบอร์ด ESP32-DevKitC V4 (38 ขา) — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
   <link rel="stylesheet" href="../styles/classroom.css" />
   <link rel="stylesheet" href="../styles/slide-support.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -35,7 +35,7 @@
     <section class="l3-hero text-center mb-3">
       <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-1">
         <span class="bg-gradient-to-r from-teal-700 via-cyan-600 to-blue-600 bg-clip-text text-transparent">
-          รู้จักบอร์ด ESP32 DevKit V1 (30 Pin)
+          รู้จักบอร์ด ESP32-DevKitC V4 (38 ขา)
         </span>
       </h1>
       <p class="text-xs sm:text-base font-semibold text-slate-600">
@@ -46,10 +46,10 @@
     <!-- Main 2-Column Interactive Explorer -->
     <section class="l3-grid">
 
-      <!-- LEFT: Realistic ESP32 DevKit V1 (30-Pin) SVG Board -->
+      <!-- LEFT: Realistic ESP32-DevKitC V4 (38-pin) SVG Board -->
       <div class="l3-board-card bg-white/95 backdrop-blur-md rounded-3xl p-3 sm:p-4 shadow-xl border-2 border-teal-200">
         <div class="board-stage" id="boardStage">
-          <svg class="esp-svg" viewBox="0 0 600 540" role="img" aria-label="แผนภาพบอร์ด ESP32 DevKit V1 30 ขาแบบโต้ตอบได้">
+          <svg class="esp-svg" viewBox="0 0 600 540" role="img" aria-label="แผนภาพบอร์ด ESP32-DevKitC V4 38 ขาแบบโต้ตอบได้">
             <!-- Zone Pointer Banner (Top) -->
             <g id="zoneBanner" class="zone-banner">
               <rect x="130" y="6" width="340" height="24" rx="12" fill="#0284c7" />
@@ -62,7 +62,7 @@
             <!-- Realistic ESP32 PCB Board centered at x=195, y=38 (width=210, height=480) -->
             <g id="pcbGroup" transform="translate(195, 38)">
               <!-- PCB Body -->
-              <rect width="210" height="480" rx="18" fill="#12685c" stroke="#0c443e" stroke-width="3" />
+              <rect width="210" height="480" rx="18" fill="#30414b" stroke="#172c38" stroke-width="3" />
               <!-- Mounting Holes -->
               <circle cx="18" cy="18" r="5" fill="#f8fafc" stroke="#d4af37" stroke-width="2" />
               <circle cx="192" cy="18" r="5" fill="#f8fafc" stroke="#d4af37" stroke-width="2" />
@@ -85,13 +85,11 @@
               <path d="M70 307h-8m8 12h-8m8 12h-8m8 12h-8m78-36h8m-8 12h8m-8 12h8m-8 12h8" stroke="#b7c8bd" stroke-width="3" />
               <text x="105" y="333" text-anchor="middle" font-size="8.5" fill="#94a3b8" font-weight="700">CP2102</text>
 
-              <!-- Onboard Power & GPIO2 LEDs (Clickable) -->
+              <!-- Onboard power LED -->
               <g class="hw-node" data-pin="leds">
                 <rect x="52" y="370" width="106" height="22" rx="6" fill="rgba(0,0,0,0.22)" class="hw-outline" />
                 <circle cx="72" cy="381" r="4.5" fill="#ef4444" />
                 <text x="81" y="384" font-size="8" font-weight="700" fill="#fecaca">PWR</text>
-                <circle cx="124" cy="381" r="4.5" fill="#38bdf8" />
-                <text x="133" y="384" font-size="8" font-weight="700" fill="#bae6fd">IO2</text>
               </g>
 
               <!-- EN (Reset) Tactile Button (Clickable) -->
@@ -115,7 +113,7 @@
                 <text x="105" y="479" text-anchor="middle" font-size="7.5" font-weight="800" fill="#1e293b">Micro-USB</text>
               </g>
 
-              <!-- Dynamic Pins & Feeder Tags Container (populated by JS with exact 30-pin order) -->
+              <!-- Dynamic Pins & Feeder Tags Container (populated by JS with exact 38-pin order) -->
               <g id="pinsLayer"></g>
 
               <!-- Pulse Ring Overlay -->
@@ -123,6 +121,7 @@
             </g>
           </svg>
         </div>
+        <p class="mt-2 rounded-xl border border-rose-300 bg-rose-50 p-3 text-sm font-bold text-rose-900">หัน USB ลงล่าง: ขาล่างสุดฝั่งซ้ายคือ <strong>5V ไม่ใช่ GND</strong> · GND ฝั่งซ้ายอยู่ระหว่าง GPIO12 กับ GPIO13 และฝั่งขวามี GND อยู่บนสุดกับระหว่าง GPIO21 และ GPIO19</p>
         <div class="l3-picker">
           <label for="boardPartPicker">เลือกขาหรือชิ้นส่วน</label>
           <select id="boardPartPicker" aria-controls="inspectorCard"></select>
@@ -145,7 +144,7 @@
         <div class="l3-zones-grid grid grid-cols-2 gap-2" role="group" aria-label="เลือกโซนขา ESP32">
           <button type="button" class="zone-btn border-rose-200 hover:border-rose-400" data-zone="power">
             <div class="text-xs sm:text-sm font-extrabold text-rose-700">1. Power &amp; Control</div>
-            <div class="text-[11px] text-slate-500 font-semibold">EN, VIN, 3V3, GND</div>
+            <div class="text-[11px] text-slate-500 font-semibold">EN, 5V, 3V3, GND</div>
           </button>
           <button type="button" class="zone-btn border-sky-200 hover:border-sky-400" data-zone="input_only">
             <div class="text-xs sm:text-sm font-extrabold text-sky-700">2. Input-Only</div>
@@ -157,7 +156,7 @@
           </button>
           <button type="button" class="zone-btn border-amber-200 hover:border-amber-400" data-zone="caution">
             <div class="text-xs sm:text-sm font-extrabold text-amber-800">4. Caution (ระวัง)</div>
-            <div class="text-[11px] text-slate-500 font-semibold">Strapping &amp; UART0</div>
+            <div class="text-[11px] text-slate-500 font-semibold">Strapping · UART0 · Flash</div>
           </button>
         </div>
 
@@ -165,7 +164,7 @@
         <div id="inspectorCard" class="l3-inspector-card rounded-3xl p-4 bg-white/95 border-2 border-teal-300 shadow-lg flex flex-col gap-2" role="status" aria-atomic="true">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <span id="inspZoneBadge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-teal-100 text-teal-800">ภาพรวมบอร์ด</span>
-            <span id="inspElecBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">30-Pin DevKit V1</span>
+            <span id="inspElecBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">DevKitC V4 · 38 ขา</span>
           </div>
 
           <!-- Project Usage Highlight Banner (visible only when pin is used in Cat Feeder) -->
@@ -175,7 +174,7 @@
           </div>
 
           <h2 id="inspTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
-            บอร์ด ESP32 DevKit V1 (30 ขา)
+            บอร์ด ESP32-DevKitC V4 (38 ขา)
           </h2>
 
           <p id="inspDesc" class="text-xs sm:text-sm text-slate-700 leading-relaxed">
@@ -191,7 +190,7 @@
       </div>
     </section>
   </main>
-  <script type="module" src="../scripts/board-intro.js"></script>
+  <script type="module" src="../scripts/board-intro.js?v=devkitc-v4"></script>
   <script defer src="../scripts/slide-support.js"></script>
 </body>
 </html>

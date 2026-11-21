@@ -1,9 +1,12 @@
 import { mkdir, writeFile, stat } from 'node:fs/promises';
 import sharp from 'sharp';
 import { recipes } from '../public/scripts/pinout/data.js';
-import { circuitSVG } from '../public/scripts/pinout/diagrams.js';
+import { boardSVG, circuitSVG } from '../public/scripts/pinout/diagrams.js';
 const output=new URL('../public/assets/wiring/',import.meta.url);
 await mkdir(output,{recursive:true});
+const board = boardSVG({x:0,y:0,labels:false});
+await writeFile(new URL('../public/assets/esp32-devkitc-v4.svg',import.meta.url), `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-11 -2 232 490" style="font-family:system-ui,sans-serif"><title>ESP32-DevKitC V4 · 38 pins</title>${board}</svg>
+`);
 const sizes=[];
 for(const r of recipes){
  const svg=circuitSVG(r);

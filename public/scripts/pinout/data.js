@@ -1,4 +1,4 @@
-// Classic ESP32-WROOM-32 / 30-pin DevKit V1. Every recipe is an independent circuit.
+// ESP32-DevKitC V4 with ESP32-WROOM-32. Every recipe is an independent circuit.
 export const docs = {
  gpio:'https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html',
  pam:'https://learn.adafruit.com/adafruit-pam8302-mono-2-5w-class-d-audio-amplifier/pinouts',
@@ -16,17 +16,19 @@ export const docs = {
  bme:'https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/',
  us:'https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf',
 };
-const left=['EN','36','39','34','35','32','33','25','26','27','14','12','13','GND','VIN'];
-const right=['23','22','1','3','21','19','18','5','17','16','4','2','15','GND','3V3'];
-export const pins = [left,right].flatMap((row,side)=>row.map((id,index)=>{
- const gpio=/^\d+$/.test(id), n=Number(id), inputOnly=gpio&&n>=34;
- const caps=!gpio?['power']:['digital','spi','uart','i2s',...(!inputOnly?['pwm','i2c']:[]),...([32,33,34,35,36,39].includes(n)?['adc1']:[]),...([2,4,12,13,14,15,25,26,27].includes(n)?['adc2']:[]),...([25,26].includes(n)?['dac']:[]),...([2,4,12,13,14,15,27,32,33].includes(n)?['touch']:[])];
- const risk=[2,5,12,15].includes(n)?'strap':[1,3].includes(n)?'usb':inputOnly?'input':'normal';
- const label=({'36':'VP · 36','39':'VN · 39','1':'TX0 · 1','3':'RX0 · 3','17':'TX2 · 17','16':'RX2 · 16'})[id]||id;
+export const leftHeader=['3V3','EN','36','39','34','35','32','33','25','26','27','14','12','GND','13','9','10','11','5V'];
+export const rightHeader=['GND','23','22','1','3','21','GND','19','18','5','17','16','4','0','2','15','8','7','6'];
+export const pinY = index => 25 + index * 23;
+const flashLabels = {6:'CLK',7:'D0',8:'D1',9:'D2',10:'D3',11:'CMD'};
+export const pins = [leftHeader,rightHeader].flatMap((row,side)=>row.map((id,index)=>{
+ const gpio=/^\d+$/.test(id), n=Number(id), inputOnly=gpio&&n>=34, flash=gpio&&n in flashLabels;
+ const caps=flash?['flash']:!gpio?['power']:['digital','spi','uart','i2s',...(!inputOnly?['pwm','i2c']:[]),...([32,33,34,35,36,39].includes(n)?['adc1']:[]),...([2,4,12,13,14,15,25,26,27].includes(n)?['adc2']:[]),...([25,26].includes(n)?['dac']:[]),...([2,4,12,13,14,15,27,32,33].includes(n)?['touch']:[])];
+ const risk=flash?'flash':[0,2,5,12,15].includes(n)?'strap':[1,3].includes(n)?'usb':inputOnly?'input':'normal';
+ const label=({'36':'VP · 36','39':'VN · 39','1':'TX0 · 1','3':'RX0 · 3','17':'TX2 · 17','16':'RX2 · 16'})[id]||(flash ? flashLabels[n] : id);
  return {id,key:`${side}-${index}`,side,index,label,caps,risk,inputOnly};
 }));
-export const filters=[['all','ทุกพิน'],['power','ไฟเลี้ยง'],['digital','Digital I/O'],['pwm','PWM / Servo'],['adc1','ADC1 · อ่าน Analog'],['adc2','ADC2'],['dac','DAC · เสียง Analog'],['i2s','I²S · เสียง Digital'],['i2c','I²C'],['spi','SPI'],['uart','UART'],['touch','Touch']];
-export const pinAdvice = p => !/^\d+$/.test(p.id)? ({EN:'Reset แบบ Active LOW: ดึงลง GND เพื่อเริ่มใหม่ ไม่ใช่พินจ่ายไฟ',VIN:'ขา 5V/VIN ของบอร์ดรุ่นนี้: เช็กสกรีนและวงจรบอร์ดก่อนใช้ เมื่อจ่าย USB อยู่ ห้ามนำ +5V แหล่งอื่นมาต่อขนาน',GND:'จุดอ้างอิง 0V: วงจรที่รับส่งสัญญาณกันต้องมี GND ร่วม ยกเว้นวงจรที่แยกทางไฟฟ้าโดยออกแบบไว้', '3V3':'ไฟ 3.3V สำหรับเซนเซอร์กระแสต่ำ ห้ามป้อนไฟ 5V เข้าขานี้ และไม่ใช้เลี้ยงมอเตอร์/เซอร์โว'})[p.id] : [p.inputOnly?'รับเข้าเท่านั้น และไม่มี pull-up / pull-down ภายใน ต้องใส่ตัวต้านทานภายนอกเมื่อจำเป็น; กำหนดเป็น UART RX / SPI MISO / I²S DIN ได้ แต่ส่งออกไม่ได้':'รับเข้า/ส่งออก Digital ได้ และกำหนดขา PWM หรือบัสผ่านโค้ดได้',p.caps.includes('adc1')?'เป็น ADC1 เหมาะอ่าน Analog ขณะเปิด Wi-Fi':p.caps.includes('adc2')?'เป็น ADC2: หลีกเลี่ยง analogRead ขณะ Wi-Fi ทำงาน ใช้ ADC1 แทน':'',p.caps.includes('dac')?'มี DAC 8-bit ของ ESP32 รุ่นดั้งเดิม: 0–255 สร้างแรงดัน Analog ต้องผ่านแอมป์ก่อนเข้าลำโพง':'',p.risk==='strap'?'เป็น strapping pin: ระดับไฟตอนรีเซ็ตมีผลต่อการบูต มือใหม่เลือกขาอื่นก่อน โดยเฉพาะ GPIO12 ห้ามถูกดึง HIGH ตอนบูต':p.risk==='usb'?'UART0 ใช้กับ USB Serial/อัปโหลดอยู่ หลีกเลี่ยงการต่ออุปกรณ์เพิ่มระหว่างอัปโหลด':'', ['16','17'].includes(p.id)?'ใช้ได้ใน WROOM-32 ตัวอย่างนี้ แต่บอร์ด WROVER ที่มี PSRAM อาจสงวนขา 16/17 ไว้':''].filter(Boolean).join(' · ');
+export const filters=[['all','ทุกพิน'],['power','ไฟเลี้ยง'],['digital','Digital I/O'],['pwm','PWM / Servo'],['adc1','ADC1 · อ่าน Analog'],['adc2','ADC2'],['dac','DAC · เสียง Analog'],['i2s','I²S · เสียง Digital'],['i2c','I²C'],['spi','SPI'],['uart','UART'],['touch','Touch'],['flash','ขา Flash']];
+export const pinAdvice = p => p.risk==='flash' ? 'ขานี้ใช้สื่อสารกับ SPI Flash ของโมดูล ให้เว้นไว้เมื่อทำวงจรโครงงาน' : !/^\d+$/.test(p.id)? ({EN:'Reset แบบ Active LOW: ดึงลง GND เพื่อเริ่มใหม่ ไม่ใช่พินจ่ายไฟ','5V':'ขาล่างสุดฝั่งซ้ายเมื่อ USB อยู่ล่างคือ 5V ไม่ใช่ GND ใช้จ่ายไฟเข้าบอร์ดผ่าน 5V และ GND เมื่อถอด USB แล้ว',GND:'จุดอ้างอิง 0V: วงจรที่รับส่งสัญญาณกันต้องมี GND ร่วม ยกเว้นวงจรที่แยกทางไฟฟ้าโดยออกแบบไว้', '3V3':'ไฟ 3.3V สำหรับเซนเซอร์กระแสต่ำ ห้ามป้อนไฟ 5V เข้าขานี้ และไม่ใช้เลี้ยงมอเตอร์/เซอร์โว'})[p.id] : [p.inputOnly?'รับเข้าเท่านั้น และไม่มี pull-up / pull-down ภายใน ต้องใส่ตัวต้านทานภายนอกเมื่อจำเป็น; กำหนดเป็น UART RX / SPI MISO / I²S DIN ได้ แต่ส่งออกไม่ได้':'รับเข้า/ส่งออก Digital ได้ และกำหนดขา PWM หรือบัสผ่านโค้ดได้',p.caps.includes('adc1')?'เป็น ADC1 เหมาะอ่าน Analog ขณะเปิด Wi-Fi':p.caps.includes('adc2')?'เป็น ADC2: หลีกเลี่ยง analogRead ขณะ Wi-Fi ทำงาน ใช้ ADC1 แทน':'',p.caps.includes('dac')?'มี DAC 8-bit ของ ESP32 รุ่นดั้งเดิม: 0–255 สร้างแรงดัน Analog ต้องผ่านแอมป์ก่อนเข้าลำโพง':'',p.risk==='strap'?'เป็น strapping pin: ระดับไฟตอนรีเซ็ตมีผลต่อการบูต มือใหม่เลือกขาอื่นก่อน โดยเฉพาะ GPIO12 ห้ามถูกดึง HIGH ตอนบูต':p.risk==='usb'?'UART0 ใช้กับ USB Serial/อัปโหลดอยู่ หลีกเลี่ยงการต่ออุปกรณ์เพิ่มระหว่างอัปโหลด':'', ['16','17'].includes(p.id)?'ใช้ได้ใน WROOM-32 ตัวอย่างนี้ แต่บอร์ด WROVER ที่มี PSRAM อาจสงวนขา 16/17 ไว้':''].filter(Boolean).join(' · ');
 const w=(from,to,label,color='signal')=>({from,to,label,color});
 const ground=[w('esp.GND','rail.gnd','GND ของ ESP32 → รางลบ','ground')];
 const logic=[w('esp.3V3','rail.logic','3V3 → ราง 3.3V','logic'),...ground];

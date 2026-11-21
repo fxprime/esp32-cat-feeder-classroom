@@ -4,7 +4,7 @@
   "editor": "wokwi",
   "parts": [
     {
-      "type": "wokwi-esp32-devkit-v1",
+      "type": "board-esp32-devkit-c-v4",
       "id": "esp",
       "top": 100,
       "left": 0,
@@ -40,7 +40,7 @@
   "connections": [
     [
       "flap:V+",
-      "esp:VIN",
+      "esp:5V",
       "red",
       []
     ],
@@ -52,13 +52,13 @@
     ],
     [
       "flap:PWM",
-      "esp:D18",
+      "esp:18",
       "orange",
       []
     ],
     [
       "beep:2",
-      "esp:D25",
+      "esp:25",
       "violet",
       []
     ],
@@ -70,7 +70,7 @@
     ],
     [
       "meal:1.l",
-      "esp:D19",
+      "esp:19",
       "blue",
       []
     ],

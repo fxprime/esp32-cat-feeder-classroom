@@ -5,67 +5,67 @@
   "images": [
     {
       "id": "servo",
-      "bytes": 16234
+      "bytes": 16484
     },
     {
       "id": "dac",
-      "bytes": 18200
+      "bytes": 18816
     },
     {
       "id": "i2s",
-      "bytes": 18510
+      "bytes": 19242
     },
     {
       "id": "dc",
-      "bytes": 20292
+      "bytes": 21040
     },
     {
       "id": "esc",
-      "bytes": 18502
+      "bytes": 18766
     },
     {
       "id": "active",
-      "bytes": 18084
+      "bytes": 18510
     },
     {
       "id": "passive",
-      "bytes": 18098
+      "bytes": 18524
     },
     {
       "id": "button",
-      "bytes": 14728
+      "bytes": 15450
     },
     {
       "id": "pot",
-      "bytes": 15228
+      "bytes": 16252
     },
     {
       "id": "ldr",
-      "bytes": 15150
+      "bytes": 16052
     },
     {
       "id": "htu21d",
-      "bytes": 15322
+      "bytes": 16496
     },
     {
       "id": "ultrasonic",
-      "bytes": 17538
+      "bytes": 18218
     },
     {
       "id": "i2c",
-      "bytes": 15504
+      "bytes": 16534
     },
     {
       "id": "spi",
-      "bytes": 17148
+      "bytes": 18360
     },
     {
       "id": "ds18",
-      "bytes": 15590
+      "bytes": 16664
     },
     {
       "id": "uart",
-      "bytes": 18204
+      "bytes": 19280
     }
   ]
 }

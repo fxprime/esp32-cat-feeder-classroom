@@ -180,3 +180,5 @@ html.is-embedded .l3-header { justify-content: flex-end; }
 @media (prefers-reduced-motion: reduce) {
   .l3-grid *, .l3-grid *::before, .l3-grid *::after { animation: none !important; transition: none !important; }
 }
+
+.pin-node[data-pin="5v"] .pin-pad { fill: #fb7185; stroke: #9f1239; stroke-width: 2.5; }
