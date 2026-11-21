@@ -17,14 +17,71 @@
     <header class="cl-hero">
       <span class="cl-kicker">โปรเจกต์ ESP32 ม.4</span>
       <h1>เลือกกรณีทดสอบเครื่องให้อาหารแมว</h1>
-      <p>ตั้งเงื่อนไขหนึ่งอย่าง คิดว่าควรเกิดอะไรขึ้น แล้วขอให้ AI ช่วยเสนอวิธีพิสูจน์ใน Lab</p>
+      <p>เราอยากให้เครื่องเช็กถังก่อนเปิดฝา และรู้ว่ามีตัวมาที่ชามหลังจ่าย แบบนี้ทำได้จริงไหม?</p>
+      <div class="ap-gemini-entry">
+        <button type="button" id="ap-show-gemini" class="ap-primary" aria-haspopup="dialog">ผลลัพธ์จาก Gemini</button>
+        <span>ตัวอย่างคำตอบสำหรับ “มื้อปกติ”</span>
+      </div>
     </header>
+
+    <dialog class="ap-gemini" id="ap-gemini" aria-labelledby="ap-gemini-title">
+      <header class="ap-gemini-head">
+        <hgroup>
+          <p>ผลลัพธ์จาก Gemini · มื้อปกติ</p>
+          <h2 id="ap-gemini-title">กดครั้งเดียว ฝาจะเปิด–ปิดหนึ่งรอบไหม?</h2>
+        </hgroup>
+        <form method="dialog"><button type="submit" autofocus>ปิด</button></form>
+      </header>
+      <div class="ap-gemini-body" tabindex="0" role="region" aria-label="แผนทดลองในหนึ่งคาบ">
+        <p class="ap-gemini-source">เรียบเรียงจากคำตอบที่ลองถาม Gemini และปรับรายละเอียดให้ตรงกับ Lab 3</p>
+        <p>ใช้หนึ่งคาบทำ <strong>POC</strong> หรือการทดลองเล็ก ๆ เพื่อพิสูจน์เรื่องเดียวว่า เมื่อความชื้นและอาหารผ่านเกณฑ์ คำสั่งหนึ่งครั้งจะจ่ายอาหารเพียงหนึ่งรอบ</p>
+
+        <ol class="ap-gemini-flow" role="list">
+          <li><strong>ตั้งค่าใน Wokwi</strong><span>ความชื้น <b>55% RH</b> · ระยะถึงผิวเม็ด <b>10 ซม.</b> · ตั้ง <b>IR เป็น HIGH</b> (ชามว่าง)</span></li>
+          <li><strong>กดให้อาหารหนึ่งครั้ง</strong><span>รอประมาณ 3 วินาทีหลังตั้งค่า แล้วกด <b>MEAL</b> หนึ่งครั้ง ดูว่าฝาขยับกี่รอบ</span></li>
+          <li><strong>นับว่าผ่านเมื่อ</strong><span>Buzzer ดัง 1 ครั้ง ฝาเปิดแล้วปิด 1 รอบ และไฟแดงดับ</span></li>
+        </ol>
+
+        <section class="ap-gemini-boundary" aria-labelledby="ap-boundary-title">
+          <h3 id="ap-boundary-title">ลองความชื้นใกล้เกณฑ์</h3>
+          <p>คงระยะ <b>10 ซม.</b> กับ IR ที่ <b>HIGH</b> เปลี่ยนแค่ความชื้น รอให้รอบก่อนจบและให้เซนเซอร์อ่านค่าใหม่ก่อนกดแต่ละครั้ง</p>
+          <div><span><b>69% RH</b> จ่ายหนึ่งรอบ</span><span><b>70% RH</b> งดจ่าย ฝาปิดและไฟแดงติด</span></div>
+        </section>
+
+        <section class="ap-gemini-serial" aria-labelledby="ap-serial-title">
+          <h3 id="ap-serial-title">ดูอะไรใน Serial Monitor?</h3>
+          <p>มื้อปกติดู <code>CHECK</code> ว่าความชื้นราว 55% และอาหารราว 78% จากนั้นดู <code>BEEP</code> → <code>FLAP_OPEN</code> → <code>DISPENSED</code> อย่างละหนึ่งครั้ง กรณี 70% จะขึ้น <code>BLOCK_HUMIDITY</code></p>
+          <p>หลังขึ้น <code>DISPENSED</code> ให้เลื่อนสวิตช์ IR เป็น <b>LOW</b> ภายใน 8 วินาที แล้วดู <code>CAT_AT_BOWL</code> เพื่อยืนยันว่ามีตัวเข้าใกล้ชาม ฝายังคงปิดอยู่</p>
+        </section>
+
+        <div class="ap-gemini-checks">
+          <section aria-labelledby="ap-wokwi-title">
+            <h3 id="ap-wokwi-title">เช็กกติกาใน Wokwi</h3>
+            <p>ใช้ Lab 3 ที่มี HTU21D แบบจำลอง, HC-SR04 และสวิตช์แทน IR ลองมื้อปกติกับค่าขอบ แล้วจดค่าที่ตั้งและสิ่งที่เกิดขึ้นในแต่ละรอบ</p>
+          </section>
+          <section aria-labelledby="ap-board-test-title">
+            <h3 id="ap-board-test-title">ยืนยันบนเครื่องจริง</h3>
+            <p>ใช้ ESP32 และอุปกรณ์ตามผัง Lab ลองวัดระยะกับเม็ดอาหารจริง เลื่อนวัตถุเข้า–ออกจากหน้าโมดูล IR แล้ววัดไฟเลี้ยง 5 V ขณะ Servo เปิดฝา</p>
+          </section>
+        </div>
+
+        <details class="ap-gemini-debug">
+          <summary>ถ้าผลยังไม่ผ่าน ลองเช็กทีละอย่าง</summary>
+          <ul>
+            <li><strong>บอร์ดรีเซ็ตตอนฝาขยับ</strong> ลองวัดไฟที่ Servo ขณะออกแรง เช็กแหล่งจ่าย 5 V และสาย GND ร่วม</li>
+            <li><strong>ระยะกระโดดไปมา</strong> ลองปรับมุมเซนเซอร์ให้ตั้งฉากกับผิวอาหาร แล้วอ่านซ้ำก่อนเปลี่ยนโค้ด</li>
+            <li><strong>กดครั้งเดียวแล้วจ่ายซ้ำ</strong> เช็กว่าตัวกรองปุ่มในโค้ด (debounce) รับการเปลี่ยนจาก HIGH เป็น LOW เพียงครั้งเดียว</li>
+            <li><strong>IR รายงานว่ามีตัวทั้งที่ชามว่าง</strong> ลองปรับระยะหรือหมุนปุ่มปรับความไวของโมดูล แล้วทดสอบภายใต้แสงเดิมอีกครั้ง</li>
+          </ul>
+        </details>
+      </div>
+    </dialog>
 
     <section class="cl-panel-inner ap-feeder-test" aria-labelledby="ap-test-heading">
       <div>
         <span class="cl-kicker">เตรียมก่อนลง Lab</span>
         <h2 id="ap-test-heading">ถ้าเปลี่ยนหนึ่งอย่าง เครื่องควรทำอะไร?</h2>
-        <p>เลือกเหตุการณ์เพื่อเติมโจทย์ทดสอบลงในคำถาม ระบบจะต่อยอดจากค่าที่เครื่องอ่านได้จริงใน Lab</p>
+        <p>เลือกเหตุการณ์เดียว แล้วลองคิดว่าควรเห็นอะไรที่เครื่องก่อนเอาคำถามไปให้ Gemini ช่วยวางแผน</p>
       </div>
       <div class="ap-feeder-cases" role="group" aria-label="กรณีทดสอบเครื่องให้อาหาร">
         <button type="button" data-feeder-test="normal" aria-pressed="true">มื้อปกติ</button>

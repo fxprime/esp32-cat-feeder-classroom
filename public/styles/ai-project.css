@@ -109,3 +109,93 @@
 .ap-optional-tradeoff { margin-block: 1rem; }
 .ap-optional-tradeoff > summary { color: #1e3a8a; cursor: pointer; min-block-size: 2.75rem; align-content: center; }
 @media (max-width: 37rem) { .ap-feeder-expect { grid-template-columns: minmax(0, 1fr); } }
+
+.ap-gemini-entry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .65rem;
+  align-items: center;
+  margin-block-start: .72rem;
+  color: #395373;
+  font-size: .9rem;
+}
+.ap-gemini-entry button, .ap-gemini-head button { min-block-size: 44px; font-size: .94rem; }
+.ap-gemini {
+  box-sizing: border-box;
+  inline-size: min(58rem, calc(100% - 1.5rem));
+  max-inline-size: none;
+  max-block-size: calc(100dvh - 1.5rem);
+  padding: 0;
+  border: 1px solid #aec8e7;
+  border-radius: 1rem;
+  background: #f8fbff;
+  color: #233d56;
+  box-shadow: 0 1rem 3rem #12284455;
+}
+.ap-gemini[open] { display: flex; flex-direction: column; overflow: hidden; }
+.ap-gemini:modal, .ap-gemini-body { overscroll-behavior: contain; }
+.ap-gemini::backdrop { background: #172b486e; overflow: hidden; overscroll-behavior: contain; }
+.ap-gemini-head {
+  display: flex;
+  flex-shrink: 0;
+  align-items: start;
+  justify-content: space-between;
+  gap: .65rem;
+  padding: .75rem clamp(.8rem, 2.3vw, 1.3rem);
+  background: #e8f3ff;
+  border-block-end: 1px solid #bed5ee;
+}
+.ap-gemini-head h2 {
+  margin: .14rem 0 0;
+  color: #153978;
+  font-size: clamp(1.25rem, 3.3vw, 1.9rem);
+  line-height: 1.36;
+  text-wrap: balance;
+}
+.ap-gemini-head p { margin: 0; color: #234f8a; font-size: .85rem; font-weight: 700; }
+.ap-gemini-head form { flex: none; margin: 0; }
+.ap-gemini-head button { min-inline-size: 4rem; }
+.ap-gemini-body {
+  min-block-size: 0;
+  overflow-y: auto;
+  padding: .72rem clamp(.8rem, 2.3vw, 1.3rem) 1.05rem;
+  font-size: clamp(.96rem, 1.7vw, 1.05rem);
+  line-height: 1.52;
+}
+.ap-gemini-body:focus-visible { outline: 2px solid #2563eb; outline-offset: -3px; }
+.ap-gemini-body p { margin: .24rem 0; }
+.ap-gemini-body .ap-gemini-source { color: #475f79; font-size: .83rem; margin-block-start: 0; }
+.ap-gemini-body h3 { margin: 0; color: #20457a; font-size: 1.05rem; }
+.ap-gemini-flow, .ap-gemini-checks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: .5rem;
+  margin: .65rem 0;
+}
+.ap-gemini-flow { list-style: none; padding: 0; }
+.ap-gemini-flow li, .ap-gemini-checks section {
+  min-inline-size: 0;
+  padding: .55rem .68rem;
+  border: 1px solid #c9dcf3;
+  border-radius: .65rem;
+  background: #fff;
+}
+.ap-gemini-flow strong { display: block; margin-block-end: .2rem; color: #1d4a83; }
+.ap-gemini-flow li:last-child { background: #ecf8ef; border-color: #bdddc8; color: #20573e; }
+.ap-gemini-flow li:last-child strong { color: #225939; }
+.ap-gemini-boundary {
+  margin: .56rem 0;
+  padding: .55rem .7rem;
+  border-inline-start: 4px solid #5287c6;
+  border-radius: .44rem;
+  background: #edf5ff;
+}
+.ap-gemini-boundary div { display: flex; flex-wrap: wrap; gap: .35rem; margin-block-start: .45rem; }
+.ap-gemini-boundary span { padding: .2rem .43rem; border-radius: .3rem; background: #dff3e5; color: #20583c; }
+.ap-gemini-boundary span:last-child { background: #fff0df; color: #7b4226; }
+.ap-gemini-serial { margin-block: .7rem; }
+.ap-gemini-body code { font-size: .82em; background: #dfebfa; color: #204b7f; padding: .08em .23em; border-radius: .2rem; overflow-wrap: anywhere; }
+.ap-gemini-debug { margin-block-start: .65rem; border-block-start: 1px solid #cedff1; }
+.ap-gemini-debug summary { min-block-size: 44px; align-content: center; cursor: pointer; color: #1e40af; font-weight: 700; }
+.ap-gemini-debug ul { margin: 0; padding-inline-start: 1.25rem; }
+.ap-gemini-debug li { margin: .32rem 0; }

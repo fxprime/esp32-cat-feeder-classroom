@@ -89,6 +89,7 @@ const requests = {
 };
 
 const form = document.querySelector('#project-form');
+const geminiDialog = document.querySelector('#ap-gemini');
 const output = document.querySelector('#ap-output');
 const status = document.querySelector('#ap-status');
 const idea = form.elements.namedItem('idea');
@@ -96,6 +97,12 @@ const presetButtons = [...form.querySelectorAll('[data-preset]')];
 const fields = ['idea', 'goal', 'budget', 'time', 'tools', 'limits'];
 const target = document.querySelector('#pt-prompt-target');
 let buildPlan;
+
+document.querySelector('#ap-show-gemini').addEventListener('click', () => {
+  geminiDialog.showModal();
+  geminiDialog.querySelector('.ap-gemini-body').scrollTop = 0;
+});
+geminiDialog.addEventListener('keydown', event => event.stopPropagation());
 
 function renderPrompt() {
   const values = new FormData(form);

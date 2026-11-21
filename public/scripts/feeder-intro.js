@@ -5,6 +5,7 @@ const progress = select('[data-project-progress]');
 const context = select('[data-project-context]');
 const next = select('[data-project-next]');
 const back = select('[data-project-back]');
+const proof = select('[data-project-proof]');
 const reveal = select('[data-project-reveal]');
 const status = select('[data-project-status]');
 const featurePanel = select('#fi-features');
@@ -64,6 +65,7 @@ function render(nextStage, focus = false) {
   reveal.hidden = !exterior || shown === features.length;
   next.hidden = !stage.next || (exterior && shown < features.length);
   next.textContent = stage.next ?? '';
+  proof.hidden = stage.id !== 'devices';
   featurePanel.hidden = !exterior || (!revealInProgress && shown === 0);
   for (const [index, legend] of legends.entries()) {
     legend.hidden = exterior;
@@ -123,4 +125,8 @@ reveal.addEventListener('click', () => {
 });
 next.addEventListener('click', () => render(stageIndex + 1, true));
 back.addEventListener('click', () => render(stageIndex - 1, true));
+proof.addEventListener('click', () => {
+  if (parent === window) location.assign('../#slide-17');
+  else parent.postMessage({ type: 'SLIDE_NAV_KEY', key: 'ArrowRight' }, location.origin);
+});
 project.dataset.projectReady = 'true';
