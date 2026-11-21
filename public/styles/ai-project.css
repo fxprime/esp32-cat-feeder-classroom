@@ -98,9 +98,6 @@
 .ap-block-diagram span { padding: .42rem .6rem; text-align: center; border: 1px solid #93c5fd; border-radius: .55rem; color: #1e3a8a; background: #eff6ff; }
 .ap-block-diagram small { display: block; font-size: .68rem; font-weight: 700; color: #0369a1; }
 .ap-block-diagram b { color: #2563eb; }
-@container code-panel (max-width: 740px) {
-  .ap-workspace { grid-template-columns: minmax(0, 1fr); }
-}
 @container code-panel (min-width: 520px) {
   .ap-modes { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
@@ -124,6 +121,9 @@
 .ap-feeder-expect dd { margin: 0; }
 .ap-optional-tradeoff { margin-block: 1rem; }
 .ap-optional-tradeoff > summary { color: #1e3a8a; cursor: pointer; min-block-size: 2.75rem; align-content: center; }
+@media (max-width: 46.25rem) {
+  .ap-workspace { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 37rem) { .ap-feeder-expect { grid-template-columns: minmax(0, 1fr); } }
 
 .ap-gemini-head button { min-block-size: 44px; font-size: .94rem; }
