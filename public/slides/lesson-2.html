@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="../styles/feeder-foundations.css">
   <link rel="stylesheet" href="../styles/feeder-scene.css">
   <link rel="stylesheet" href="../styles/feeder-ir.css">
-  <link rel="stylesheet" href="../styles/feeder-flow.css?v=manual-feed">
+  <link rel="stylesheet" href="../styles/feeder-flow.css?v=separate-ports">
 </head>
 <body class="flow-page">
   <main class="flow-shell">
@@ -38,10 +38,6 @@
           </div>
         </section>
 
-        <svg class="flow-forward" data-flow-beat="first-arrow" viewBox="0 0 44 20" aria-hidden="true">
-          <path d="M4 10h35m-7-7 7 7-7 7"/>
-        </svg>
-
         <section class="flow-node" data-flow-node="process" data-flow-beat="process">
           <h3>Process</h3>
           <div class="flow-art">
@@ -52,10 +48,6 @@
             <p data-flow-detail>ใช้ข้อมูลกับกติกาเพื่อเลือกว่าจะทำอะไร</p>
           </div>
         </section>
-
-        <svg class="flow-forward" data-flow-beat="second-arrow" viewBox="0 0 44 20" aria-hidden="true">
-          <path d="M4 10h35m-7-7 7 7-7 7"/>
-        </svg>
 
         <section class="flow-node" data-flow-node="output" data-flow-beat="output">
           <h3>Output</h3>
@@ -68,9 +60,13 @@
           </div>
         </section>
 
-        <svg class="flow-return" aria-hidden="true">
-          <path class="flow-route-in" pathLength="100"/>
-          <path class="flow-route-out" pathLength="100"/>
+        <svg class="flow-links" aria-hidden="true">
+          <path class="flow-link-input" pathLength="100"/>
+          <path class="flow-link-output" pathLength="100"/>
+          <path class="flow-link-feedback" pathLength="100"/>
+          <circle class="flow-output-branch" r="2.8"/>
+          <circle class="flow-input-port" r="3.5"/>
+          <circle class="flow-feedback-port" r="3.5"/>
         </svg>
 
         <section class="flow-feedback" data-flow-feedback data-flow-beat="feedback">
@@ -347,7 +343,7 @@
             </button>
 
             <div class="fs-scene-alert" aria-hidden="true" data-scene-alert hidden>
-              <span>✉</span><strong>แจ้งเจ้าของแล้ว</strong>
+              <span>✉</span><strong data-alert-message></strong>
               <small>Telegram จำลอง</small>
             </div>
             <noscript><p>เปิด JavaScript เพื่อทดลองลากอุปกรณ์ในฉาก</p></noscript>
@@ -384,8 +380,8 @@
       </section>
     </details>
   </main>
-  <script type="module" src="../scripts/feeder-flow.js?v=manual-feed"></script>
-  <script type="module" src="../scripts/feeder-scene.js?v=tank-refill"></script>
+  <script type="module" src="../scripts/feeder-flow.js?v=separate-ports"></script>
+  <script type="module" src="../scripts/feeder-scene.js?v=stock-alert"></script>
   <script defer src="../scripts/slide-support.js"></script>
 </body>
 </html>

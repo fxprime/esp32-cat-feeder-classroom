@@ -69,6 +69,7 @@ function mountFeederScene(lab) {
   const bowlPellets = [];
   const rainArt = scene.querySelector('[data-rain-art]');
   const alert = scene.querySelector('[data-scene-alert]');
+  const alertMessage = alert.querySelector('[data-alert-message]');
   const clockControl = scene.querySelector('[data-clock-control]');
   const clockHand = scene.querySelector('[data-clock-hand]');
   const clockMarker = scene.querySelector('[data-clock-marker]');
@@ -322,7 +323,7 @@ function mountFeederScene(lab) {
       'ขีดสีส้มบอกเวลาให้อาหาร'];
     if (recovered) return ['เติมอาหารในถังแล้ว', `หมุนเข็มไปที่มื้อ ${dueLabel()} เพื่อจ่ายอาหารลงชาม`];
     if (drag?.name === 'level') return ['ปรับระดับอาหารในถัง', 'ดูเม็ดอาหารขยับตามเส้น ยิ่งอาหารสูง ระยะที่วัดได้ยิ่งสั้น'];
-    if (emptyFood(state.foodPercent)) return ['ถังอาหารหมด', 'ลากกล่องอาหารใหม่ที่ไฮไลท์ไปเทที่ปากถัง'];
+    if (emptyFood(state.foodPercent)) return ['ถังอาหารหมด', 'แจ้งเจ้าของผ่าน Telegram (จำลอง) แล้ว ลากกล่องอาหารใหม่ไปที่ปากถัง'];
     if (eating()) return ['แมวกำลังกิน', 'IR อ่าน LOW และเม็ดอาหารในชามค่อย ๆ ลดลง'];
     if (finishedEating) return ['กินหมดชามแล้ว', `ถังยังมีอาหาร ${state.foodPercent}% รอมื้อ ${dueLabel()}`];
     if (latest?.type === 'arrival') return ['IR บันทึกว่ามีตัวมาที่ชามแล้ว', 'ลองลากแมวถอยออกจากระยะแล้วดู IR กลับเป็น HIGH หรือลากเมฆเพื่อทดสอบถังชื้น'];
@@ -344,8 +345,10 @@ function mountFeederScene(lab) {
     const angle = state.servoAngle;
     const servoMode = angle ? 'open' : closing ? 'closing' : 'closed';
     const tankEmpty = emptyFood(shownPercent);
-    const feederFault = state.ledRed && (state.reason !== 'empty' || emptyFood(state.foodPercent));
-    const fault = wetFood || feederFault;
+    const stockEmpty = emptyFood(state.foodPercent);
+    const emptyAlert = stockEmpty && !wetFood && current !== 'refilling';
+    const feederFault = state.ledRed && state.reason !== 'empty';
+    const fault = wetFood || emptyAlert || feederFault;
     const refillReady = available('box');
     const refillOver = refillReady && drag?.name === 'box' && nearSpout(positions.box);
 
@@ -375,7 +378,10 @@ function mountFeederScene(lab) {
     attr(rainArt, 'transform', `translate(${(positions.cloud[0] - CLOUD_X) * .7} 0)`);
     drawBowl();
     drawFallingFood(state);
-    alert.hidden = !wetFood;
+    if (wetFood || emptyAlert) {
+      text(alertMessage, wetFood ? 'ถังชื้น ช่วยเปลี่ยนอาหาร' : 'อาหารหมด ช่วยเติมอาหารในถัง');
+    }
+    alert.hidden = !wetFood && !emptyAlert;
     actors.old.hidden = current !== 'discard';
     attr(actors.cat, 'aria-pressed', state.catAtBowl);
     attr(actors.cloud, 'aria-pressed', raining());
@@ -410,13 +416,15 @@ function mountFeederScene(lab) {
     text(artCommand, statement);
     text(process, check ? `ถึงมื้อแล้ว · อ่าน ${rh}% RH และอาหาร ${state.foodPercent}%` :
       wetFood ? `พบความชื้นถึงเกณฑ์ ${FEEDER_LIMITS.humidity}% RH · รอเปลี่ยนอาหาร` :
-      feederFault ? `ถึงมื้อแล้วมีอาหารเหลือไม่เกิน ${FEEDER_LIMITS.emptyPercent}%` :
       busy(state) ? 'ความชื้นกับระดับอาหารผ่าน · จ่ายได้หนึ่งรอบ' :
+      emptyAlert ? `ตรวจพบว่าอาหารในถังเหลือไม่เกิน ${FEEDER_LIMITS.emptyPercent}%` :
+      feederFault ? 'งดจ่าย · ตรวจค่าเซนเซอร์อีกครั้ง' :
       atBowl() ? 'IR อ่าน LOW เมื่อมีตัวมาที่ชาม' : `รอมื้อ ${dueLabel()} แล้วตรวจความชื้นกับระดับอาหาร`);
     text(output, angle ? 'Servo หมุนเพื่อเปิดทางให้อาหารตก' :
       closing ? 'Servo หมุนกลับเพื่อหยุดจ่าย' :
       wetFood ? 'ไฟแดงติด · แจ้งเจ้าของผ่าน Telegram (จำลอง)' :
-      feederFault ? 'ไฟแดงติด · แจ้งว่าอาหารหมด' :
+      emptyAlert ? 'ไฟแดงติด · แจ้งเจ้าของให้เติมอาหารผ่าน Telegram (จำลอง)' :
+      feederFault ? 'ไฟแดงติด · แจ้งปัญหาผ่าน Telegram (จำลอง)' :
       state.buzzer ? 'Buzzer เตือนก่อนเปิดฝา' :
       state.phase === 'watching' ? 'จ่ายแล้ว · IR เฝ้าดูที่ชาม' :
       state.portions ? 'จ่ายรอบล่าสุดเสร็จแล้ว' : 'รอคำสั่งจ่ายอาหาร');

@@ -64,10 +64,17 @@ const nodes = {
   output: lesson.querySelector('[data-flow-node="output"]'),
   feedback: lesson.querySelector('[data-flow-feedback]'),
 };
+const inputArt = nodes.input.querySelector('.flow-art');
+const processArt = nodes.process.querySelector('.flow-art');
+const outputArt = nodes.output.querySelector('.flow-art');
 const processBalloon = nodes.process.querySelector('.flow-balloon');
-const outputBalloon = nodes.output.querySelector('.flow-balloon');
-const routeIn = map.querySelector('.flow-route-in');
-const routeOut = map.querySelector('.flow-route-out');
+const links = map.querySelector('.flow-links');
+const inputWire = links.querySelector('.flow-link-input');
+const outputWire = links.querySelector('.flow-link-output');
+const feedbackWire = links.querySelector('.flow-link-feedback');
+const inputPort = links.querySelector('.flow-input-port');
+const feedbackPort = links.querySelector('.flow-feedback-port');
+const outputBranch = links.querySelector('.flow-output-branch');
 let current = 0;
 
 function layoutPosition(block) {
@@ -80,16 +87,30 @@ function layoutPosition(block) {
   return { x, y };
 }
 
-function drawFeedbackRoutes() {
-  const process = layoutPosition(processBalloon);
-  const output = layoutPosition(outputBalloon);
-  const feedbackTop = layoutPosition(nodes.feedback).y;
-  const processX = process.x + processBalloon.offsetWidth / 2;
-  const outputX = output.x + outputBalloon.offsetWidth / 2;
-  const processBottom = process.y + processBalloon.offsetHeight;
-  const outputBottom = output.y + outputBalloon.offsetHeight;
-  routeIn.setAttribute('d', `M${outputX} ${outputBottom} V${feedbackTop} l-4-5 4 5 4-5`);
-  routeOut.setAttribute('d', `M${processX} ${feedbackTop} V${processBottom} l-4 5 4-5 4 5`);
+function placePort(port, x, y) {
+  port.setAttribute('cx', x);
+  port.setAttribute('cy', y);
+}
+
+function drawWires() {
+  const processLeft = layoutPosition(nodes.process).x;
+  const processRight = processLeft + nodes.process.offsetWidth;
+  const inputEnd = layoutPosition(nodes.input).x + nodes.input.offsetWidth;
+  const outputStart = layoutPosition(nodes.output).x;
+  const upperY = layoutPosition(processArt).y + processArt.offsetHeight / 2;
+  const lowerY = layoutPosition(processBalloon).y + processBalloon.offsetHeight / 2;
+  const loopY = layoutPosition(nodes.feedback).y - 8;
+  const branchX = (processRight + outputStart) / 2;
+  const returnX = (inputEnd + processLeft) / 2;
+  const inletX = processLeft - 3.5;
+  const arrowhead = 'l-5 -4 5 4 -5 4';
+
+  inputWire.setAttribute('d', `M${layoutPosition(inputArt).x + inputArt.offsetWidth} ${upperY} H${inletX} ${arrowhead}`);
+  outputWire.setAttribute('d', `M${processRight} ${upperY} H${layoutPosition(outputArt).x} ${arrowhead}`);
+  feedbackWire.setAttribute('d', `M${branchX} ${upperY} V${loopY} H${returnX} V${lowerY} H${inletX} ${arrowhead}`);
+  placePort(inputPort, processLeft, upperY);
+  placePort(feedbackPort, processLeft, lowerY);
+  placePort(outputBranch, branchX, upperY);
 }
 
 function playReveal() {
@@ -120,7 +141,7 @@ function renderStep() {
   summary.hidden = !principle;
   practice.hidden = principle;
   if (principle) practice.open = false;
-  drawFeedbackRoutes();
+  drawWires();
   playReveal();
 }
 
@@ -140,6 +161,6 @@ next.addEventListener('click', () => {
   renderStep();
 });
 replay.addEventListener('click', playReveal);
-const routeObserver = new ResizeObserver(drawFeedbackRoutes);
-for (const element of [map, processBalloon, outputBalloon, nodes.feedback]) routeObserver.observe(element);
+const routeObserver = new ResizeObserver(drawWires);
+for (const element of [map, nodes.process, processArt, processBalloon, nodes.feedback]) routeObserver.observe(element);
 renderStep();
