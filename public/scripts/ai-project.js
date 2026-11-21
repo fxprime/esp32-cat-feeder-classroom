@@ -88,13 +88,19 @@ const requests = {
   explain: 'อธิบายว่าโปรเจกต์นี้ทำงานอย่างไรด้วยคำง่าย ๆ ขยายคำย่อครั้งแรกและยกตัวอย่างจากโปรเจกต์นี้',
 };
 
+const requestKeywords = {
+  assess: ['งบและเวลา', 'ตาราง BOM', 'POC'],
+  poc: ['POC', 'เสี่ยงที่สุด', 'Wokwi'],
+  diagram: ['block diagram', 'Input → Process → Output'],
+  explain: ['คำง่าย ๆ'],
+};
+
 const form = document.querySelector('#project-form');
 const aiResultDialog = document.querySelector('#ap-ai-result');
 const aiResultButton = document.querySelector('#ap-show-ai-result');
 const output = document.querySelector('#ap-output');
 const outputText = document.querySelector('#ap-output-text');
-const outputParts = createPromptParts(document.querySelector('#ap-request-mark'));
-const typingParts = createPromptParts(document.querySelector('#ap-typing-mark'));
+const typingText = document.querySelector('#ap-typing-text');
 const typingOption = document.querySelector('#ap-animate');
 const status = document.querySelector('#ap-status');
 const idea = form.elements.namedItem('idea');
@@ -112,21 +118,47 @@ let typingFrame = 0;
 let typingEnabled = true;
 let buildPlan;
 
-function createPromptParts(mark) {
-  const intro = new Text();
-  const instructions = new Text();
-  const details = new Text();
-  mark.before(intro);
-  mark.append(instructions);
-  mark.after(details);
-  return [intro, instructions, details];
+function markRequestKeywords(request, keywords) {
+  const parts = [];
+  let offset = 0;
+  for (const keyword of keywords) {
+    const start = request.indexOf(keyword, offset);
+    if (start < 0) continue;
+    parts.push({ text: request.slice(offset, start) }, { text: keyword, highlighted: true });
+    offset = start + keyword.length;
+  }
+  parts.push({ text: request.slice(offset) });
+  return parts;
 }
 
-function revealPromptParts(nodes, parts, remaining = Infinity) {
-  for (const [index, part] of parts.entries()) {
-    const visible = part.slice(0, remaining);
-    if (nodes[index].data !== visible) nodes[index].data = visible;
-    remaining = Math.max(0, remaining - part.length);
+function promptField(label, value) {
+  return [{ text: '\n' }, { text: label, highlighted: true }, { text: `: ${value}` }];
+}
+
+function mountPromptParts(container, parts) {
+  const fragment = document.createDocumentFragment();
+  const mounted = parts.map(({ text, highlighted }) => {
+    const node = new Text();
+    if (highlighted) {
+      const mark = document.createElement('mark');
+      mark.className = 'ap-marker';
+      mark.append(node);
+      fragment.append(mark);
+    } else {
+      fragment.append(node);
+    }
+    return { text, node };
+  });
+  container.replaceChildren(fragment);
+  return mounted;
+}
+
+function revealPromptParts(parts, remaining = Infinity) {
+  for (const { text, node } of parts) {
+    if (remaining <= 0) break;
+    const visible = text.slice(0, remaining);
+    if (node.data !== visible) node.data = visible;
+    remaining -= text.length;
   }
 }
 
@@ -134,11 +166,12 @@ function finishTyping() {
   cancelAnimationFrame(typingFrame);
   typingFrame = 0;
   output.removeAttribute('data-typing');
-  for (const part of typingParts) part.data = '';
+  typingText.replaceChildren();
 }
 
 function typePrompt(prompt, parts) {
   finishTyping();
+  const typingParts = mountPromptParts(typingText, parts);
   const characters = [...graphemes.segment(prompt)];
   let characterIndex = 0;
   let nextAt;
@@ -156,7 +189,7 @@ function typePrompt(prompt, parts) {
       finishTyping();
       return;
     }
-    if (endOffset) revealPromptParts(typingParts, parts, endOffset);
+    if (endOffset) revealPromptParts(typingParts, endOffset);
     typingFrame = requestAnimationFrame(reveal);
   }
 
@@ -201,27 +234,29 @@ function renderPrompt({ topicSelected = false } = {}) {
   document.querySelector('#ap-format-field').hidden = !explaining;
   const request = explaining ? `${requests.explain}\n${explainFormats[read('format')]}` : requests[mode];
   const test = feederBrief ? feederTests[selectedFeederTest] : null;
-  const details = [
-    `ไอเดีย: ${read('idea') || 'ยังไม่ได้ระบุ'}`,
-    `ผลที่อยากให้เห็นตอนสาธิต: ${read('goal') || 'ช่วยเสนอผลที่วัดได้'}`,
-    `งบสูงสุด: ${read('budget') ? `${read('budget')} บาท` : 'ยังไม่กำหนด'}`,
-    `เวลาที่มี: ${read('time') || 'ยังไม่กำหนด'}`,
-    `บอร์ด อุปกรณ์ และเครื่องมือที่มี: ${read('tools') || 'ยังไม่ได้ระบุ'}`,
-    `ข้อจำกัดเพิ่มเติม: ${read('limits') || 'ยังไม่ได้ระบุ'}`,
-    ...(buildPlan ? [`เป้าหมายความพร้อม: ${buildPlan.goal} ช่วยประเมินงบและเวลาของโปรเจกต์ฉันตามเป้าหมายนี้`] : []),
+  const parts = [
+    { text: promptIntro },
+    ...markRequestKeywords(request, requestKeywords[mode]),
+    { text: '\n' },
+    ...promptField('ไอเดีย', read('idea') || 'ยังไม่ได้ระบุ'),
+    ...promptField('ผลที่อยากให้เห็นตอนสาธิต', read('goal') || 'ช่วยเสนอผลที่วัดได้'),
+    ...promptField('งบสูงสุด', read('budget') ? `${read('budget')} บาท` : 'ยังไม่กำหนด'),
+    ...promptField('เวลาที่มี', read('time') || 'ยังไม่กำหนด'),
+    ...promptField('บอร์ด อุปกรณ์ และเครื่องมือที่มี', read('tools') || 'ยังไม่ได้ระบุ'),
+    ...promptField('ข้อจำกัดเพิ่มเติม', read('limits') || 'ยังไม่ได้ระบุ'),
+    ...(buildPlan ? promptField('เป้าหมายความพร้อม', `${buildPlan.goal} ช่วยประเมินงบและเวลาของโปรเจกต์ฉันตามเป้าหมายนี้`) : []),
     ...(test ? [
-      '',
-      `กรณีทดสอบที่เลือก: ${test.input}`,
-      `ผลที่คาดไว้: ${test.pass}`,
-      ...(mode === 'poc' ? ['ช่วยวางขั้นตอนทดลองให้ทำซ้ำได้ ระบุว่าจะดูค่าไหนบน Serial หรือหน้าเครื่อง และเสนอกรณีใกล้ขอบเงื่อนไขอีกหนึ่งกรณี'] : []),
+      { text: '\n' },
+      ...promptField('กรณีทดสอบที่เลือก', test.input),
+      ...promptField('ผลที่คาดไว้', test.pass),
+      ...(mode === 'poc' ? [{ text: '\nช่วยวางขั้นตอนทดลองให้ทำซ้ำได้ ระบุว่าจะดูค่าไหนบน Serial หรือหน้าเครื่อง และเสนอกรณีใกล้ขอบเงื่อนไขอีกหนึ่งกรณี' }] : []),
     ] : []),
-  ].join('\n');
-  const parts = [promptIntro, request, `\n\n${details}`];
-  const prompt = parts.join('');
+  ];
+  const prompt = parts.map(part => part.text).join('');
   const firstSelection = topicSelected && !playedTopics.has(mode);
   const promptChanged = prompt !== outputText.textContent;
   if (firstSelection) playedTopics.add(mode);
-  if (promptChanged) revealPromptParts(outputParts, parts);
+  if (promptChanged) revealPromptParts(mountPromptParts(outputText, parts));
   if (firstSelection && typingOption.checked) typePrompt(prompt, parts);
   else if (promptChanged) finishTyping();
   const matchesSample = mode === 'poc' && test === feederTests.normal && !buildPlan
