@@ -84,16 +84,16 @@ export default function Dashboard({
           {/* Main Title Banner */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7">
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight text-balance">
-                {COURSE_TITLE}
-              </h1>
-
-              <p className="text-base sm:text-lg text-cyan-300 leading-relaxed font-semibold">
-                คอร์สเรียนรู้ ESP32 แบบ Project-Based Learning
-              </p>
-              <p className="text-sm sm:text-base text-slate-300 leading-relaxed mt-1 mb-6">
-                โดย วิทยากร ธนบดี บุหลันศรีชาติ
-              </p>
+              <hgroup className="course-heading mb-6">
+                <h1 className="text-white mb-4 text-balance">{COURSE_TITLE}</h1>
+                <p className="course-subtitle text-cyan-300">
+                  คอร์สเรียนรู้ ESP32 แบบ{" "}
+                  <span className="inline-block">Project-Based Learning</span>
+                </p>
+                <p className="course-presenter text-slate-300 mt-1">
+                  โดย วิทยากร ธนบดี บุหลันศรีชาติ
+                </p>
+              </hgroup>
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3">

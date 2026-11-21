@@ -24,6 +24,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+## Supermarket Regular
+
+Copyright (c) 2009 Chatnarong Jingsuphatada. The original font file is bundled with the homepage for display.
+
+[Font release](https://www.f0nt.com/release/supermarket/) · [License terms](https://www.f0nt.com/about/license/)
+
 ## invokers-polyfill 1.0.4
 
 Conditional Invoker Commands fallback, bundled locally for slide 6.
