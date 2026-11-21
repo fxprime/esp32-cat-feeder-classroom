@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ศึกษา digital / analog จากบางส่วน inputของโปรเจค · ESP32 ม.4</title>
+  <title>Digital VS Analog · ESP32 ม.4</title>
   <link rel="stylesheet" href="../styles/classroom.css">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -35,26 +35,6 @@
       box-shadow: 0 2px 8px rgba(124, 58, 237, 0.45);
       cursor: pointer;
     }
-
-    input[type="range"].pwm-slider {
-      -webkit-appearance: none;
-      appearance: none;
-      height: 12px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #e2e8f0 0%, #f59e0b 100%);
-      outline: none;
-    }
-    input[type="range"].pwm-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #d97706;
-      border: 3px solid #ffffff;
-      box-shadow: 0 2px 8px rgba(217, 119, 6, 0.45);
-      cursor: pointer;
-    }
   </style>
 <link rel="stylesheet" href="../styles/slide-support.css"><link rel="stylesheet" href="../styles/signal-lab.css"><link rel="stylesheet" href="../styles/adc-tutorial.css"><link rel="stylesheet" href="../styles/adc-origin.css"><link rel="stylesheet" href="../styles/feeder-signals.css">
   <link rel="stylesheet" href="../styles/feeder-ir.css"></head>
@@ -67,7 +47,7 @@
         ESP32 ม.4 • คาบที่ 1
       </span>
       <span class="text-xs sm:text-sm font-semibold text-slate-600 bg-white/80 backdrop-blur px-3 py-1 rounded-full border border-slate-200">
-        สไลด์ที่ 7 / 17
+        สไลด์ที่ 5 / 20
       </span>
     </div>
   </header>
@@ -77,90 +57,14 @@
     <section class="text-center">
       <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-1">
         <span class="bg-gradient-to-r from-sky-600 via-violet-600 to-amber-500 bg-clip-text text-transparent">
-          ศึกษา digital / analog จากบางส่วน inputของโปรเจค
+          Digital VS Analog
         </span>
       </h1>
       <p class="text-xs sm:text-sm font-semibold text-slate-600">
-        ให้แมวเข้ามาในระยะ IR แล้วลองเคาะแผ่น Piezo เทียบสิ่งที่ ESP32 อ่านได้จากสองขา
+        กดสวิตช์สลับ 0 กับ 1 แล้วปรับลูกบิดเพื่อดูแรงดันระหว่าง 0–3.3 V
       </p>
     </section>
 
-    <section class="feeder-signal-compare" aria-label="ทดลองสัญญาณสองแบบ">
-      <article class="feeder-signal-card feeder-signal-card--ir" data-feeder-ir>
-        <span class="feeder-signal-tag">DIGITAL INPUT · GPIO33</span>
-        <h2>IR สะท้อนตรวจที่ชาม</h2>
-        <p>ตัวส่งกับตัวรับอยู่ในหัวเดียวกัน พอแสง IR สะท้อนจากตัวแมวกลับมามากพอ ขา OUT ของรุ่น Active LOW จะเปลี่ยนจาก 1 เป็น 0</p>
-        <svg class="feeder-sensor-art" viewBox="0 0 320 132" aria-hidden="true">
-          <path d="M24 107h273" stroke="#c0d8e7" stroke-width="2"/>
-          <path d="M70 38 179 24v71L70 79Z" fill="#ccecfb" opacity=".58"/>
-          <rect x="29" y="38" width="46" height="51" rx="9" fill="#1e6192"/>
-          <path class="ir-outbound" d="M66 50l82 8m-9-6 9 6-10 4"/>
-          <path class="ir-return" d="M148 58 66 73m10-7-10 7 12 3"/>
-          <circle cx="67" cy="50" r="5" fill="#67e8f9"/>
-          <circle class="ir-receiver" cx="67" cy="73" r="5" fill="#a78bfa"/>
-          <text x="110" y="39" text-anchor="middle">แสงออก</text>
-          <text class="feeder-reflection-label" x="115" y="89" text-anchor="middle">สะท้อนกลับ</text>
-          <g class="feeder-ir-cat">
-            <path d="M147 57l2-22 16 13q8-3 16 0l15-13 1 22q6 11-5 19-12 9-33 4-17-6-12-23Z" fill="#ffc780" stroke="#975719" stroke-width="2"/>
-            <path d="M151 88q-21 10-29 0" fill="none" stroke="#975719" stroke-width="8" stroke-linecap="round"/>
-            <path d="M159 64h2m19 0h2m-13 6h3" stroke="#81411a" stroke-width="2" stroke-linecap="round"/>
-          </g>
-          <path d="M119 91h81l-9 16h-63Z" fill="#99dbed" stroke="#24749d" stroke-width="2"/>
-          <text x="32" y="124">ตัวส่ง + ตัวรับ</text><text x="170" y="124" text-anchor="middle">ชาม</text>
-        </svg>
-        <div class="feeder-signal-action">
-          <button type="button" class="feeder-action" id="feeder-ir-toggle" aria-pressed="false">แมวเข้ามาในระยะ</button>
-          <output id="feeder-ir-value" aria-live="polite">1 / HIGH · ยังตรวจไม่พบ</output>
-        </div>
-        <figure class="feeder-wave">
-          <figcaption>สถานะที่ขา GPIO33 · การเปลี่ยนครั้งล่าสุด</figcaption>
-          <svg viewBox="0 0 300 88" role="img" aria-label="กราฟระดับ Digital 0 และ 1 เมื่อแมวเข้าและออกจากระยะตรวจจับ">
-            <path d="M29 16h256M29 66h256" class="feeder-wave-grid"/>
-            <text x="8" y="20">1</text><text x="8" y="69">0</text>
-            <text x="284" y="83" text-anchor="end">เวลา →</text>
-            <path id="feeder-ir-wave" d="M29 16H285" class="feeder-wave-trace"/>
-          </svg>
-        </figure>
-        <p class="feeder-signal-guide">ลองให้แมวเข้าและออกจากระยะ แล้วดูขอบขาลงกับขาขึ้นบนกราฟ สัญญาณนี้บอกว่าตรวจพบวัตถุในระยะ ปุ่ม “ให้อาหาร Manual” ใช้สั่งจ่ายอาหาร</p>
-      </article>
-      <article class="feeder-signal-card feeder-signal-card--piezo" data-feeder-piezo>
-        <span class="feeder-signal-tag">ANALOG INPUT · ADC1 / GPIO34</span>
-        <h2>เม็ดอาหารกระทบแผ่น Piezo</h2>
-        <p>แรงกระแทกทำให้แผ่นสั่น วงจรปรับสัญญาณส่งแรงดันที่เปลี่ยนตามการสั่นเข้า ADC</p>
-        <svg class="feeder-sensor-art" viewBox="0 0 320 132" aria-hidden="true">
-          <path d="M19 31l112 41 10-14L29 16Z" fill="#dcd4f9" stroke="#7a4eb0" stroke-width="2"/>
-          <path d="M120 96l79 16 4-15-79-17Z" fill="#f3c975" stroke="#93672f" stroke-width="2"/>
-          <path d="M179 104h46v-42h19" fill="none" stroke="#9866c3" stroke-width="3"/>
-          <rect x="243" y="47" width="54" height="29" rx="6" fill="#825ac0"/>
-          <text x="270" y="66" text-anchor="middle" style="fill:white">ADC1</text>
-          <circle class="feeder-piezo-pellet" cx="100" cy="48" r="8" fill="#b46b2c" stroke="#7c491d" stroke-width="2"/>
-          <path d="M146 76l-6-8m20 7 4-9m5 16 12-3" fill="none" stroke="#b5652c" stroke-width="2" stroke-linecap="round"/>
-          <text x="161" y="129" text-anchor="middle">แผ่นรับแรงกระแทก</text>
-        </svg>
-        <div class="feeder-signal-action">
-          <button type="button" class="feeder-action" data-piezo-strike="soft">เคาะเบา</button>
-          <button type="button" class="feeder-action" data-piezo-strike="hard">เคาะแรง</button>
-        </div>
-        <figure class="feeder-wave">
-          <figcaption>รูปคลื่นหลังปรับสัญญาณ · เส้นประคือเกณฑ์ตรวจจับ</figcaption>
-          <svg viewBox="0 0 300 88" role="img" aria-label="แรงดันหลังปรับสัญญาณ Piezo เทียบกับเวลา">
-            <path d="M36 15h249M36 39h249M36 66h249" class="feeder-wave-grid"/>
-            <path id="feeder-piezo-threshold" d="M36 29H285" class="feeder-wave-limit"/>
-            <text x="3" y="19">3.3 V</text><text x="11" y="70">0 V</text>
-            <text x="284" y="83" text-anchor="end">40 ms</text>
-            <path id="feeder-piezo-wave" d="M36 40.5H285" class="feeder-wave-trace"/>
-          </svg>
-        </figure>
-        <label class="feeder-signal-slider" for="feeder-piezo-limit">เกณฑ์นับในแบบจำลอง <output id="feeder-piezo-limit-value">2.4 V</output>
-          <input id="feeder-piezo-limit" type="range" min="1.7" max="3.1" value="2.4" step=".1">
-        </label>
-        <p class="feeder-signal-guide" id="feeder-piezo-result" role="status">ลองเคาะเบากับเคาะแรง แล้วดูว่าการสั่นแบบไหนข้ามเกณฑ์</p>
-      </article>
-    </section>
-    <p class="feeder-signal-footer">รูปคลื่น Piezo เป็นแบบจำลองหลังปรับสัญญาณแล้ว การต่อจริงต้องมีวงจรปรับระดับและป้องกันแรงดันที่อินพุต <a href="https://www.ti.com/lit/an/sloa033a/sloa033a.pdf" target="_blank" rel="noopener">วงจรปรับสัญญาณ · TI</a></p>
-
-    <details id="feeder-signal-extras" class="feeder-optional">
-      <summary>ทดลองเพิ่ม: สวิตช์ LED, ลูกบิด และ PWM</summary>
     <!-- Top 2-Column Comparison: Digital & Analog -->
     <section class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
 
@@ -169,7 +73,7 @@
         <div>
           <div class="flex items-center justify-between gap-2 mb-1.5">
             <span class="px-3 py-0.5 rounded-full text-xs font-extrabold bg-sky-100 text-sky-800">DIGITAL (ดิจิทัล)</span>
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">มีแค่ 2 ค่า: 0 กับ 1</span>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">สถานะ 0 / 1</span>
           </div>
           <p class="text-xs sm:text-sm text-slate-700 font-medium mb-3">
             เหมือน <strong class="text-sky-700">สวิตช์ไฟบ้าน</strong> มีแค่ <strong>"ปิด" (0 / LOW)</strong> กับ <strong class="text-sky-700">"เปิด" (1 / HIGH)</strong>
@@ -225,35 +129,28 @@
             <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-violet-50 text-violet-700">แรงดันต่อเนื่อง → ADC อ่านเป็นเลข</span>
           </div>
           <p class="text-xs sm:text-sm text-slate-700 font-medium mb-3">
-            เหมือน <strong class="text-violet-700">ปุ่มหมุนเร่งเสียง</strong> ค่อยๆ ปรับระดับความแรงได้ละเอียด
+            หมุน <strong class="text-violet-700">ลูกบิด</strong> แล้วดูแรงดันที่เข้าขา ADC เปลี่ยน
           </p>
 
           <div class="bg-violet-50/70 rounded-2xl p-3 border border-violet-200 flex items-center gap-3 mb-3">
-            <svg viewBox="0 0 110 120" class="w-20 h-20 shrink-0">
-              <defs>
-                <radialGradient id="anaGlowGrad" cx="50%" cy="45%" r="50%">
-                  <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95" />
-                  <stop offset="100%" stop-color="#fde047" stop-opacity="0" />
-                </radialGradient>
-              </defs>
-              <circle id="anaBulbGlow" cx="55" cy="48" r="46" fill="url(#anaGlowGrad)" opacity="0.5" />
-              <path id="anaBulbGlass" d="M35 55 C35 30 75 30 75 55 C75 68 66 74 66 84 L44 84 C44 74 35 68 35 55 Z"
-                fill="#fef08a" stroke="#b45309" stroke-width="2.5" />
-              <rect x="44" y="84" width="22" height="14" rx="3" fill="#94a3b8" stroke="#475569" stroke-width="2" />
-              <path d="M47 98 L63 98 L59 104 L51 104 Z" fill="#475569" />
-              <path d="M48 68 L52 52 L58 52 L62 68" stroke="#b45309" stroke-width="2" fill="none" />
+            <svg viewBox="0 0 104 110" class="w-20 h-20 shrink-0" aria-hidden="true">
+              <path d="M23 84a41 41 0 1 1 58 0" fill="none" stroke="#c4b5fd" stroke-width="5" stroke-linecap="round" />
+              <circle cx="52" cy="55" r="31" fill="#ede9fe" stroke="#8b5cc3" stroke-width="3" />
+              <circle cx="52" cy="55" r="22" fill="#f5efff" stroke="#c4b5fd" stroke-width="2" />
+              <path id="analogKnobPointer" d="M52 48v-15" fill="none" stroke="#6d28a8" stroke-width="5" stroke-linecap="round" />
+              <path d="M30 101h44" stroke="#c4b5fd" stroke-width="2" stroke-linecap="round" />
+              <text x="52" y="94" text-anchor="middle" fill="#6d28a8" font-size="10" font-weight="700">0–3.3 V</text>
             </svg>
 
-            <div class="flex-1 flex flex-col gap-1.5">
-              <div class="flex items-baseline justify-between">
-                <label for="analogSlider" class="text-xs font-bold text-violet-800">เลื่อนปรับค่า:</label>
-                <span id="analogValueBadge" class="text-lg sm:text-xl font-extrabold text-violet-700 font-mono">2048</span>
+            <div class="min-w-0 flex-1 flex flex-col gap-1.5">
+              <div class="flex flex-wrap items-baseline justify-between gap-x-2">
+                <label for="analogSlider" class="text-xs font-bold text-violet-800">ปรับแรงดันจำลอง</label>
+                <output id="analog-voltage" for="analogSlider" class="text-lg sm:text-xl font-extrabold text-violet-700 font-mono">1.65 V</output>
               </div>
-              <input id="analogSlider" type="range" min="0" max="4095" value="2048" class="analog-slider w-full cursor-pointer" /><button type="button" commandfor="adc-dialog" command="show-modal" aria-haspopup="dialog" aria-controls="adc-dialog" class="adc-inline-open signal-secondary">ดูวงจร ADC: แรงดัน → 0–4095 ↗</button>
+              <input id="analogSlider" type="range" min="0" max="4095" value="2048" class="analog-slider w-full cursor-pointer" /><button id="open-adc-dialog" type="button" commandfor="adc-dialog" command="show-modal" aria-haspopup="dialog" aria-controls="adc-dialog" class="adc-inline-open signal-secondary">ดูว่า ADC แปลงเป็นเลขอย่างไร ↗</button>
               <div class="flex justify-between text-[11px] font-bold text-slate-500">
-                <span>0</span>
-                <span id="analogPercentLabel" class="text-violet-700">50%</span>
-                <span>4095</span>
+                <span>0 V</span>
+                <span>3.3 V</span>
               </div>
             </div>
           </div>
@@ -277,81 +174,96 @@
 
     </section>
 
-    <!-- PWM switches a digital output; it is not a DAC. -->
-    <section class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-xl border-2 border-amber-300">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900">
-            ✨ เทคนิคพิเศษ: PWM (~) ปรับเวลาเปิดของ Digital
-          </span>
-          <span class="text-xs sm:text-sm font-semibold text-slate-700">
-            ขา Digital สลับระดับ <strong class="text-sky-700">0 กับ 1</strong> แต่ใช้วิธี <strong>“กะพริบเปิด-ปิดเร็วมาก”</strong> จนตาเรามองเห็นว่าไฟหรี่ได้!
-          </span>
-        </div>
-        <span id="pwmCodeBadge" class="px-3 py-1 rounded-xl bg-slate-900 text-amber-300 font-mono text-xs font-bold">
-          ledcWrite(23, 128); // 50%
-        </span>
-      </div>
+    <div class="feeder-signal-controls">
+      <button id="open-feeder-examples" type="button" commandfor="feeder-examples-dialog" command="show-modal"
+        class="feeder-action feeder-examples-open" aria-haspopup="dialog" aria-controls="feeder-examples-dialog">ตัวอย่างที่ใช้ในโปรเจค</button>
+      <button id="pauseGraphs" type="button" class="feeder-action">หยุดกราฟ</button>
+    </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-        <!-- PWM Controls & Bulb -->
-        <div class="lg:col-span-5 bg-amber-50/70 rounded-2xl p-3.5 border border-amber-200 flex items-center gap-3">
-          <svg viewBox="0 0 110 120" class="w-20 h-20 shrink-0">
-            <defs>
-              <radialGradient id="pwmGlowGrad" cx="50%" cy="45%" r="50%">
-                <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95" />
-                <stop offset="100%" stop-color="#fde047" stop-opacity="0" />
-              </radialGradient>
-            </defs>
-            <circle id="pwmBulbGlow" cx="55" cy="48" r="46" fill="url(#pwmGlowGrad)" opacity="0.5" />
-            <path id="pwmBulbGlass" d="M35 55 C35 30 75 30 75 55 C75 68 66 74 66 84 L44 84 C44 74 35 68 35 55 Z"
-              fill="#fef08a" stroke="#b45309" stroke-width="2.5" />
-            <rect x="44" y="84" width="22" height="14" rx="3" fill="#94a3b8" stroke="#475569" stroke-width="2" />
-            <path d="M47 98 L63 98 L59 104 L51 104 Z" fill="#475569" />
-            <path d="M48 68 L52 52 L58 52 L62 68" stroke="#b45309" stroke-width="2" fill="none" />
-          </svg>
-
-          <div class="flex-1 flex flex-col gap-2">
-            <div class="flex items-baseline justify-between">
-              <label for="pwmSlider" class="text-xs font-bold text-amber-900">ความกว้างคลื่น (Duty Cycle):</label>
-              <span id="pwmPercentBadge" class="text-lg font-extrabold text-amber-700 font-mono">50%</span>
+    <dialog id="feeder-examples-dialog" class="feeder-examples-dialog" aria-labelledby="feeder-examples-title">
+      <header class="feeder-examples-header">
+        <h2 id="feeder-examples-title">ตัวอย่างที่ใช้ในโปรเจค</h2>
+        <form method="dialog">
+          <button type="submit" class="feeder-action" autofocus>ปิด</button>
+        </form>
+      </header>
+      <div class="feeder-examples-body">
+        <section class="feeder-signal-compare" aria-label="ทดลองสัญญาณสองแบบ">
+          <article class="feeder-signal-card feeder-signal-card--ir" data-feeder-ir>
+            <span class="feeder-signal-tag">DIGITAL INPUT · GPIO33</span>
+            <h3>IR สะท้อนตรวจที่ชาม</h3>
+            <p>ตัวส่งกับตัวรับอยู่ในหัวเดียวกัน พอแสง IR สะท้อนจากตัวแมวกลับมามากพอ ขา OUT ของรุ่น Active LOW จะเปลี่ยนจาก 1 เป็น 0</p>
+            <svg class="feeder-sensor-art" viewBox="0 0 320 132" aria-hidden="true">
+              <path d="M24 107h273" stroke="#c0d8e7" stroke-width="2"/>
+              <path d="M70 38 179 24v71L70 79Z" fill="#ccecfb" opacity=".58"/>
+              <rect x="29" y="38" width="46" height="51" rx="9" fill="#1e6192"/>
+              <path class="ir-outbound" d="M66 50l82 8m-9-6 9 6-10 4"/>
+              <path class="ir-return" d="M148 58 66 73m10-7-10 7 12 3"/>
+              <circle cx="67" cy="50" r="5" fill="#67e8f9"/>
+              <circle class="ir-receiver" cx="67" cy="73" r="5" fill="#a78bfa"/>
+              <text x="110" y="39" text-anchor="middle">แสงออก</text>
+              <text class="feeder-reflection-label" x="115" y="89" text-anchor="middle">สะท้อนกลับ</text>
+              <g class="feeder-ir-cat">
+                <path d="M147 57l2-22 16 13q8-3 16 0l15-13 1 22q6 11-5 19-12 9-33 4-17-6-12-23Z" fill="#ffc780" stroke="#975719" stroke-width="2"/>
+                <path d="M151 88q-21 10-29 0" fill="none" stroke="#975719" stroke-width="8" stroke-linecap="round"/>
+                <path d="M159 64h2m19 0h2m-13 6h3" stroke="#81411a" stroke-width="2" stroke-linecap="round"/>
+              </g>
+              <path d="M119 91h81l-9 16h-63Z" fill="#99dbed" stroke="#24749d" stroke-width="2"/>
+              <text x="32" y="124">ตัวส่ง + ตัวรับ</text><text x="170" y="124" text-anchor="middle">ชาม</text>
+            </svg>
+            <div class="feeder-signal-action">
+              <button type="button" class="feeder-action" id="feeder-ir-toggle" aria-pressed="false">แมวเข้ามาในระยะ</button>
+              <output id="feeder-ir-value" aria-live="polite">1 / HIGH · ยังตรวจไม่พบ</output>
             </div>
-            <input id="pwmSlider" type="range" min="0" max="100" value="50" class="pwm-slider w-full cursor-pointer" />
-            <div class="flex flex-wrap gap-1.5">
-              <button type="button" data-pwm="0" class="pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-white border border-amber-300 hover:bg-amber-100 cursor-pointer">0%</button>
-              <button type="button" data-pwm="25" class="pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-white border border-amber-300 hover:bg-amber-100 cursor-pointer">25%</button>
-              <button type="button" data-pwm="50" class="pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-amber-500 text-white border border-amber-500 cursor-pointer">50%</button>
-              <button type="button" data-pwm="75" class="pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-white border border-amber-300 hover:bg-amber-100 cursor-pointer">75%</button>
-              <button type="button" data-pwm="100" class="pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-white border border-amber-300 hover:bg-amber-100 cursor-pointer">100%</button>
+            <figure class="feeder-wave">
+              <figcaption>สถานะที่ขา GPIO33 · การเปลี่ยนครั้งล่าสุด</figcaption>
+              <svg viewBox="0 0 300 88" role="img" aria-label="กราฟระดับ Digital 0 และ 1 เมื่อแมวเข้าและออกจากระยะตรวจจับ">
+                <path d="M29 16h256M29 66h256" class="feeder-wave-grid"/>
+                <text x="8" y="20">1</text><text x="8" y="69">0</text>
+                <text x="284" y="83" text-anchor="end">เวลา →</text>
+                <path id="feeder-ir-wave" d="M29 16H285" class="feeder-wave-trace"/>
+              </svg>
+            </figure>
+            <p class="feeder-signal-guide">ลองให้แมวเข้าและออกจากระยะ แล้วดูขอบขาลงกับขาขึ้นบนกราฟ สัญญาณนี้บอกว่าตรวจพบวัตถุในระยะ ปุ่ม “ให้อาหาร Manual” ใช้สั่งจ่ายอาหาร</p>
+          </article>
+          <article class="feeder-signal-card feeder-signal-card--piezo" data-feeder-piezo>
+            <span class="feeder-signal-tag">ANALOG INPUT · ADC1 / GPIO34</span>
+            <h3>เม็ดอาหารกระทบแผ่น Piezo</h3>
+            <p>แรงกระแทกทำให้แผ่นสั่น วงจรปรับสัญญาณส่งแรงดันที่เปลี่ยนตามการสั่นเข้า ADC</p>
+            <svg class="feeder-sensor-art" viewBox="0 0 320 132" aria-hidden="true">
+              <path d="M19 31l112 41 10-14L29 16Z" fill="#dcd4f9" stroke="#7a4eb0" stroke-width="2"/>
+              <path d="M120 96l79 16 4-15-79-17Z" fill="#f3c975" stroke="#93672f" stroke-width="2"/>
+              <path d="M179 104h46v-42h19" fill="none" stroke="#9866c3" stroke-width="3"/>
+              <rect x="243" y="47" width="54" height="29" rx="6" fill="#825ac0"/>
+              <text x="270" y="66" text-anchor="middle" style="fill:white">ADC1</text>
+              <circle class="feeder-piezo-pellet" cx="100" cy="48" r="8" fill="#b46b2c" stroke="#7c491d" stroke-width="2"/>
+              <path d="M146 76l-6-8m20 7 4-9m5 16 12-3" fill="none" stroke="#b5652c" stroke-width="2" stroke-linecap="round"/>
+              <text x="161" y="129" text-anchor="middle">แผ่นรับแรงกระแทก</text>
+            </svg>
+            <div class="feeder-signal-action">
+              <button type="button" class="feeder-action" data-piezo-strike="soft">เคาะเบา</button>
+              <button type="button" class="feeder-action" data-piezo-strike="hard">เคาะแรง</button>
             </div>
-          </div>
-        </div>
-
-        <!-- PWM Pulse Width Graph -->
-        <div class="lg:col-span-7 bg-slate-900 rounded-2xl p-3 border border-slate-700">
-          <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold mb-1">
-            <span class="text-amber-300">คลื่นสี่เหลี่ยม PWM (ยิ่งช่วง 1 กว้าง → ไฟยิ่งสว่าง!)</span>
-            <span id="pwmDutyDesc" class="text-slate-300 font-mono">เปิด 50% / ปิด 50%</span>
-          </div>
-          <svg viewBox="0 0 500 84" class="w-full h-20">
-            <line x1="0" y1="16" x2="500" y2="16" stroke="#334155" stroke-dasharray="4 4" stroke-width="1" />
-            <line x1="0" y1="68" x2="500" y2="68" stroke="#334155" stroke-dasharray="4 4" stroke-width="1" />
-            <text x="6" y="13" font-size="9" font-weight="700" fill="#fbbf24">1 (3.3V)</text>
-            <text x="6" y="79" font-size="9" font-weight="700" fill="#94a3b8">0 (0V)</text>
-            <!-- Average Analog Equivalent Line -->
-            <line id="pwmAvgLine" x1="25" y1="42" x2="490" y2="42" stroke="#c084fc" stroke-width="2" stroke-dasharray="5 4" />
-            <text id="pwmAvgLabel" x="486" y="38" text-anchor="end" font-size="9" font-weight="700" fill="#e9d5ff">ค่าเฉลี่ย ~1.65V</text>
-            <!-- PWM Wave Polyline -->
-            <polyline id="pwmWaveLine" points="" fill="none" stroke="#fbbf24" stroke-width="3.5" stroke-linejoin="miter" />
-          </svg>
-        </div>
+            <figure class="feeder-wave">
+              <figcaption>รูปคลื่นหลังปรับสัญญาณ · เส้นประคือเกณฑ์ตรวจจับ</figcaption>
+              <svg viewBox="0 0 300 88" role="img" aria-label="แรงดันหลังปรับสัญญาณ Piezo เทียบกับเวลา">
+                <path d="M36 15h249M36 39h249M36 66h249" class="feeder-wave-grid"/>
+                <path id="feeder-piezo-threshold" d="M36 29H285" class="feeder-wave-limit"/>
+                <text x="3" y="19">3.3 V</text><text x="11" y="70">0 V</text>
+                <text x="284" y="83" text-anchor="end">40 ms</text>
+                <path id="feeder-piezo-wave" d="M36 40.5H285" class="feeder-wave-trace"/>
+              </svg>
+            </figure>
+            <label class="feeder-signal-slider" for="feeder-piezo-limit">เกณฑ์นับในแบบจำลอง <output id="feeder-piezo-limit-value">2.4 V</output>
+              <input id="feeder-piezo-limit" type="range" min="1.7" max="3.1" value="2.4" step=".1">
+            </label>
+            <p class="feeder-signal-guide" id="feeder-piezo-result" role="status">ลองเคาะเบากับเคาะแรง แล้วดูว่าการสั่นแบบไหนข้ามเกณฑ์</p>
+          </article>
+        </section>
+        <p class="feeder-signal-footer">รูปคลื่น Piezo เป็นแบบจำลองหลังปรับสัญญาณแล้ว การต่อจริงต้องมีวงจรปรับระดับและป้องกันแรงดันที่อินพุต <a href="https://www.ti.com/lit/an/sloa033a/sloa033a.pdf" target="_blank" rel="noopener">วงจรปรับสัญญาณ · TI</a></p>
       </div>
-    </section>
-  <p class="mx-auto max-w-5xl px-4 pb-4 text-xs text-slate-700">ESP32 core 3.x: ตั้งค่าใน setup() ด้วย ledcAttach(23, 5000, 8); แล้วใช้ ledcWrite(23, duty); · ADC เริ่มต้น 12 บิต 0–4095 เป็นค่าดิบ ขึ้นกับ attenuation / calibration · PWM ยังเป็น 0/3.3V ไม่ใช่แรงดัน DC คงที่</p></details>
-<section class="signal-lab" aria-label="ทดลอง ADC">
- <div class="adc-entry"><div><span class="signal-kicker">ย้อนมาดูฝั่ง ANALOG</span><h3>แรงดัน กลายเป็นเลข 0–4095 ได้อย่างไร?</h3><p>ขา ADC รับแรงดันได้ แต่วงจร ADC ต้องแปลงเป็นตัวเลขก่อนที่ CPU จะนำไปใช้</p></div><button id="open-adc-dialog" type="button" commandfor="adc-dialog" command="show-modal" aria-haspopup="dialog" aria-controls="adc-dialog" class="signal-button">ลองแรงดันเป็นตัวเลข ↗</button></div>
- <p class="signal-reference">อ้างอิง: <a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/adc.html" target="_blank" rel="noopener">Espressif · ADC</a></p>
-</section>
+    </dialog>
+
 <dialog id="adc-dialog" aria-labelledby="adc-title" class="adc-dialog">
  <div class="adc-head"><div><span class="signal-kicker">ลองด้วยตัวเอง · ADC</span><h2 id="adc-title">แรงดันเข้าขาเดียว ทำไมอ่านได้ 4096 ค่า?</h2></div><button type="button" commandfor="adc-dialog" command="close" class="adc-close" aria-label="ปิดหน้าต่าง ADC" autofocus>✕</button></div>
  <div class="adc-content adc-tutorial">
@@ -396,28 +308,13 @@
 
       // Analog elements
       const analogSlider = document.getElementById('analogSlider');
-      const analogValueBadge = document.getElementById('analogValueBadge');
-      const analogPercentLabel = document.getElementById('analogPercentLabel');
+      const analogVoltage = document.getElementById('analog-voltage');
+      const analogKnobPointer = document.getElementById('analogKnobPointer');
       const analogGraphReadout = document.getElementById('analogGraphReadout');
-      const anaBulbGlow = document.getElementById('anaBulbGlow');
-      const anaBulbGlass = document.getElementById('anaBulbGlass');
       const analogWaveLine = document.getElementById('analogWaveLine');
 
-      // PWM elements
-      const pwmSlider = document.getElementById('pwmSlider');
-      const pwmPercentBadge = document.getElementById('pwmPercentBadge');
-      const pwmCodeBadge = document.getElementById('pwmCodeBadge');
-      const pwmDutyDesc = document.getElementById('pwmDutyDesc');
-      const pwmBulbGlow = document.getElementById('pwmBulbGlow');
-      const pwmBulbGlass = document.getElementById('pwmBulbGlass');
-      const pwmWaveLine = document.getElementById('pwmWaveLine');
-      const pwmAvgLine = document.getElementById('pwmAvgLine');
-      const pwmAvgLabel = document.getElementById('pwmAvgLabel');
-      const pwmPresets = Array.from(document.querySelectorAll('.pwm-preset'));
-
       let digitalState = 0;
-      let analogValue = 2048;
-      let pwmDuty = 50; // 0 to 100
+      let analogValue = Number(analogSlider.value);
 
       const maxPoints = 45;
       const digHistory = new Array(maxPoints).fill(0);
@@ -449,70 +346,13 @@
         }
       }
 
-      function setBulbBrightness(glowEl, glassEl, ratio) {
-        glowEl.setAttribute('opacity', ratio.toFixed(2));
-        const r = Math.round(226 + (254 - 226) * ratio);
-        const g = Math.round(232 + (240 - 232) * ratio);
-        const b = Math.round(240 + (138 - 240) * ratio);
-        glassEl.setAttribute('fill', `rgb(${r}, ${g}, ${b})`);
-        glassEl.setAttribute('stroke', ratio > 0.15 ? '#b45309' : '#64748b');
-      }
-
       function renderAnalogUI() {
         const ratio = analogValue / 4095;
-        analogValueBadge.textContent = String(analogValue);
-        analogPercentLabel.textContent = `${Math.round(ratio * 100)}%`;
+        const voltage = (3.3 * ratio).toFixed(2);
+        analogVoltage.textContent = `${voltage} V`;
+        analogSlider.setAttribute('aria-valuetext', `${voltage} โวลต์`);
+        analogKnobPointer.setAttribute('transform', `rotate(${270 * ratio - 135} 52 55)`);
         analogGraphReadout.textContent = `ค่า: ${analogValue} / 4095`;
-        setBulbBrightness(anaBulbGlow, anaBulbGlass, ratio);
-      }
-
-      function renderPwmUI() {
-        const ratio = pwmDuty / 100;
-        const val255 = Math.round(ratio * 255);
-        const volt = (3.3 * ratio).toFixed(2);
-
-        pwmPercentBadge.textContent = `${pwmDuty}%`;
-        pwmCodeBadge.textContent = `ledcWrite(23, ${val255}); // ${pwmDuty}%`;
-        pwmDutyDesc.textContent = `เปิด ${pwmDuty}% / ปิด ${100 - pwmDuty}%`;
-        setBulbBrightness(pwmBulbGlow, pwmBulbGlass, ratio);
-
-        pwmPresets.forEach((btn) => {
-          const active = Number(btn.dataset.pwm) === pwmDuty;
-          btn.className = active
-            ? 'pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-amber-500 text-white border border-amber-500 cursor-pointer'
-            : 'pwm-preset px-2 py-0.5 rounded-lg text-[11px] font-bold bg-white border border-amber-300 hover:bg-amber-100 cursor-pointer';
-        });
-
-        // Average voltage dashed line
-        const avgY = (68 - ratio * 52).toFixed(1);
-        pwmAvgLine.setAttribute('y1', avgY);
-        pwmAvgLine.setAttribute('y2', avgY);
-        pwmAvgLabel.setAttribute('y', String(Math.max(12, Number(avgY) - 5)));
-        pwmAvgLabel.textContent = `ค่าเฉลี่ย ~${volt}V`;
-
-        // Draw 5 crisp PWM cycles from x=28 to x=488 (92px per cycle)
-        const startX = 28;
-        const cycleW = 92;
-        const yHigh = 16;
-        const yLow = 68;
-        const pts = [];
-
-        if (pwmDuty === 0) {
-          pts.push(`${startX},${yLow}`, `${startX + cycleW * 5},${yLow}`);
-        } else if (pwmDuty === 100) {
-          pts.push(`${startX},${yHigh}`, `${startX + cycleW * 5},${yHigh}`);
-        } else {
-          const onW = cycleW * ratio;
-          for (let i = 0; i < 5; i++) {
-            const cx = startX + i * cycleW;
-            pts.push(`${cx.toFixed(1)},${yLow}`);
-            pts.push(`${cx.toFixed(1)},${yHigh}`);
-            pts.push(`${(cx + onW).toFixed(1)},${yHigh}`);
-            pts.push(`${(cx + onW).toFixed(1)},${yLow}`);
-          }
-          pts.push(`${startX + cycleW * 5},${yLow}`);
-        }
-        pwmWaveLine.setAttribute('points', pts.join(' '));
       }
 
       function renderGraphs() {
@@ -555,23 +395,10 @@
         renderGraphs();
       });
 
-      pwmSlider.addEventListener('input', (e) => {
-        pwmDuty = Number(e.target.value);
-        renderPwmUI();
-      });
-
-      pwmPresets.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          pwmDuty = Number(btn.dataset.pwm);
-          pwmSlider.value = String(pwmDuty);
-          renderPwmUI();
-        });
-      });
-
-      const optionalExamples = document.getElementById('feeder-signal-extras');
+      const examplesDialog = document.getElementById('feeder-examples-dialog');
       const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
       setInterval(() => {
-        if (window.esp32PauseGraphs || document.hidden || reducedMotion.matches || !optionalExamples.open) return;
+        if (window.esp32PauseGraphs || document.hidden || reducedMotion.matches || examplesDialog.open) return;
         digHistory.shift();
         digHistory.push(digitalState);
         anaHistory.shift();
@@ -581,14 +408,13 @@
 
       renderDigitalUI();
       renderAnalogUI();
-      renderPwmUI();
       renderGraphs();
     })();
   </script>
 
   <!-- Embed Mode Handler & Navigation Key Forwarder -->
   <style>
-    html.is-embedded header > div:first-child { display: none !important; }
+    html.is-embedded body > header > div:first-child { display: none !important; }
   </style>
   <script>
     (function () {
@@ -596,7 +422,7 @@
       if (params.get('embed') === '1') {
         document.documentElement.classList.add('is-embedded');
         const hideBadge = function () {
-          const header = document.querySelector('header');
+          const header = document.querySelector('body > header');
           if (header) {
             const leftBadge = header.querySelector('div:first-child');
             if (leftBadge) {

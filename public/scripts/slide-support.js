@@ -5,7 +5,7 @@
   if (embedded) document.documentElement.classList.add("is-embedded");
   document.addEventListener("keydown", (event) => {
     if (
-      event.target.closest("input,textarea,select,[contenteditable]") ||
+      event.target.closest("input,textarea,select,[contenteditable],dialog[open]") ||
       event.metaKey ||
       event.ctrlKey ||
       event.altKey
@@ -37,17 +37,9 @@
     }
   });
   // Graph sampling should be pausable even when reduced motion is not enabled.
-  if (document.querySelector("#digitalWaveLine")) {
-    const button = document.createElement("button");
-    button.id = "pauseGraphs";
-    button.type = "button";
-    button.className =
-      "fixed bottom-3 right-3 z-40 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-800 shadow";
-    button.textContent = "หยุดกราฟ";
-    button.addEventListener("click", () => {
-      window.esp32PauseGraphs = !window.esp32PauseGraphs;
-      button.textContent = window.esp32PauseGraphs ? "เล่นกราฟต่อ" : "หยุดกราฟ";
-    });
-    document.body.appendChild(button);
-  }
+  const graphPause = document.getElementById("pauseGraphs");
+  graphPause?.addEventListener("click", () => {
+    window.esp32PauseGraphs = !window.esp32PauseGraphs;
+    graphPause.textContent = window.esp32PauseGraphs ? "เล่นกราฟต่อ" : "หยุดกราฟ";
+  });
 })();

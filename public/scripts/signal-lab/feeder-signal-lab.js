@@ -54,11 +54,3 @@ for (const button of piezo.querySelectorAll("[data-piezo-strike]")) {
 }
 limit.addEventListener("input", renderStrike);
 renderStrike();
-
-// The legacy graph controls belong to the optional examples.
-const extra = document.querySelector("#feeder-signal-extras");
-const pause = document.querySelector("#pauseGraphs");
-if (pause) {
-  pause.className = "feeder-action feeder-pause-graphs";
-  extra.insertBefore(pause, extra.children[1]);
-}

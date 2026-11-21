@@ -5,7 +5,12 @@ const $=s=>document.querySelector(s),dialog=$('#adc-dialog');
 // Keep native invoker behavior; load the compatibility bundle only when needed.
 if(!('commandForElement' in HTMLButtonElement.prototype)){
  try{await import('../vendor/invoker-polyfill.js');}
- catch{document.querySelectorAll('[commandfor="adc-dialog"]').forEach(button=>button.addEventListener('click',()=>button.getAttribute('command')==='close'?dialog.close():dialog.showModal()));}
+ catch{
+  document.querySelectorAll('[commandfor="adc-dialog"], [commandfor="feeder-examples-dialog"]').forEach(button=>{
+   const target=document.getElementById(button.getAttribute('commandfor'));
+   button.addEventListener('click',()=>button.getAttribute('command')==='close'?target.close():target.showModal());
+  });
+ }
 }
 let bits=3,captured=null,previousPause=false,activeConversion=false,lastSample=null;
 function voltage(){return Number($('#adc-voltage').value);}
@@ -62,8 +67,6 @@ $('#adc-read').addEventListener('click',()=>{
 });
 $('#adc-apply').addEventListener('click',()=>{
  if (!captured) return;
- const extras = $('#feeder-signal-extras');
- if (extras) extras.open = true;
  const slider = $('#analogSlider');
  slider.value = captured.code;
  slider.dispatchEvent(new Event('input',{bubbles:true}));
