@@ -24,12 +24,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-## Supermarket Regular
-
-Copyright (c) 2009 Chatnarong Jingsuphatada. The original font file is bundled with the homepage for display.
-
-[Font release](https://www.f0nt.com/release/supermarket/) · [License terms](https://www.f0nt.com/about/license/)
-
 ## Noto Sans Thai Looped and Noto Sans Symbols
 
 The classroom bundles two Google Fonts WOFF2 subsets under the SIL Open Font License 1.1. Noto Sans Thai Looped supplies the Thai glyphs used in the course, and Noto Sans Symbols supplies the direct-current sign (U+2393). Each font's OFL notice is included alongside the font in `public/assets/fonts/`.
