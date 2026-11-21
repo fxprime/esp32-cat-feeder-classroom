@@ -1,5 +1,29 @@
 .ap-lesson { max-inline-size: 1120px; }
 .ap-lesson > .cl-hero > p { color: #435777; font-size: 1rem; }
+.ap-prompt-compare { padding: clamp(.8rem, 2.1vw, 1.2rem); }
+.ap-prompt-compare .cl-example-heading > p { color: #435777; font-size: .94rem; margin-block: 0 .62rem; }
+.ap-compare-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: .55rem; }
+.ap-compare-card {
+  min-inline-size: 0;
+  padding: .63rem .78rem;
+  border: 1px solid var(--ap-compare-edge);
+  border-inline-start: .24rem solid var(--ap-compare-accent);
+  border-radius: .66rem;
+  background: var(--ap-compare-paper);
+  overflow-wrap: break-word;
+}
+.ap-compare-vague { --ap-compare-edge: #f0d6b7; --ap-compare-accent: #925020; --ap-compare-paper: #fff8ef; }
+.ap-compare-specific { --ap-compare-edge: #c9e3e8; --ap-compare-accent: #176859; --ap-compare-paper: #f0faf9; }
+.ap-compare-card h3 { margin: 0; color: var(--ap-compare-accent); font-size: clamp(.96rem, 1.8vw, 1.1rem); line-height: 1.4; }
+.ap-compare-card blockquote { margin: .3rem 0; color: #233e58; font-size: clamp(.95rem, 1.7vw, 1.06rem); line-height: 1.59; }
+.ap-compare-card p, .ap-compare-card li { margin: .18rem 0; color: #344d65; font-size: .9rem; line-height: 1.5; }
+.ap-compare-card ul { margin: .34rem 0; padding-inline-start: 1.18rem; }
+.ap-compare-answers { margin-block-start: .42rem; }
+.ap-compare-answers > summary { min-block-size: 44px; align-content: center; cursor: pointer; color: #1e40af; font-size: .92rem; font-weight: 700; }
+.ap-compare-answers > summary:hover { color: #1e3a8a; text-decoration: underline; text-underline-offset: .18em; }
+@container code-panel (min-width: 34rem) {
+  .ap-compare-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 .ap-workspace, .ap-follow-up, .ap-glossary { margin-block-start: 1rem; }
 .ap-workspace { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; align-items: start; }
 .ap-workspace > section { min-inline-size: 0; }

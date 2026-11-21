@@ -20,6 +20,43 @@
       <p>เราอยากรู้ว่าไอเดียที่จะทำสามารถเกิดขึ้นจริงหรือเจ๊งได้จากในจอ ลดความสูญเสียทั้งเงิน เวลา และพลังงาน</p>
     </header>
 
+    <section class="cl-panel-inner ap-prompt-compare" id="ap-comparison" aria-labelledby="ap-comparison-title">
+      <header class="cl-example-heading">
+        <h2 id="ap-comparison-title">Prompt แย่ ๆ vs Prompt ที่ดี</h2>
+        <p>โจทย์เดียวกัน เราจะรู้ได้ยังไงว่าเครื่องให้อาหารหยุดจ่ายเมื่อถังชื้น?</p>
+      </header>
+      <div class="ap-compare-grid">
+        <article class="ap-compare-card ap-compare-vague">
+          <h3>Prompt แย่ ๆ</h3>
+          <blockquote>“ช่วยคิดวิธีทดสอบว่าเครื่องให้อาหารแมวหยุดจ่ายเมื่อถังชื้นไหม”</blockquote>
+          <p>AI ต้องเดาว่าชื้นแค่ไหน ต้องปรับอะไร และดูตรงไหน</p>
+        </article>
+        <article class="ap-compare-card ap-compare-specific">
+          <h3>Prompt ที่ดี</h3>
+          <blockquote>“ใน Wokwi Lab 3 คงระยะถึงผิวอาหารไว้ที่ <mark class="ap-marker">10 ซม.</mark> ช่วยออกแบบการทดลองว่าเครื่องงดจ่ายที่ <mark class="ap-marker">70% RH</mark> ไหม ให้ <mark class="ap-marker">เปลี่ยนแค่ความชื้น</mark> แล้วบอกขั้นตอนและ <mark class="ap-marker">เกณฑ์ผ่าน</mark>”</blockquote>
+          <p>ระบุค่าที่คงไว้ สิ่งที่เปลี่ยน และผลที่ต้องตรวจ</p>
+        </article>
+      </div>
+      <details class="ap-compare-answers">
+        <summary>เทียบตัวอย่างคำตอบ</summary>
+        <div class="ap-compare-grid">
+          <article class="ap-compare-card ap-compare-vague">
+            <h3>คำตอบแบบกว้าง ๆ</h3>
+            <p>“ลองเพิ่มความชื้น แล้วดูว่าเครื่องหยุดจ่ายหรือเปล่า”</p>
+          </article>
+          <article class="ap-compare-card ap-compare-specific">
+            <h3>คำตอบที่ใช้ทดลองได้</h3>
+            <p>คงระยะไว้ที่ 10 ซม. รอให้ค่าอัปเดตแล้วกด MEAL หนึ่งครั้งในแต่ละรอบ รอให้รอบแรกจบก่อนเปลี่ยนค่า</p>
+            <ul>
+              <li><strong>69% RH</strong> ฝาเปิด–ปิดหนึ่งรอบ ไฟแดงดับ</li>
+              <li><strong>70% RH</strong> ฝายังคงปิด ไฟแดงติด</li>
+            </ul>
+            <p>ผ่านเมื่อฝาและไฟแดงแสดงผลตรงทั้งสองรอบ</p>
+          </article>
+        </div>
+      </details>
+    </section>
+
     <form class="ap-workspace" id="project-form" aria-labelledby="ap-prompt-heading">
       <section class="cl-panel-inner ap-prompt" aria-labelledby="ap-prompt-heading">
         <header class="cl-example-heading ap-prompt-header">
