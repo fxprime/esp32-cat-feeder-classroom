@@ -2,10 +2,10 @@ const steps = [
   {
     key: 'principle',
     title: 'จากข้อมูลไปสู่การกระทำ',
-    input: ['clock', 'ข้อมูล', 'เวลาหรือค่าที่เซนเซอร์อ่านได้'],
-    process: ['esp32', 'การตัดสินใจ', 'ESP32 ใช้ข้อมูลเทียบเงื่อนไขในโค้ด'],
-    output: ['buzzer', 'การกระทำ', 'สั่งอุปกรณ์ให้ทำงาน'],
-    feedback: ['ir', 'การติดตามผลของการกระทำ', 'อ่านสิ่งที่เกิดขึ้น แล้วส่งข้อมูลกลับมาที่ ESP32'],
+    input: ['data', 'ข้อมูล', 'รับจากผู้ใช้หรือจากสิ่งรอบตัว'],
+    process: ['decision', 'การตัดสินใจ', 'ใช้ข้อมูลกับกติกาเพื่อเลือกว่าจะทำอะไร'],
+    output: ['action', 'การกระทำ', 'ลงมือทำตามที่ตัดสินใจ'],
+    feedback: ['observe', 'การติดตามผลของการกระทำ', 'ดูผลที่เกิดขึ้น แล้วส่งข้อมูลกลับไปช่วยตัดสินใจรอบต่อไป'],
   },
   {
     key: 'meal',
@@ -51,6 +51,7 @@ const steps = [
 
 const lesson = document.querySelector('[data-flow-lesson]');
 const map = lesson.querySelector('.flow-map');
+const chapter = document.querySelector('[data-flow-chapter]');
 const next = lesson.querySelector('[data-flow-next]');
 const previous = lesson.querySelector('[data-flow-prev]');
 const replay = lesson.querySelector('[data-flow-replay]');
@@ -63,7 +64,33 @@ const nodes = {
   output: lesson.querySelector('[data-flow-node="output"]'),
   feedback: lesson.querySelector('[data-flow-feedback]'),
 };
+const processBalloon = nodes.process.querySelector('.flow-balloon');
+const outputBalloon = nodes.output.querySelector('.flow-balloon');
+const routeIn = map.querySelector('.flow-route-in');
+const routeOut = map.querySelector('.flow-route-out');
 let current = 0;
+
+function layoutPosition(block) {
+  let x = 0;
+  let y = 0;
+  for (let parent = block; parent && parent !== map; parent = parent.offsetParent) {
+    x += parent.offsetLeft;
+    y += parent.offsetTop;
+  }
+  return { x, y };
+}
+
+function drawFeedbackRoutes() {
+  const process = layoutPosition(processBalloon);
+  const output = layoutPosition(outputBalloon);
+  const feedbackTop = layoutPosition(nodes.feedback).y;
+  const processX = process.x + processBalloon.offsetWidth / 2;
+  const outputX = output.x + outputBalloon.offsetWidth / 2;
+  const processBottom = process.y + processBalloon.offsetHeight;
+  const outputBottom = output.y + outputBalloon.offsetHeight;
+  routeIn.setAttribute('d', `M${outputX} ${outputBottom} V${feedbackTop} l-4-5 4 5 4-5`);
+  routeOut.setAttribute('d', `M${processX} ${feedbackTop} V${processBottom} l-4 5 4-5 4 5`);
+}
 
 function playReveal() {
   map.classList.remove('is-revealing');
@@ -74,21 +101,26 @@ function playReveal() {
 
 function renderStep() {
   const step = steps[current];
+  const principle = current === 0;
+  chapter.textContent = principle ? 'หลักการทำงานของระบบ' : 'หลักการทำงานของเครื่องให้อาหารแมว';
   lesson.dataset.flowStep = step.key;
   lesson.querySelector('[data-flow-title]').textContent = step.title;
   lesson.querySelector('[data-flow-count]').textContent = `${current + 1} / ${steps.length}`;
 
   for (const [key, node] of Object.entries(nodes)) {
     const [icon, title, detail] = step[key];
-    node.querySelector('use').setAttribute('href', `../assets/feeder-flow.svg#${icon}`);
+    node.querySelector('use').setAttribute('href', `../assets/feeder-flow.svg?v=feedback-route#${icon}`);
     node.querySelector('[data-flow-text]').textContent = title;
     node.querySelector('[data-flow-detail]').textContent = detail;
   }
 
-  if (current === 0 && document.activeElement === previous) next.focus();
-  previous.disabled = current === 0;
+  if (principle && document.activeElement === previous) next.focus();
+  previous.disabled = principle;
   next.textContent = current === steps.length - 1 ? 'ลองกับเครื่อง' : 'ถัดไป';
-  summary.hidden = current !== 0;
+  summary.hidden = !principle;
+  practice.hidden = principle;
+  if (principle) practice.open = false;
+  drawFeedbackRoutes();
   playReveal();
 }
 
@@ -108,4 +140,6 @@ next.addEventListener('click', () => {
   renderStep();
 });
 replay.addEventListener('click', playReveal);
+const routeObserver = new ResizeObserver(drawFeedbackRoutes);
+for (const element of [map, processBalloon, outputBalloon, nodes.feedback]) routeObserver.observe(element);
 renderStep();

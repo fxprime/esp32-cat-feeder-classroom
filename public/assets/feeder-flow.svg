@@ -1,4 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="data" viewBox="0 0 96 72">
+    <g stroke="#226488" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="33" y="11" width="47" height="50" rx="9" fill="#dff3fb"/>
+      <path d="M46 24h20m-20 12h24M46 48h15" stroke="#5c95b1"/>
+      <path d="M10 36h24m-8-8 8 8-8 8" fill="none" stroke-width="4"/>
+    </g>
+  </symbol>
+  <symbol id="decision" viewBox="0 0 96 72">
+    <g stroke="#5c4d91" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M48 9 77 36 48 63 19 36Z" fill="#e8ddfb"/>
+      <path d="m37 36 8 8 14-16" fill="none" stroke-width="4"/>
+      <path d="M7 36h12m58 0h12" stroke="#8a77b5"/>
+    </g>
+  </symbol>
+  <symbol id="action" viewBox="0 0 96 72">
+    <g stroke="#226957" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M38 46c0-6-11-9-11-22a21 21 0 0 1 42 0c0 13-11 16-11 22v7H38Z" fill="#c6efda"/>
+      <path d="M38 54h20m-16 8h12M13 19l6 3m65-3-6 3M16 38l5-3m59 3-5-3" fill="none"/>
+      <path d="M48 45V31m-6-5 6 5 6-5" fill="none"/>
+    </g>
+  </symbol>
+  <symbol id="observe" viewBox="0 0 96 72">
+    <g stroke="#6552a0" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M47 12a24 24 0 1 1-24 24" fill="none"/>
+      <path d="M23 36a24 24 0 0 1 18-23m-1-6 8 5-6 7" fill="none"/>
+      <path d="M33 36q15-17 30 0-15 17-30 0Z" fill="#e9defa" stroke-width="2.6"/>
+      <circle cx="48" cy="36" r="4.6" fill="#6552a0" stroke="none"/>
+    </g>
+  </symbol>
   <symbol id="clock" viewBox="0 0 96 72">
     <g stroke="#254e6b" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="48" cy="36" r="31" fill="#b9dfef" stroke-width="3"/>

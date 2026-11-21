@@ -22,6 +22,7 @@
 .flow-step { flex: none; margin: 0; border-radius: 99rem; padding: .25rem .58rem; background: #e8f2f9; color: #305d82; font-size: .77rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .flow-map {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(.8rem, 4vw, 3rem) minmax(0, 1fr) clamp(.8rem, 4vw, 3rem) minmax(0, 1fr);
   column-gap: clamp(.11rem, .75vw, .55rem);
@@ -52,7 +53,7 @@
   color: var(--flow-ink);
   overflow-wrap: anywhere;
 }
-.flow-balloon::before, .flow-feedback::before {
+.flow-balloon::before {
   position: absolute;
   inset: -.26rem auto auto calc(50% - .24rem);
   inline-size: .48rem;
@@ -69,11 +70,12 @@
 .flow-forward path, .flow-return path { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 
 .flow-return {
-  grid-column: 3 / -1;
-  justify-self: center;
-  inline-size: 58%;
-  block-size: 2.15rem;
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
   color: #6552a0;
+  pointer-events: none;
 }
 .flow-feedback {
   --flow-ink: #483477;
@@ -86,6 +88,7 @@
   grid-template-columns: clamp(2.7rem, 6vw, 4.2rem) minmax(0, 1fr);
   align-items: center;
   gap: .38rem;
+  margin-block-start: 2.25rem;
   padding: .26rem .48rem .32rem;
   border: 1px solid var(--flow-edge);
   border-radius: .8rem;
@@ -122,8 +125,7 @@
   .flow-map { padding: .57rem; }
   .flow-art { inline-size: 5.55rem; }
   .flow-balloon { min-block-size: 3.7rem; }
-  .flow-return { block-size: 1.85rem; }
-  .flow-feedback { grid-template-columns: 3.7rem minmax(0, 1fr); }
+  .flow-feedback { grid-template-columns: 3.7rem minmax(0, 1fr); margin-block-start: 1.95rem; }
   .flow-summary { margin-block-start: .52rem; }
 }
 
@@ -138,17 +140,17 @@
   [data-flow-beat="second-arrow"] { --flow-delay: 906ms; }
   [data-flow-beat="output"] { --flow-delay: 1050ms; }
   [data-flow-beat="output-bubble"] { --flow-delay: 155ms; }
-  [data-flow-beat="return"] { --flow-delay: 1470ms; }
-  [data-flow-beat="feedback"] { --flow-delay: 1860ms; }
+  [data-flow-beat="feedback"] { --flow-delay: 1880ms; }
 
   .flow-map.is-revealing [data-flow-beat$="bubble"] { animation-delay: calc(var(--flow-parent-delay, 0ms) + var(--flow-delay)); }
   [data-flow-beat="process-bubble"] { --flow-parent-delay: 520ms; }
   [data-flow-beat="output-bubble"] { --flow-parent-delay: 1050ms; }
-  .flow-map.is-revealing .flow-return-track {
+  .flow-map.is-revealing .flow-return path {
     stroke-dasharray: 100;
-    animation: flow-trace 540ms ease-out 1510ms both;
+    animation: flow-trace 400ms ease-out var(--flow-route-delay) both;
   }
-  .flow-map.is-revealing .flow-return-tip { animation: flow-appear 220ms ease-out 1925ms both; }
+  .flow-route-in { --flow-route-delay: 1470ms; }
+  .flow-route-out { --flow-route-delay: 2180ms; }
 
   @keyframes flow-appear { from { opacity: 0; transform: translateY(.38rem); } }
   @keyframes flow-trace { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }

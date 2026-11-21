@@ -12,12 +12,12 @@
   <link rel="stylesheet" href="../styles/feeder-foundations.css">
   <link rel="stylesheet" href="../styles/feeder-scene.css">
   <link rel="stylesheet" href="../styles/feeder-ir.css">
-  <link rel="stylesheet" href="../styles/feeder-flow.css">
+  <link rel="stylesheet" href="../styles/feeder-flow.css?v=feedback-route">
 </head>
 <body class="flow-page">
   <main class="flow-shell">
     <header class="flow-hero">
-      <h1>หลักการทำงานของเครื่องให้อาหารแมว</h1>
+      <h1 data-flow-chapter>หลักการทำงานของระบบ</h1>
     </header>
 
     <section class="ff-card flow-lesson" data-flow-lesson data-flow-step="principle" aria-labelledby="flow-title">
@@ -30,11 +30,11 @@
         <section class="flow-node" data-flow-node="input" data-flow-beat="input">
           <h3>Input</h3>
           <div class="flow-art">
-            <svg viewBox="0 0 96 72" aria-hidden="true"><use href="../assets/feeder-flow.svg#clock"></use></svg>
+            <svg viewBox="0 0 96 72" aria-hidden="true"><use href="../assets/feeder-flow.svg?v=feedback-route#data"></use></svg>
           </div>
           <div class="flow-balloon" data-flow-beat="input-bubble">
             <strong data-flow-text>ข้อมูล</strong>
-            <p data-flow-detail>เวลาหรือค่าที่เซนเซอร์อ่านได้</p>
+            <p data-flow-detail>รับจากผู้ใช้หรือจากสิ่งรอบตัว</p>
           </div>
         </section>
 
@@ -45,11 +45,11 @@
         <section class="flow-node" data-flow-node="process" data-flow-beat="process">
           <h3>Process</h3>
           <div class="flow-art">
-            <svg viewBox="0 0 96 72" aria-hidden="true"><use href="../assets/feeder-flow.svg#esp32"></use></svg>
+            <svg viewBox="0 0 96 72" aria-hidden="true"><use href="../assets/feeder-flow.svg?v=feedback-route#decision"></use></svg>
           </div>
           <div class="flow-balloon" data-flow-beat="process-bubble">
             <strong data-flow-text>การตัดสินใจ</strong>
-            <p data-flow-detail>ESP32 ใช้ข้อมูลเทียบเงื่อนไขในโค้ด</p>
+            <p data-flow-detail>ใช้ข้อมูลกับกติกาเพื่อเลือกว่าจะทำอะไร</p>
           </div>
         </section>
 
@@ -60,25 +60,25 @@
         <section class="flow-node" data-flow-node="output" data-flow-beat="output">
           <h3>Output</h3>
           <div class="flow-art">
-            <svg viewBox="0 0 96 72" aria-hidden="true"><use href="../assets/feeder-flow.svg#buzzer"></use></svg>
+            <svg viewBox="0 0 96 72" aria-hidden="true"><use href="../assets/feeder-flow.svg?v=feedback-route#action"></use></svg>
           </div>
           <div class="flow-balloon" data-flow-beat="output-bubble">
             <strong data-flow-text>การกระทำ</strong>
-            <p data-flow-detail>สั่งอุปกรณ์ให้ทำงาน</p>
+            <p data-flow-detail>ลงมือทำตามที่ตัดสินใจ</p>
           </div>
         </section>
 
-        <svg class="flow-return" data-flow-beat="return" viewBox="0 0 300 44" preserveAspectRatio="none" aria-hidden="true">
-          <path class="flow-return-track" pathLength="100" d="M290 1v20q0 17-17 17H27Q10 38 10 21V5"/>
-          <path class="flow-return-tip" d="m5 12 5-7 5 7"/>
+        <svg class="flow-return" aria-hidden="true">
+          <path class="flow-route-in" pathLength="100"/>
+          <path class="flow-route-out" pathLength="100"/>
         </svg>
 
         <section class="flow-feedback" data-flow-feedback data-flow-beat="feedback">
-          <svg viewBox="0 0 96 72" aria-hidden="true"><use href="../assets/feeder-flow.svg#ir"></use></svg>
+          <svg viewBox="0 0 96 72" aria-hidden="true"><use href="../assets/feeder-flow.svg?v=feedback-route#observe"></use></svg>
           <div>
             <h3>Feedback</h3>
             <strong data-flow-text>การติดตามผลของการกระทำ</strong>
-            <p data-flow-detail>อ่านสิ่งที่เกิดขึ้น แล้วส่งข้อมูลกลับมาที่ ESP32</p>
+            <p data-flow-detail>ดูผลที่เกิดขึ้น แล้วส่งข้อมูลกลับไปช่วยตัดสินใจรอบต่อไป</p>
           </div>
         </section>
       </div>
@@ -91,12 +91,12 @@
     </section>
 
     <ul class="flow-summary" data-flow-summary aria-label="สรุปจากตัวอย่างเปรียบเทียบกับร่างกาย">
-      <li><b>Input</b> เซนเซอร์รับรู้สิ่งรอบตัว เหมือนตาและหู</li>
-      <li><b>Process</b> ESP32 ตัดสินใจตามโค้ด เหมือนสมอง</li>
-      <li><b>Output</b> Servo ขยับ ไฟ LED ติด หรือ Buzzer ส่งเสียง</li>
+      <li><b>Input</b> เหมือนตาและหูที่รับรู้สิ่งรอบตัว</li>
+      <li><b>Process</b> เหมือนสมองที่คิดว่าจะทำอะไร</li>
+      <li><b>Output</b> เหมือนการขยับมือหรือพูดตอบ</li>
     </ul>
 
-    <details class="ff-extra" id="feeder-practice">
+    <details class="ff-extra" id="feeder-practice" hidden>
       <summary>เปิดแบบจำลองเครื่องให้อาหารแมว</summary>
       <section class="ff-card fs-lab" data-feeder-scene data-stage="ready" aria-labelledby="fs-title">
         <div class="fs-intro">
@@ -384,7 +384,7 @@
       </section>
     </details>
   </main>
-  <script type="module" src="../scripts/feeder-flow.js"></script>
+  <script type="module" src="../scripts/feeder-flow.js?v=feedback-route"></script>
   <script type="module" src="../scripts/feeder-scene.js"></script>
   <script defer src="../scripts/slide-support.js"></script>
 </body>
