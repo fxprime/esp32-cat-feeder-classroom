@@ -189,7 +189,7 @@ export default function App() {
     currentSlideId !== null && completedSlides.includes(currentSlideId);
 
   return (
-    <div className="flex flex-col h-dvh w-full overflow-hidden bg-slate-900">
+    <div className={`flex flex-col h-dvh w-full overflow-hidden bg-slate-900${currentSlide ? "" : " classroom-home"}`}>
       {/* If in slide view and nav is not hidden, render Top Navigation Bar */}
       {currentSlide && !isNavHidden && (
         <Navbar

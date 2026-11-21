@@ -4,7 +4,7 @@
 
 @layer base {
   * {
-    font-family: "Prompt", sans-serif;
+    font-family: var(--classroom-font, "Prompt", sans-serif);
   }
 }
 
@@ -16,10 +16,12 @@
   font-display: swap;
 }
 
-.course-heading > *,
-.course-heading .course-subtitle span {
-  font-family: "Supermarket", "Prompt", sans-serif;
+.classroom-home {
+  --classroom-font: "Supermarket", "Prompt", sans-serif;
   font-size-adjust: from-font;
+}
+
+.course-heading > * {
   font-synthesis: none;
   font-weight: 400;
 }

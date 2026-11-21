@@ -127,7 +127,7 @@ export default function Dashboard({
                       ความคืบหน้าการเรียนรู้
                     </h3>
                   </div>
-                  <span className="text-xs font-mono font-extrabold px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800">
+                  <span className="text-sm font-extrabold px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800">
                     {completedCount} / {totalCount} ผ่านแล้ว
                   </span>
                 </div>
@@ -140,7 +140,7 @@ export default function Dashboard({
                   />
                 </div>
 
-                <div className="flex justify-between items-center text-xs text-slate-400 mb-4 font-mono">
+                <div className="flex justify-between items-center text-sm text-slate-400 mb-4">
                   <span>ความสำเร็จโดยรวม</span>
                   <span className="text-cyan-300 font-bold">
                     {progressPercent}%
@@ -148,15 +148,15 @@ export default function Dashboard({
                 </div>
 
                 {/* Quick Shortcuts List */}
-                <div className="pt-3 border-t border-slate-700/70 grid grid-cols-2 gap-2 text-xs text-slate-400">
+                <div className="pt-3 border-t border-slate-700/70 grid grid-cols-2 gap-2 text-sm text-slate-400">
                   <div className="flex items-center gap-2">
-                    <span className="px-1.5 py-0.5 rounded bg-slate-700 font-mono text-[11px] text-cyan-300">
+                    <span className="px-1.5 py-0.5 rounded bg-slate-700 text-xs text-cyan-300">
                       ←
                     </span>
                     <span>สไลด์ก่อนหน้า</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="px-1.5 py-0.5 rounded bg-slate-700 font-mono text-[11px] text-cyan-300">
+                    <span className="px-1.5 py-0.5 rounded bg-slate-700 text-xs text-cyan-300">
                       →
                     </span>
                     <span>สไลด์ถัดไป</span>
@@ -190,7 +190,7 @@ export default function Dashboard({
                     <h2 className="text-lg sm:text-2xl font-extrabold text-white tracking-tight">
                       {phase.title}
                     </h2>
-                    <p className="text-xs sm:text-sm text-slate-400 font-normal mt-0.5">
+                    <p className="text-sm sm:text-base text-slate-400 font-normal mt-0.5">
                       {phase.description}
                     </p>
                   </div>
@@ -233,12 +233,12 @@ export default function Dashboard({
                       {/* Top Row: Slide number & Status */}
                       <div>
                         <div className="flex items-center justify-between gap-2 mb-3">
-                          <span className="px-2.5 py-1 rounded-xl bg-slate-700/80 group-hover:bg-cyan-950 group-hover:text-cyan-300 text-slate-300 text-xs font-mono font-bold transition-colors">
+                          <span className="px-2.5 py-1 rounded-xl bg-slate-700/80 group-hover:bg-cyan-950 group-hover:text-cyan-300 text-slate-300 text-xs font-bold transition-colors">
                             สไลด์ #{lesson.slideNum}
                           </span>
 
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-900/60 text-slate-300 border border-slate-700/60">
+                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-900/60 text-slate-300 border border-slate-700/60">
                               {lesson.tag}
                             </span>
                             {isDone ? (
@@ -247,7 +247,7 @@ export default function Dashboard({
                                 <span>ผ่านแล้ว</span>
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 bg-slate-900/40 px-2 py-0.5 rounded-full">
+                              <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 bg-slate-900/40 px-2 py-0.5 rounded-full">
                                 <Circle className="w-3 h-3 text-slate-500" />
                                 <span>ยังไม่เรียน</span>
                               </span>
@@ -263,24 +263,24 @@ export default function Dashboard({
                             <IconComponent className="w-5 h-5" />
                           </div>
                           <div>
-                            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-cyan-300 transition-colors leading-snug">
+                            <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-cyan-300 transition-colors leading-snug">
                               {lesson.title}
                             </h3>
-                            <p className="text-xs text-cyan-400/90 font-medium">
+                            <p className="text-sm text-cyan-400/90 font-medium">
                               {lesson.subtitle}
                             </p>
                           </div>
                         </div>
 
                         {/* Description */}
-                        <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-4">
+                        <p className="text-sm text-slate-400 line-clamp-3 leading-relaxed mb-4">
                           {lesson.description}
                         </p>
                       </div>
 
                       {/* Card Footer */}
                       <div className="pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs text-slate-400">
-                        <span className="font-mono text-[11px] text-slate-400">
+                        <span className="text-xs text-slate-400">
                           ⏱ {lesson.estMinutes}
                         </span>
 
@@ -299,7 +299,7 @@ export default function Dashboard({
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-slate-800 text-center text-xs text-slate-500">
+      <footer className="mt-16 py-8 border-t border-slate-800 text-center text-sm text-slate-500">
         <section className="max-w-xl mx-auto px-4 mb-5" aria-labelledby="course-references">
           <h2 id="course-references" className="mb-1.5 text-sm font-bold text-slate-300">แหล่งอ้างอิง</h2>
           <div className="flex flex-col items-center">
