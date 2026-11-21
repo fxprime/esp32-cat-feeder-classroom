@@ -29,3 +29,22 @@
 .mm-extra-cases summary { cursor: pointer; min-height: 35px; padding-block: .2rem; font-weight: 700; font-size: .85rem; color: #315375; }
 .mm-extra-cases[open] summary { margin-bottom: .55rem; }
 @media(max-width:700px) { .mm-feeder-task { grid-template-columns: minmax(0, 1fr); } }
+
+.mm-hero .mm-lab-link {
+  display: inline-grid;
+  place-items: center;
+  min-block-size: 44px;
+  max-inline-size: 100%;
+  margin-block: .25rem .8rem;
+  padding: .62rem 1.05rem;
+  border-radius: .75rem;
+  background: #0369a1;
+  color: #fff;
+  font-weight: 700;
+  line-height: 1.4;
+  text-decoration: none;
+  text-wrap: balance;
+}
+.mm-hero .mm-lab-link:hover { background: #075985; }
+.mm-hero .mm-lab-link:active { background: #0c4a6e; }
+.mm-hero .mm-lab-link:focus-visible { outline: 3px solid #075985; outline-offset: 3px; }

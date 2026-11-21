@@ -329,6 +329,7 @@ export const LESSONS = [
     subtitle: "ฝาไม่ขยับ · ลองวัดไฟเลี้ยงและตรวจ GND",
     description: "หาว่าฝาไม่ขยับเพราะไฟเลี้ยงหรือ GND แล้วลองวัดกรณีอื่นด้วยมิเตอร์และหัววัดเวกเตอร์",
     file: "lesson-multimeter.html",
+    allowExternalTabs: true,
     tag: "10 ปัญหา · ทดลองวัดด้วยมิเตอร์",
     icon: "Activity",
     themeColor: "cyan",
