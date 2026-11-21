@@ -20,7 +20,7 @@ const steps = [
     title: 'หยุดจ่ายเมื่อถังชื้น',
     input: ['humidity', 'HTU21D วัดได้ 70% RH', 'อ่านความชื้นอากาศในถัง'],
     process: ['esp32', 'ความชื้นถึงเกณฑ์ไหม?', 'ตั้งไว้ที่ 70% RH ในแบบจำลอง'],
-    output: ['closed', 'คงฝาปิด เปิดไฟแดง', 'แจ้งเจ้าของว่าถังชื้น'],
+    output: ['closed', 'คงสถานะปิดฝาไว้ ไม่เทขนม', 'แจ้งเจ้าของให้มาเปลี่ยนอาหาร'],
     feedback: ['humidity', 'วัดใหม่หลังเปลี่ยนอาหาร', 'ส่งค่าความชื้นกลับไปเช็กว่าถังพร้อมแล้วหรือยัง'],
   },
   {
@@ -33,19 +33,19 @@ const steps = [
   },
   {
     key: 'arrival',
-    title: 'ติดตามว่ามีตัวมาที่ชามไหม',
-    input: ['ir', 'IR อ่านแสงสะท้อน', 'เริ่มเฝ้าดูชามหลังจ่ายอาหาร'],
-    process: ['esp32', 'มีตัวเข้าใกล้ชามใน 8 วินาทีไหม?', 'อ่านสัญญาณจาก IR'],
-    output: ['counter', 'บันทึกว่าพบตัวที่ชาม', 'ดูเหตุการณ์บน Serial'],
-    feedback: ['cat', 'เทียบกับสิ่งที่เห็นที่ชาม', 'ลองให้แมวเข้าและออกจากระยะตรวจจับ'],
+    title: 'ติดตามว่าแมวกินเวลาไหนนานแค่ไหน',
+    input: ['ir', 'IR ตรวจแมวที่ชาม', 'จับสัญญาณตอนมาถึงและออกจากชาม'],
+    process: ['esp32', 'จับเวลาอยู่หน้าชาม', 'ใช้ช่วงที่อยู่หน้าชามประมาณเวลากิน'],
+    output: ['phone', 'ส่งรายงานผ่าน Wi-Fi', 'เก็บเวลาที่แมวมาถึงและระยะเวลาที่อยู่หน้าชาม'],
+    feedback: ['buzzer', 'เจ้าของสั่งเรียกซ้ำได้', 'ถ้ารายงานว่าแมวยังไม่มา เจ้าของส่งคำสั่งผ่าน Wi-Fi ให้ Buzzer ส่งเสียงเรียกว่าอาหารพร้อมอีกครั้ง'],
   },
   {
-    key: 'pellets',
-    title: 'ต่อยอดด้วยการนับเม็ดอาหาร',
-    input: ['piezo', 'เม็ดกระทบแผ่น Piezo', 'แรงกระแทกทำให้เกิดสัญญาณไฟฟ้า'],
-    process: ['esp32', 'สัญญาณนี้มาจากเม็ดใหม่ไหม?', 'แยกการกระทบออกจากการสั่นซ้ำ'],
-    output: ['counter', 'เพิ่มตัวนับ 1 เม็ด', 'แสดงจำนวนที่นับได้'],
-    feedback: ['feeder', 'เทียบกับจำนวนเม็ดที่ตกจริง', 'ใช้ผลที่เห็นปรับเกณฑ์การนับ'],
+    key: 'manual',
+    title: 'ให้อาหารด้วยปุ่ม Manual',
+    input: ['manual-switch', 'Manual Feed Switch', 'กดปุ่มเพื่อขอให้อาหารทันที'],
+    process: ['esp32', 'อาหารพร้อมจ่ายไหม?', 'เช็กความชื้นและอาหารในถัง'],
+    output: ['feeder', 'เปิดฝาให้อาหาร', 'เมื่อถังพร้อม เซอร์โวเปิดฝา'],
+    feedback: ['piezo', 'Piezo เช็กว่ามีเม็ดอาหารตกไหม', 'ถ้าเปิดฝาแล้วไม่พบแรงกระแทกที่ราง อาหารอาจติดขัด ให้แจ้งเจ้าของทาง Telegram'],
   },
 ];
 
@@ -109,7 +109,7 @@ function renderStep() {
 
   for (const [key, node] of Object.entries(nodes)) {
     const [icon, title, detail] = step[key];
-    node.querySelector('use').setAttribute('href', `../assets/feeder-flow.svg?v=feedback-route#${icon}`);
+    node.querySelector('use').setAttribute('href', `../assets/feeder-flow.svg?v=manual-feed#${icon}`);
     node.querySelector('[data-flow-text]').textContent = title;
     node.querySelector('[data-flow-detail]').textContent = detail;
   }

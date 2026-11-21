@@ -28,6 +28,15 @@
       <circle cx="48" cy="36" r="4.6" fill="#6552a0" stroke="none"/>
     </g>
   </symbol>
+  <symbol id="manual-switch" viewBox="0 0 96 72">
+    <g stroke="#254e6b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M29 51v11m38-11v11M29 62h-9m47 0h9" fill="none" stroke="#5c8197"/>
+      <rect x="19" y="29" width="58" height="24" rx="6" fill="#a9c7d8"/>
+      <path d="M25 29h46v16H25z" fill="#eaf5fb" stroke="none"/>
+      <path d="M30 28v-6a4 4 0 0 1 4-4h28a4 4 0 0 1 4 4v6z" fill="#f1b878"/>
+      <path d="M48 4v10m-5-5 5 5 5-5" fill="none" stroke="#167ea3"/>
+    </g>
+  </symbol>
   <symbol id="clock" viewBox="0 0 96 72">
     <g stroke="#254e6b" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="48" cy="36" r="31" fill="#b9dfef" stroke-width="3"/>

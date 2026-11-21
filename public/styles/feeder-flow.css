@@ -64,8 +64,8 @@
   background: var(--flow-paper);
   content: "";
 }
-.flow-balloon strong, .flow-feedback strong { display: block; font-size: clamp(.81rem, 1.9vw, 1.14rem); font-weight: 800; line-height: 1.4; }
-.flow-balloon p, .flow-feedback p { margin: .15rem 0 0; font-size: clamp(.71rem, 1.35vw, .93rem); line-height: 1.45; }
+.flow-balloon strong, .flow-feedback strong { display: block; font-size: clamp(.81rem, 1.9vw, 1.14rem); font-weight: 800; line-height: 1.4; text-wrap: balance; }
+.flow-balloon p, .flow-feedback p { margin: .15rem 0 0; font-size: clamp(.71rem, 1.35vw, .93rem); line-height: 1.45; text-wrap: pretty; }
 .flow-forward { align-self: start; inline-size: 100%; block-size: 1.35rem; margin-block-start: clamp(2.75rem, 5.3vw, 3.8rem); color: #3c78a3; }
 .flow-forward path, .flow-return path { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 
