@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="bench" viewBox="0 0 880 312">
+    <defs>
+      <linearGradient id="solder-steps-sky" x2="0" y2="1">
+        <stop stop-color="#e4f5ff"/>
+        <stop offset="1" stop-color="#f7fcff"/>
+      </linearGradient>
+    </defs>
+    <rect width="880" height="312" fill="url(#solder-steps-sky)"/>
+    <path d="M30 247h820m-802 21h784m-753 21h720" fill="none" stroke="#d5e9f3" stroke-width="2"/>
+    <ellipse cx="492" cy="260" rx="208" ry="17" fill="#c4deeb"/>
+    <path d="M312 240h365v12l-18 10H327l-15-10z" fill="#245d69" stroke="#244d61" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M357 198h275l45 42H312z" fill="#48979b" stroke="#244d61" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M356 229h66l34-17m78 0h42l19 16h46" fill="none" stroke="#277481" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M344 244h291" stroke="#6ba3a7" stroke-width="2.5" stroke-linecap="round"/>
+    <g fill="#b0d1cf" stroke="#326f74" stroke-width="2">
+      <ellipse cx="375" cy="223" rx="8" ry="4"/>
+      <ellipse cx="398" cy="223" rx="8" ry="4"/>
+      <ellipse cx="586" cy="221" rx="8" ry="4"/>
+      <ellipse cx="610" cy="221" rx="8" ry="4"/>
+      <ellipse cx="631" cy="230" rx="8" ry="4"/>
+    </g>
+    <ellipse cx="486" cy="208" rx="41" ry="14" fill="#26696e"/>
+    <ellipse cx="486" cy="206" rx="35" ry="12" fill="#da9464" stroke="#a65940" stroke-width="2.5"/>
+    <path d="M456 206q12-8 31-8" fill="none" stroke="#ffbe81" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="488" cy="205" rx="12" ry="6" fill="#754637"/>
+    <path d="M553 204v-75q0-13-13-13h-33m-19 89v-89h18" fill="none" stroke="#4d6675" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M551 200v-71q0-11-11-11h-33m-21 82v-82h20" fill="none" stroke="#d0e1e5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="498" y="104" width="45" height="26" rx="8" fill="#85b8d4" stroke="#244d61" stroke-width="3"/>
+    <path d="M510 106v22m10-22v22m11-22v22" stroke="#3e7696" stroke-width="3"/>
+    <path d="M547 202h12l5 4h-22z" fill="#bed1d6" stroke="#4d6675" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M58 84h38m-19-19v38m707-70h24m-12-12v24m-43 176h20m-10-10v20" fill="none" stroke="#b8d9e8" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="stand" viewBox="0 0 880 312">
+    <ellipse cx="748" cy="271" rx="69" ry="9" fill="#c3d9e4"/>
+    <path d="M704 237h88l20 21h-127z" fill="#4c7491" stroke="#244d61" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M685 258h127v9H685z" fill="#315367" stroke="#244d61" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M743 243v-40m38 42v-39m-39 36h40" fill="none" stroke="#2a5268" stroke-width="8" stroke-linecap="round"/>
+    <path d="M725 194q18-14 38 0m-37 11q18-14 38 0m-34 11q17-13 35 0m-28 11q17-12 35 0" fill="none" stroke="#7895a8" stroke-width="7" stroke-linecap="round"/>
+    <path d="M725 194q18-14 38 0m-37 11q18-14 38 0m-34 11q17-13 35 0m-28 11q17-12 35 0" fill="none" stroke="#c3d7e0" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="brass" viewBox="0 0 880 312">
+    <ellipse cx="252" cy="263" rx="64" ry="10" fill="#c4dce7"/>
+    <path d="M198 222h108l-13 30q-4 9-14 10h-54q-11-1-15-10z" fill="#b78046" stroke="#775b45" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="252" cy="222" rx="54" ry="17" fill="#e4ba74" stroke="#775b45" stroke-width="3"/>
+    <ellipse cx="252" cy="221" rx="45" ry="12" fill="#8d5a32"/>
+    <path d="M215 224q-2-12 9-10 9 1 2 9-10 3-8-6 2-10 10-10 11 0 6 9-6 7-10 1-7-12 8-16 13-3 16 8 2 7-5 8-8 1-7-8 1-14 13-12 9 0 7 11-3 8-9 3-8-5 1-13 10-5 18 3 4 7-3 13-7 6-10-2 0-11 12-11 12 0 14 9 1 7-8 8-8-1-5-8 5-8 16-5 9 3 5 10-7 9-14 5-5-9 5-12 12-1 13 9" fill="none" stroke="#eab35d" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M217 240q35 9 69 0" fill="none" stroke="#e7bf86" stroke-width="2.3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="joint" viewBox="0 0 880 312">
+    <defs>
+      <linearGradient id="solder-steps-metal" x2=".8" y2="1">
+        <stop stop-color="#f4fbfb"/>
+        <stop offset=".57" stop-color="#a9c4cd"/>
+        <stop offset="1" stop-color="#6a8c9a"/>
+      </linearGradient>
+    </defs>
+    <ellipse cx="488" cy="207" rx="32" ry="11" fill="#edc19b" opacity=".75"/>
+    <path d="M466 206q11-4 15-9 4-6 5-12q1-4 4-4 4 0 5 8 2 9 9 14l9 4q-4 5-24 7-15 0-23-8Z" fill="url(#solder-steps-metal)" stroke="#567d8c" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M477 206q8-6 12-15m1 17h8" fill="none" stroke="#f5fbff" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="tip" viewBox="0 0 880 312">
+    <g transform="translate(486 204) rotate(28) scale(.83 1)" stroke-linejoin="round">
+      <path d="M-355 0q-24 0-34-22" fill="none" stroke="#2e4355" stroke-width="8" stroke-linecap="round"/>
+      <rect x="-356" y="-13" width="38" height="26" rx="7" fill="#384b5a" stroke="#223f55" stroke-width="3"/>
+      <path d="M-330-24h105q13 0 20 14v20q-7 14-20 14h-105q-12 0-12-12v-24q0-12 12-12Z" fill="#3983ac" stroke="#223f55" stroke-width="3.5"/>
+      <path d="M-330-20h102q8 0 13 7h-126q2-7 11-7Z" fill="#7dc2dd"/>
+      <path d="M-305-12h69q13 0 22 8v8q-9 8-22 8h-69q-9 0-9-9v-6q0-9 9-9Z" fill="#285f81"/>
+      <path d="M-286-8v16m14-16v16m14-16v16m14-16v16" stroke="#438bb1" stroke-width="3" stroke-linecap="round"/>
+      <path d="M-204-11h29v22h-29z" fill="#859da9" stroke="#354f62" stroke-width="3"/>
+      <path d="M-175-9h98v18h-98z" fill="#9eb5bf" stroke="#435d6a" stroke-width="2.8"/>
+      <path d="M-162-5h66" stroke="#e0eaec" stroke-width="3" stroke-linecap="round"/>
+      <path d="M-82-8h35L-2 0l-45 9h-35z" fill="#d5e1e4" stroke="#526875" stroke-width="2.8"/>
+      <path d="m-50-4 37 4-37 4" fill="none" stroke="#edf7f8" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="m-19 0 17 .2-16 3.4" fill="none" stroke="#a96d49" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+  </symbol>
+
+  <symbol id="wire" viewBox="0 0 880 312">
+    <g stroke-linecap="round" stroke-linejoin="round">
+      <path d="M494 204c45-33 111-77 185-102q23-9 37-32" fill="none" stroke="#557580" stroke-width="6"/>
+      <path d="M494 203c45-33 111-77 185-102q23-9 37-32" fill="none" stroke="#e8f4f8" stroke-width="2.6"/>
+      <path d="M704 40h67c14 0 23 13 23 29s-9 29-23 29h-67z" fill="#9cb4bc" stroke="#315464" stroke-width="3"/>
+      <path d="M716 45h46m-40 7h53m-51 7h55m-54 7h57m-57 7h57m-58 7h54m-56 7h49m-53 7h44" fill="none" stroke="#ddebed" stroke-width="2.6"/>
+      <ellipse cx="705" cy="69" rx="22" ry="29" fill="#446877" stroke="#284c61" stroke-width="3"/>
+      <ellipse cx="705" cy="69" rx="12" ry="17" fill="#d5e4e5" stroke="#284c61" stroke-width="3"/>
+      <ellipse cx="705" cy="69" rx="6" ry="9" fill="#315362"/>
+    </g>
+  </symbol>
+</svg>

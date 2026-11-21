@@ -1,0 +1,101 @@
+.solder-art {
+  --solder-motion: cubic-bezier(.45, 0, .55, 1);
+  margin: 0;
+  border: 1px solid #afcfe2;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #e4f5ff;
+}
+
+.solder-art > svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.solder-art__joint,
+.solder-art__wire {
+  opacity: 0;
+}
+
+.solder-art__tip {
+  transform-box: view-box;
+  transform-origin: 486px 204px;
+}
+
+.solder-art[data-solder-stage="clean"] .solder-art__tip {
+  transform: translate(-234px, 7px) rotate(10deg);
+}
+
+.solder-art[data-solder-stage="feed"] :is(.solder-art__joint, .solder-art__wire),
+.solder-art[data-solder-stage="remove"] .solder-art__joint {
+  opacity: 1;
+}
+
+.solder-art[data-solder-stage="remove"] .solder-art__tip {
+  transform: translate(-96px, -38px);
+}
+
+.solder-art[data-solder-stage="remove"] .solder-art__wire {
+  transform: translate(120px, -48px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .solder-art[data-solder-stage="clean"] .solder-art__tip {
+    animation: solder-steps-brush 1.15s var(--solder-motion) both;
+  }
+
+  .solder-art[data-solder-stage="heat"] .solder-art__tip {
+    animation: solder-steps-approach .7s var(--solder-motion) both;
+  }
+
+  .solder-art[data-solder-stage="feed"] .solder-art__wire {
+    animation: solder-steps-feed .77s var(--solder-motion) both;
+  }
+
+  .solder-art[data-solder-stage="feed"] .solder-art__joint {
+    animation: solder-steps-wet .42s .58s ease-out both;
+  }
+
+  .solder-art[data-solder-stage="remove"] .solder-art__wire {
+    animation: solder-steps-retract-wire .48s var(--solder-motion) both;
+  }
+
+  .solder-art[data-solder-stage="remove"] .solder-art__tip {
+    animation: solder-steps-retract-tip .68s .55s var(--solder-motion) both;
+  }
+}
+
+@keyframes solder-steps-brush {
+  0% { transform: translate(-213px, -2px) rotate(9deg); }
+  30%, 68% { transform: translate(-243px, 9px) rotate(10deg); }
+  50%, 85% { transform: translate(-225px, 7px) rotate(10deg); }
+  100% { transform: translate(-234px, 7px) rotate(10deg); }
+}
+
+@keyframes solder-steps-approach {
+  from { transform: translate(-96px, -38px); }
+  to { transform: none; }
+}
+
+@keyframes solder-steps-feed {
+  from { opacity: 0; transform: translate(120px, -48px); }
+  31% { opacity: 1; }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes solder-steps-wet {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes solder-steps-retract-wire {
+  from { opacity: 1; transform: none; }
+  67% { opacity: 1; }
+  to { opacity: 0; transform: translate(120px, -48px); }
+}
+
+@keyframes solder-steps-retract-tip {
+  from { transform: none; }
+  to { transform: translate(-96px, -38px); }
+}

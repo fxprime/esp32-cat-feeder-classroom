@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soldering Lab · บัดกรีให้ติดและปลอดภัย | ESP32 ม.4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/slide-support.css">
+  <link rel="stylesheet" href="../styles/soldering-lab.css">
+  <link rel="stylesheet" href="../styles/soldering-steps-art.css">
+</head>
+<body>
+  <main class="solder-shell" data-soldering-lab>
+    <header class="solder-hero">
+      <span>Soldering Lab · ESP32 ม.4</span>
+      <h1>บัดกรีให้ติดและปลอดภัย</h1>
+    </header>
+
+    <nav class="solder-track" aria-label="ลำดับบทบัดกรี">
+      <button type="button" data-solder-section="safety" aria-controls="solder-safety" aria-current="step">กฎความปลอดภัย</button>
+      <button type="button" data-solder-section="demo" aria-controls="solder-demo">จี้–ป้อน–ถอน</button>
+      <button type="button" data-solder-section="joints" aria-controls="solder-joints">ตรวจรอยบัดกรี</button>
+      <button type="button" data-solder-section="practice" aria-controls="solder-practice">ลงมือทำ</button>
+    </nav>
+
+    <div class="solder-stage">
+      <section id="solder-safety" data-solder-panel="safety" aria-labelledby="solder-safety-title">
+        <header class="solder-head">
+          <span class="solder-time">ช่วงที่ 1 · 15 นาที</span>
+          <h2 id="solder-safety-title" tabindex="-1">กฎ 3 ข้อก่อนจับหัวแร้ง</h2>
+          <p>ปลายหัวแร้งในตัวอย่างตั้งไว้ประมาณ <strong>350 °C</strong> ให้ครูตั้งตามชนิดลวดและชิ้นงาน</p>
+        </header>
+        <ol class="solder-rules">
+          <li data-solder-rule data-revealed>
+            <span class="solder-rule-number" aria-hidden="true">1</span>
+            <svg viewBox="0 0 80 64" aria-hidden="true" class="solder-rule-art">
+              <path d="m7 24 7-7h52l7 7M14 25H7m66 0h-7M33 32q7-7 14 0" fill="none" stroke="#155582" stroke-width="4" stroke-linecap="round"/>
+              <path d="M12 25h22v13a9 9 0 0 1-9 9h-3a9 9 0 0 1-9-9zm34 0h22l-1 13a9 9 0 0 1-9 9h-3a9 9 0 0 1-9-9z" fill="#bde9fe" stroke="#155582" stroke-width="3" stroke-linejoin="round"/>
+              <path d="m18 35 5-5m30 5 5-5" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div data-solder-rule-copy>
+              <h3>ใส่แว่นนิรภัย</h3>
+              <p>ใส่ตลอดเวลาที่บัดกรีหรือตัดขาอุปกรณ์ เพื่อกันโลหะและเศษขากระเด็นเข้าตา</p>
+            </div>
+          </li>
+          <li data-solder-rule>
+            <span class="solder-rule-number" aria-hidden="true">2</span>
+            <svg viewBox="0 0 80 64" aria-hidden="true" class="solder-rule-art">
+              <path d="M13 52h54M27 50l4-15h18l4 15" fill="none" stroke="#155582" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="m20 33 8-4 13-13 5 5-14 14z" fill="#a4bac9" stroke="#155582" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="m40 15 13-9a5 5 0 0 1 6 8l-13 9z" fill="#65bce7" stroke="#155582" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="m12 35 3-1m3-12 2 3" stroke="#da7708" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div data-solder-rule-copy hidden>
+              <h3>จับด้ามแล้วคืนแท่น</h3>
+              <p>จับเฉพาะด้ามฉนวนเหมือนจับปากกา วางบนแท่นทุกครั้งที่พัก และวางก่อนลุกจากโต๊ะ</p>
+            </div>
+          </li>
+          <li data-solder-rule>
+            <span class="solder-rule-number" aria-hidden="true">3</span>
+            <svg viewBox="0 0 80 64" aria-hidden="true" class="solder-rule-art">
+              <rect x="39" y="11" width="31" height="35" rx="7" fill="#d4f3fa" stroke="#155582" stroke-width="3"/>
+              <circle cx="54.5" cy="28.5" r="11" fill="#b7e7f0" stroke="#155582" stroke-width="2"/>
+              <path d="M54 28c-8 0-8-8-4-8 5 0 5 4 4 8zm0 0c4-7 11-3 9 1-2 4-6 2-9-1zm0 0c4 7-2 11-5 8-3-4 0-7 5-8z" fill="#3686a3"/>
+              <path d="M10 23h20m-5-5 5 5-5 5M13 36h16m-5-5 5 5-5 5m16 9h23" fill="none" stroke="#155582" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div data-solder-rule-copy hidden>
+              <h3>ดูดควันที่จุดบัดกรี</h3>
+              <p>เปิดเครื่องดูดควันใกล้รอยต่อก่อนเริ่ม ให้ใบหน้าอยู่นอกแนวควันฟลักซ์ แม้ใช้ลวดไร้ตะกั่ว</p>
+            </div>
+          </li>
+        </ol>
+        <p class="solder-rule-count" data-solder-rule-count role="status">เปิดแล้ว 1 จาก 3 ข้อ</p>
+      </section>
+
+      <section id="solder-demo" data-solder-panel="demo" aria-labelledby="solder-demo-title" hidden>
+        <header class="solder-head solder-head-with-action">
+          <hgroup>
+            <h2 id="solder-demo-title" tabindex="-1">จี้–ป้อน–ถอน</h2>
+            <p>ดูจุดที่ปลายหัวแร้งกับลวดบัดกรีแตะชิ้นงาน</p>
+          </hgroup>
+          <a class="solder-button solder-primary" data-solder-lab-link href="https://soldering-lab-3d.modulemore.chatgpt.site/" target="_blank" rel="noopener noreferrer" aria-label="เปิดแอนิเมชัน Soldering Lab 3D ในแท็บใหม่">เปิดแอนิเมชัน Soldering Lab 3D</a>
+        </header>
+        <figure class="solder-art" data-solder-art data-solder-stage="clean">
+          <svg viewBox="0 0 880 312" aria-hidden="true">
+            <use class="solder-art__bench" href="../assets/soldering-steps.svg#bench"/>
+            <use class="solder-art__stand" href="../assets/soldering-steps.svg#stand"/>
+            <use class="solder-art__brass" href="../assets/soldering-steps.svg#brass"/>
+            <use class="solder-art__joint" href="../assets/soldering-steps.svg#joint"/>
+            <use class="solder-art__tip" href="../assets/soldering-steps.svg#tip"/>
+            <use class="solder-art__wire" href="../assets/soldering-steps.svg#wire"/>
+          </svg>
+          <figcaption class="solder-demo-caption" aria-live="polite" aria-atomic="true">
+            <strong data-solder-demo-name>เตรียมปลายหัวแร้ง</strong>
+            <span data-solder-demo-detail>เช็ดปลายในฝอยทองเหลือง แล้วเคลือบปลายด้วยลวดบัดกรีบาง ๆ เพื่อช่วยถ่ายความร้อน</span>
+          </figcaption>
+        </figure>
+        <div class="solder-demo-controls" role="group" aria-label="ควบคุมการสาธิต">
+          <button type="button" data-solder-motion="clean" aria-pressed="true">เช็ดปลาย</button>
+          <button type="button" data-solder-motion="heat" aria-pressed="false">1. จี้</button>
+          <button type="button" data-solder-motion="feed" aria-pressed="false">2. ป้อน</button>
+          <button type="button" data-solder-motion="remove" aria-pressed="false">3. ถอน</button>
+          <button type="button" data-solder-play>เล่นตั้งแต่ต้น</button>
+        </div>
+      </section>
+
+      <section id="solder-joints" data-solder-panel="joints" aria-labelledby="solder-joints-title" hidden>
+        <header class="solder-head">
+          <h2 id="solder-joints-title" tabindex="-1">รอยบัดกรีแบบไหนใช้ได้?</h2>
+          <p>กดชื่อรอยใต้ภาพ แล้วดูว่าลวดบัดกรีแนบขาและแผ่นทองแดงอย่างไร</p>
+        </header>
+        <figure class="solder-joints">
+          <div class="solder-joints-frame" data-solder-joint-selection="good">
+            <img src="../assets/soldering-joints.webp" width="1376" height="768" alt="ภาพตัดขวางสามแบบจากซ้ายไปขวา รอยเว้าแนบขาและแพด รอยเป็นก้อน และรอยที่พาดเชื่อมสองขา">
+            <span class="solder-joint-outline" aria-hidden="true"></span>
+          </div>
+          <div class="solder-joint-buttons" role="group" aria-label="เปรียบเทียบรอยบัดกรี">
+            <button type="button" data-solder-joint="good" aria-pressed="true">รอยดี</button>
+            <button type="button" data-solder-joint="cold" aria-pressed="false">รอยบัดกรีเย็น</button>
+            <button type="button" data-solder-joint="bridge" aria-pressed="false">สะพานตะกั่ว</button>
+          </div>
+          <figcaption class="solder-joint-caption" aria-live="polite" aria-atomic="true">
+            <strong data-solder-joint-name>รอยดี · ทรงภูเขาไฟ</strong>
+            <span data-solder-joint-detail>ลวดบัดกรีไหลแนบขากับแพด ขอบโค้งเว้า และเห็นรูปขาชัด ลวดไร้ตะกั่วอาจมีผิวด้านได้</span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="solder-practice" data-solder-panel="practice" aria-labelledby="solder-practice-title" hidden>
+        <header class="solder-head">
+          <span class="solder-time">ช่วงที่ 2 · 60 นาที</span>
+          <h2 id="solder-practice-title" tabindex="-1">ฝึก 4 จุด แล้วทำชิ้นงานของกลุ่ม</h2>
+        </header>
+        <div class="solder-practice-grid">
+          <article>
+            <span class="solder-time">15 นาทีแรก</span>
+            <h3>ซ้อมบน Perfboard</h3>
+            <p>ใช้ลวดบัดกรีไร้ตะกั่ว ฝึกคนละ <strong>4 จุด</strong> เทียบกับรูป แล้วให้ครูตรวจการแนบแพดและขาก่อนทำชิ้นงานจริง</p>
+          </article>
+          <article>
+            <span class="solder-time">45 นาทีถัดไป</span>
+            <h3>ประกอบเครื่องให้อาหารแมว</h3>
+            <ul>
+              <li>บัดกรี <strong>Pin Header ของ HTU21D</strong></li>
+              <li>ต่อสาย <strong>Piezo</strong> แล้วหุ้มรอยต่อด้วยท่อหด</li>
+              <li>ประกอบบอร์ดกระจายไฟ <strong>5 V และ GND ร่วม</strong> สำหรับ Servo</li>
+            </ul>
+          </article>
+        </div>
+        <p class="solder-off">ถอด USB และแบตก่อนทำงาน ให้ครูตรวจรอยบัดกรีและขาที่อาจลัดวงจรก่อนจ่ายไฟ</p>
+        <div class="solder-break">
+          <strong>15:00–15:15 · พักเบรกบ่าย</strong>
+          <p>ปิดหัวแร้ง วางบนแท่นให้เย็น แล้วล้างมือด้วยสบู่ก่อนกินของว่าง</p>
+        </div>
+      </section>
+
+      <div class="solder-navigation">
+        <button type="button" data-solder-prev disabled>ย้อนกลับ</button>
+        <button type="button" class="solder-primary" data-solder-next>เปิดกฎข้อถัดไป</button>
+      </div>
+    </div>
+
+    <details class="solder-notes">
+      <summary>สคริปต์สำหรับผู้สอน</summary>
+      <p><strong>ช่วงที่ 1 · 15 นาที</strong> “วันนี้ปลายหัวแร้งตั้งไว้ประมาณ 350 °C เปิดกฎทีละข้อก่อนจับด้าม ใส่แว่นตั้งแต่เริ่มจนตัดขาเสร็จ จับด้ามฉนวนและคืนแท่นก่อนลุกจากโต๊ะ เปิดเครื่องดูดควันใกล้ชิ้นงานแล้วหลบแนวควันฟลักซ์”</p>
+      <p>“ดูจังหวะจี้–ป้อน–ถอนครับ เช็ดปลายกับฝอยทองเหลืองและเคลือบปลายบาง ๆ จี้ให้โดนขากับแพดพร้อมกัน อุ่นสั้น ๆ ประมาณ 1–2 วินาทีในตัวอย่าง แล้วป้อนลวดที่รอยต่อ เมื่อไหลแนบทั้งสองด้าน ให้ถอนลวดก่อน ยกหัวแร้งตาม และวางชิ้นงานนิ่งจนรอยแข็งตัว”</p>
+      <p>“ตอนเทียบกับภาพให้ดูขอบรอยและผิวที่แนบกับแพด ถ้าเป็นก้อนหรือขอบยังลอยให้ครูช่วยดูวิธีอุ่นรอยต่ออีกครั้ง ถ้าโลหะเชื่อมขาข้าง ๆ ให้หยุดและให้ครูช่วยใช้ที่ดูดหรือสายซับตะกั่ว ผิวด้านอย่างเดียวพบได้ในรอยบัดกรีไร้ตะกั่ว”</p>
+      <p><strong>ช่วงที่ 2 · 60 นาที</strong> “15 นาทีแรกซ้อมคนละ 4 จุด พอครูตรวจแล้วใช้ 45 นาทีที่เหลือทำ Pin Header ของ HTU21D, สาย Piezo และบอร์ดไฟ 5 V/GND ให้ครบ ยังไม่เสียบไฟจนกว่าครูจะตรวจ พอถึง 15:00 น. ปิดหัวแร้งและต้องล้างมือด้วยสบู่ก่อนกินของว่าง ช่วงพักถึง 15:15 น.”</p>
+      <p class="solder-sources">อ้างอิง <a href="https://www.hse.gov.uk/asthma/solderers.htm" target="_blank" rel="noopener noreferrer">การดูดควันฟลักซ์</a> · <a href="https://research.columbia.edu/ehs/safely-handling-solder" target="_blank" rel="noopener noreferrer">ความปลอดภัยในการบัดกรี</a> · <a href="https://learn.adafruit.com/adafruit-guide-excellent-soldering/common-problems" target="_blank" rel="noopener noreferrer">ตัวอย่างรอยบัดกรี</a> · <a href="https://www.kester.com/knowledge-base/faq" target="_blank" rel="noopener noreferrer">ผิวของรอยไร้ตะกั่ว</a></p>
+    </details>
+  </main>
+  <script defer src="../scripts/slide-support.js"></script>
+  <script type="module" src="../scripts/soldering-lab.js"></script>
+</body>
+</html>
