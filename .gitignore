@@ -5,3 +5,7 @@ dist/
 
 # Teacher configuration stays next to the local Arduino sketch.
 teacher-secrets.h
+
+# Three.js runtime is copied from the pinned dependency by the build.
+/public/scripts/vendor/three.*.min.js
+/public/scripts/vendor/THREE-LICENSE.txt

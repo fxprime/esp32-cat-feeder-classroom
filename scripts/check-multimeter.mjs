@@ -30,9 +30,9 @@ for(const mode of ['current','dcv','off'])assert.equal(measure('current',setup('
 assert.equal(measure('current',setup('current',{power:true,fuseBlown:true})).severity,'stop');
 assert.equal(measure('current',setup('current',{power:true,jack:'v'})).severity,'stop');
 assert.equal(measure('continuity',setup('continuity',{red:null})).severity,'stop');
-assert.deepEqual(LESSONS.slice(3,11).map(lesson=>lesson.id),[4,14,5,6,11,7,13,8]);
-assert.deepEqual(LESSONS.slice(11).map(lesson=>lesson.id),[9,12,15,16,17,10]);
-assert.deepEqual(LESSONS.map(l=>l.slideNum),Array.from({length:17},(_,i)=>i+1));assert.deepEqual(PHASES.flatMap(p=>p.slides),LESSONS.map(l=>l.id));
+assert.deepEqual(LESSONS.slice(3,12).map(lesson=>lesson.id),[4,14,18,5,6,11,7,13,8]);
+assert.deepEqual(LESSONS.slice(12).map(lesson=>lesson.id),[9,12,15,16,17,10]);
+assert.deepEqual(LESSONS.map(l=>l.slideNum),Array.from({length:18},(_,i)=>i+1));assert.deepEqual(PHASES.flatMap(p=>p.slides),LESSONS.map(l=>l.id));
 assert.deepEqual(normalizeProgress([5,6,9,12,13]),[5,6,9,12,13]);
 console.log('Multimeter passed: 10 cases, supply polarity, isolated components, voltage drop, series current, current-jack shorts even in V/OFF, power guards, stable lesson IDs and new placement.');
 

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ทำไม Servo ต้องต่อ GND ร่วม? · ESP32 Classroom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/slide-support.css">
+  <link rel="stylesheet" href="../styles/servo-reference.css">
+</head>
+<body>
+<main class="sr-page" data-servo-reference data-step="0" data-outcome="off">
+  <h1>ทำไม Servo ต้องต่อ GND ร่วม?</h1>
+  <section class="sr-card" aria-labelledby="sr-heading">
+    <div class="sr-instruction" role="status" aria-atomic="true">
+      <h2 id="sr-heading" data-step-heading>มีไฟสองแหล่ง จะส่งคำสั่งถึงกันไหม?</h2>
+      <p data-step-description>ESP32 รับไฟจาก USB ส่วน Servo ใช้แหล่งจ่าย 5 V ของตัวเอง ลองต่อสายไปทีละขั้น</p>
+    </div>
+    <div class="sr-stage">
+      <figure class="sr-bench">
+        <svg class="sr-diagram" viewBox="0 43 620 267" role="img" aria-labelledby="sr-diagram-title sr-diagram-description">
+          <title id="sr-diagram-title">การต่อ ESP32 กับ Servo ที่ใช้ไฟเลี้ยงแยก</title>
+          <desc id="sr-diagram-description">USB จ่ายไฟให้ ESP32 ขา GPIO18 ส่งพัลส์ไปยัง SIG ของ Servo แหล่งจ่าย DC 5 V จ่ายไฟให้ Servo โดยมีสายกลับมาที่ขั้ว GND สายกราวด์ร่วมเชื่อม GND ของ ESP32 เข้ากับ GND ของแหล่งจ่าย DC</desc>
+          <defs>
+            <pattern id="sr-board-dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#bed9e9"/></pattern>
+            <linearGradient id="sr-servo-case" x2="0" y2="1"><stop stop-color="#2788aa"/><stop offset="1" stop-color="#175c82"/></linearGradient>
+          </defs>
+          <rect width="620" height="310" rx="15" fill="#eef8fe"/>
+          <rect width="620" height="310" rx="15" fill="url(#sr-board-dots)"/>
+          <rect x="40" y="82" width="50" height="35" rx="4" fill="#d5eaf7" stroke="#3a6e92" stroke-width="3"/>
+          <path d="M32 118h66l-5 7H37z" fill="#3a6e92"/>
+          <text x="65" y="149" text-anchor="middle" class="sr-diagram-label">USB</text>
+          <rect x="140" y="66" width="149" height="113" rx="13" fill="#184b60" stroke="#124052" stroke-width="2"/>
+          <path d="M155 83h43v20h-8V91h-8v12h-8V91h-8v12h-11z" fill="#91b9c4"/>
+          <rect x="154" y="109" width="69" height="31" rx="6" fill="#d8e8ed"/>
+          <text x="188" y="130" text-anchor="middle" class="sr-chip-label">ESP32</text>
+          <rect x="135" y="97" width="13" height="20" rx="3" fill="#8cb7ca"/>
+          <circle class="sr-board-led" cx="164" cy="154" r="5"/>
+          <text x="238" y="97" text-anchor="middle" class="sr-device-label">GPIO18</text>
+          <text x="245" y="162" text-anchor="middle" class="sr-device-label">GND</text>
+          <rect x="42" y="225" width="163" height="64" rx="10" fill="#fff" stroke="#5d819a" stroke-width="2"/>
+          <path d="M124 225v7h57v39h19" fill="none" stroke="#66869c" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="181" cy="271" r="2.6" fill="#3d657f"/>
+          <text x="57" y="250" class="sr-diagram-label sr-supply-title">ไฟแยก DC 5 V</text>
+          <circle class="sr-supply-led" cx="62" cy="271" r="5"/>
+          <text x="73" y="276" class="sr-small-svg-label" data-svg-supply>ปิดไฟ</text>
+          <text x="196" y="250" text-anchor="end" class="sr-small-svg-label">+</text>
+          <text x="196" y="276" text-anchor="end" class="sr-small-svg-label">−</text>
+          <rect x="478" y="107" width="109" height="116" rx="13" fill="url(#sr-servo-case)" stroke="#154c6e" stroke-width="2"/>
+          <rect x="487" y="116" width="91" height="96" rx="8" fill="#d5eeff" opacity=".24"/>
+          <rect x="488" y="98" width="89" height="18" rx="7" fill="#206e96"/>
+          <circle cx="499" cy="107" r="4" fill="#e3f1f7"/>
+          <circle cx="566" cy="107" r="4" fill="#e3f1f7"/>
+          <text x="532" y="85" text-anchor="middle" class="sr-diagram-label">Servo</text>
+          <text x="489" y="178" class="sr-device-label">SIG</text>
+          <text x="489" y="196" class="sr-device-label">5 V</text>
+          <text x="489" y="214" class="sr-device-label">GND</text>
+          <circle cx="544" cy="177" r="22" fill="#183f59" stroke="#8dc3df" stroke-width="2.5"/>
+          <path class="sr-arm-ghost" d="M544 177l-33-70m33 70 55-31" fill="none" stroke="#a44525" stroke-width="6" stroke-linecap="round" stroke-dasharray="6 7"/>
+          <g transform="translate(544 177)">
+            <g class="sr-servo-arm">
+              <path d="M-4 6-8-65a8 8 0 0 1 16 0L4 6z" fill="#fff4d6" stroke="#624820" stroke-width="2.5"/>
+              <circle cx="0" cy="-59" r="2.8" fill="#80693d"/><circle cx="0" cy="-47" r="2.8" fill="#80693d"/>
+            </g>
+            <circle r="7" fill="#ffc77e" stroke="#78501f" stroke-width="2"/>
+          </g>
+
+          <g class="sr-route sr-usb" data-wire="usb">
+            <path class="sr-guide" d="M90 107h48"/>
+            <path class="sr-wire" pathLength="100" d="M90 107h48"/>
+            <g transform="translate(136 107)"><rect class="sr-plug" x="-12" y="-6" width="14" height="12" rx="3"/></g>
+          </g>
+          <g class="sr-route sr-signal" data-wire="signal">
+            <path class="sr-guide" d="M289 106h160q11 0 11 11v46q0 10 10 10h9"/>
+            <path class="sr-wire" pathLength="100" d="M289 106h160q11 0 11 11v46q0 10 10 10h9"/>
+            <rect class="sr-jack" x="284" y="102" width="9" height="8" rx="2"/>
+            <g transform="translate(478 173)"><rect class="sr-plug" x="-11" y="-5" width="13" height="10" rx="2"/></g>
+            <text x="352" y="95" class="sr-wire-label" text-anchor="middle">สัญญาณพัลส์</text>
+          </g>
+          <g class="sr-route sr-positive" data-wire="positive">
+            <path class="sr-guide" d="M205 246h236q10 0 10-10v-35q0-10 10-10h18"/>
+            <path class="sr-wire" pathLength="100" d="M205 246h236q10 0 10-10v-35q0-10 10-10h18"/>
+            <rect class="sr-jack" x="200" y="242" width="9" height="8" rx="2"/>
+            <g transform="translate(478 191)"><rect class="sr-plug" x="-11" y="-5" width="13" height="10" rx="2"/></g>
+            <text x="329" y="236" class="sr-wire-label" text-anchor="middle">+5 V ไป Servo</text>
+          </g>
+          <g class="sr-route sr-return" data-wire="return">
+            <path class="sr-guide" d="M205 271h261q10 0 10-10v-52h3"/>
+            <path class="sr-wire" pathLength="100" d="M205 271h261q10 0 10-10v-52h3"/>
+            <rect class="sr-jack" x="200" y="267" width="9" height="8" rx="2"/>
+            <g transform="translate(478 209)"><rect class="sr-plug" x="-11" y="-5" width="13" height="10" rx="2"/></g>
+            <text x="327" y="293" class="sr-wire-label" text-anchor="middle">GND กลับแหล่งจ่าย</text>
+          </g>
+          <g class="sr-route sr-common" data-wire="common">
+            <path class="sr-guide" d="M245 179v18q0 10-10 10H135q-11 0-11 11v7"/>
+            <path class="sr-wire" pathLength="100" d="M245 179v18q0 10-10 10H135q-11 0-11 11v7"/>
+            <rect class="sr-jack" x="241" y="175" width="8" height="9" rx="2"/>
+            <g transform="translate(124 224)"><rect class="sr-plug" x="-5" y="-11" width="10" height="13" rx="2"/></g>
+            <text x="175" y="197" class="sr-wire-label" text-anchor="middle">GND ร่วม</text>
+          </g>
+        </svg>
+        <figcaption class="sr-caption"><strong data-wiring-status>ยังไม่ได้ต่อสาย</strong><span data-power-status>USB ปิด · 5 V ปิด</span></figcaption>
+      </figure>
+      <figure class="sr-scope">
+        <figcaption>
+          <strong>Servo วัดแรงดันตรงไหน?</strong>
+          <code>SIG − GND ของ Servo</code>
+        </figcaption>
+        <svg class="sr-trace" viewBox="0 0 330 111" role="img" aria-labelledby="sr-trace-title">
+          <title id="sr-trace-title" data-trace-title>ยังไม่มีพัลส์ให้วัด</title>
+          <path class="sr-trace-grid" d="M10 26h310M10 55h310M10 84h310M24 10v94m58-94v94m58-94v94m58-94v94m58-94v94m58-94v94"/>
+          <path class="sr-trace-ref" d="M10 84h310"/>
+          <path class="sr-trace-off" d="M12 82h310"/>
+          <path class="sr-trace-error" d="M12 77l16 3 9-8 13 7 4-48 12 20 3 24 17-8 10 13 24-2 5-31 11 7 5 24 15-7 10 8 14-4 5-43 7 15 5-12 7 42 14-12 6 12 24-3 4-24 14 11 7-7 4 27 11-9 25 7"/>
+          <path class="sr-trace-ok" d="M12 84h34V26h20v58h91V26h20v58h91V26h20v58h34"/>
+        </svg>
+        <p class="sr-scope-status" data-scope-status>ยังไม่มีพัลส์จาก ESP32</p>
+        <p class="sr-scope-note">เส้นประคือ GND ของตัวรับ · กราฟในฉากนี้เป็นภาพจำลอง</p>
+      </figure>
+    </div>
+    <div class="sr-controls" role="group" aria-label="ควบคุมการทดลอง">
+      <button type="button" data-back disabled>ย้อนกลับ</button>
+      <p class="sr-position"><span data-step-number>1</span> / 7</p>
+      <button type="button" class="sr-main-button" data-next>ต่อสายสัญญาณ</button>
+    </div>
+  </section>
+  <div class="sr-extras">
+    <button type="button" data-replay hidden>เล่นฉากสั่นอีกครั้ง</button>
+    <button type="button" data-open-differential>เทียบกับ RS-485 / CAN</button>
+    <a href="https://www.pololu.com/blog/16/electrical-characteristics-of-servos-and-introduction-to-the-servo-control-interface" target="_blank" rel="noopener">อ้างอิงการต่อ Servo</a>
+  </div>
+
+  <dialog class="sr-dialog" data-differential aria-labelledby="sr-diff-title">
+    <div class="sr-dialog-head">
+      <h2 id="sr-diff-title">ถ้าตัวรับอ่านผลต่างระหว่างสองสาย?</h2>
+      <form method="dialog"><button type="submit" autofocus aria-label="ปิดการเปรียบเทียบ">ปิด</button></form>
+    </div>
+    <p>RS-485 อ่านผลต่าง <code>A − B</code> ส่วน CAN อ่าน <code>CANH − CANL</code> ลองยกแรงดันตัวอย่างทั้งคู่ขึ้นเท่ากัน</p>
+    <div class="sr-diff-figure">
+      <div class="sr-diff-pair">
+        <p><span>สาย A / CANH</span><strong data-pair-high>3.5 V</strong></p>
+        <p><span>สาย B / CANL</span><strong data-pair-low>1.5 V</strong></p>
+      </div>
+      <svg viewBox="0 0 280 100" aria-hidden="true">
+        <path d="M13 88h256" class="sr-trace-ref"/>
+        <g class="sr-pair-lines">
+          <path class="sr-pair-high" d="M25 43h224"/>
+          <path class="sr-pair-low" d="M25 68h224"/>
+          <path class="sr-pair-arrows" d="M146 43v25m-4-19 4-6 4 6m-8 13 4 6 4-6"/>
+        </g>
+      </svg>
+    </div>
+    <p class="sr-diff-result" role="status" aria-atomic="true"><code data-pair-result>3.5 − 1.5 = 2.0 V</code></p>
+    <button type="button" class="sr-main-button" data-shift>เพิ่มทั้งคู่ 1 V</button>
+    <p class="sr-diff-note">ผลต่างเท่าเดิม แต่แรงดันของสายทั้งคู่เทียบกับ GND ตัวรับต้องอยู่ในช่วงที่ชิปรับได้ (<em>common-mode range</em>) วงจรจริงอาจต้องมีสายอ้างอิงหรือใช้วงจรแยกสัญญาณ (isolation)</p>
+    <p class="sr-diff-sources"><a href="https://www.ti.com/lit/an/slla272d/slla272d.pdf" target="_blank" rel="noopener">TI · RS-485</a><a href="https://www.analog.com/en/resources/app-notes/an-1123.html" target="_blank" rel="noopener">Analog Devices · CAN</a></p>
+  </dialog>
+  <noscript><p class="sr-noscript">Servo ต้องอ้างอิงพัลส์จาก GPIO18 เทียบกับ GND ของตัวเอง เมื่อต่อ GND ของทั้งสองฝั่งเข้าด้วยกัน ตัวรับจึงมีจุดอ้างอิงเดียวกับ ESP32 เปิด JavaScript เพื่อลองต่อสายทีละขั้น</p></noscript>
+</main>
+<script defer src="../scripts/slide-support.js"></script>
+<script type="module" src="../scripts/servo-reference.js"></script>
+</body>
+</html>

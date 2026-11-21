@@ -3,287 +3,83 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>แหล่งพลังงาน (Power Source) · ESP32 Classroom</title>
+  <title>โต๊ะทดลองแหล่งจ่ายไฟ · ESP32 Classroom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/slide-support.css">
-  <link rel="stylesheet" href="../styles/power-source.css">
-  <link rel="stylesheet" href="../styles/adapter-lab.css">
-  <link rel="stylesheet" href="../styles/lithium-protection.css">
-  <link rel="stylesheet" href="../styles/feeder-foundations.css">
-  <link rel="stylesheet" href="../styles/power-story.css">
+  <link rel="stylesheet" href="../styles/power-workbench.css">
 </head>
 <body>
-<main class="power-page power-story">
-  <header class="power-hero">
-    <h1>เลือกไฟให้เครื่องให้อาหารแมว</h1>
+<main class="workbench" data-workbench>
+  <header class="workbench-header">
+    <h1>จ่ายไฟให้โปรเจกต์ไหนดี?</h1>
+    <p>เลือกอุปกรณ์กับที่ใช้งาน แล้วกดแหล่งจ่ายริมโต๊ะเพื่อดูผล</p>
   </header>
-
-  <nav class="power-lesson-nav" aria-label="ลำดับการสอน">
-    <button type="button" data-power-back disabled>ย้อนกลับ</button>
-    <ol class="power-lesson-stages" role="list">
-      <li><button type="button" data-power-jump="0" aria-current="step">USB และ Adapter</button></li>
-      <li><button type="button" data-power-jump="1">ถ่าน AA / AAA</button></li>
-      <li><button type="button" data-power-jump="2">แบตลิเธียม</button></li>
-      <li><button type="button" data-power-jump="3">ลองเลือก</button></li>
-      <li><button type="button" data-power-jump="4">ต่อไฟเปิดฝา</button></li>
-    </ol>
-    <p class="power-lesson-position" data-power-position>1 / 5</p>
-    <button type="button" data-power-next class="power-lesson-primary">ถัดไป</button>
-  </nav>
-
-  <section class="power-lesson-panel" data-power-step="0" aria-labelledby="wire-title">
-    <h2 id="wire-title" tabindex="-1">5 V เท่ากัน ทำไมจ่ายกระแสได้ต่างกัน?</h2>
-    <p class="power-lesson-prompt">ถึงมื้อแล้ว ESP32 ติด แต่ตอน Servo ออกแรง ฝาอาจไม่เปิด ลองเทียบแหล่งจ่ายสองแบบที่เขียนว่า 5 V เหมือนกัน</p>
-    <div class="power-lesson-layout">
-      <div class="power-lesson-visual power-wire-visual" aria-label="เปรียบเทียบกระแส">
-        <div class="power-wire-head">
-          <span><b>5 V</b> แรงดันตามป้าย</span>
-          <strong data-wire-source-label>USB จากคอม</strong>
+  <div class="workbench-layout">
+    <section class="workbench-stage" data-workbench-visual data-renderer="flat" aria-label="โต๊ะทดลองแหล่งจ่าย">
+      <canvas data-workbench-canvas aria-hidden="true"></canvas>
+      <div class="workbench-flat" aria-hidden="true">
+        <svg viewBox="0 0 650 380" preserveAspectRatio="xMidYMid slice">
+          <path d="M98 87l449-18 90 211-597 17z" fill="#ded1ae" stroke="#887957" stroke-width="3"/>
+          <path d="M40 297l597-17v30l-592 21z" fill="#a88d66"/>
+          <path d="M201 168l274-6 37 93-351 4z" fill="#427e74" stroke="#2e5b54" stroke-width="4"/>
+          <path d="M84 145q34-38 67-12t25-9" stroke="#273c53" stroke-width="6" fill="none"/>
+          <rect x="199" y="113" width="46" height="27" rx="5" fill="#2c394c"/>
+          <g fill="#c99247"><rect x="286" y="114" width="43" height="10" rx="3"/><rect x="286" y="127" width="43" height="10" rx="3"/></g>
+          <rect x="377" y="110" width="37" height="29" rx="3" fill="#829ab3"/><rect x="422" y="114" width="36" height="12" rx="5" fill="#347369"/>
+          <rect x="506" y="105" width="35" height="29" rx="4" fill="#fff2dd" stroke="#885746"/><path d="M516 116v7m14-7v7" stroke="#71574b" stroke-width="3"/>
+          <rect x="264" y="188" width="106" height="51" rx="7" fill="#1d525b" stroke="#15343e" stroke-width="3"/>
+          <rect x="280" y="200" width="43" height="27" rx="3" fill="#abc9cb"/>
+          <circle class="workbench-flat-led" cx="338" cy="218" r="6" fill="#456b75"/>
+          <g class="workbench-flat-fixture" fill="#347bb1" stroke="#193d59" stroke-width="3"><rect x="353" y="198" width="42" height="32" rx="5"/><path d="M370 215h32" stroke="#e7f2f6" stroke-width="5"/></g>
+          <path d="M623 380H516q-12-60 24-78 41-22 39-51-1-17-26-12l-33 18q-16 3-24-9 18-36 62-41 42-4 49 45 11 46 16 128Z" fill="#1d4158"/>
+          <g class="workbench-flat-fire"><path d="M308 212Q284 180 319 160Q319 185 331 180Q341 163 345 150Q376 202 350 215Z" fill="#ec793d"/><path d="M319 209q-4-21 13-33 1 15 13 19l-1 14Z" fill="#ffd17a"/></g>
+        </svg>
+      </div>
+      <div class="workbench-docks" role="group" aria-label="เลือกแหล่งจ่าย">
+        <button type="button" data-supply="usb" aria-pressed="false"><b>USB</b><small>5 V · 0.5 A</small></button>
+        <button type="button" data-supply="adapter" aria-pressed="false"><b>Adapter</b><small>5 V · 2 A</small></button>
+        <button type="button" data-supply="aa" aria-pressed="false"><b>AA / AAA</b><small>รังถ่าน × 4</small></button>
+        <button type="button" data-supply="lithium" aria-pressed="false"><b>LiPo / 18650</b><small>1 เซลล์</small></button>
+        <button type="button" data-supply="mains" aria-pressed="false"><b>ไฟบ้าน</b><small>220 V AC</small></button>
+      </div>
+      <button type="button" class="workbench-project" data-project>เลือกโหลดบนโต๊ะ</button>
+      <p class="workbench-safety">ไฟบ้านใช้จำลองเท่านั้น</p>
+    </section>
+    <aside class="workbench-panel" aria-label="ควบคุมการทดลอง">
+      <fieldset class="workbench-field" data-load-picker>
+        <legend>อุปกรณ์กลางโต๊ะ</legend>
+        <div class="workbench-loads">
+          <button type="button" data-bench-load="board" aria-pressed="false">LED</button>
+          <button type="button" data-bench-load="servo" aria-pressed="true">Servo</button>
+          <button type="button" data-bench-load="motor" aria-pressed="false">มอเตอร์ DC</button>
         </div>
-        <div class="power-meter">
-          <span>พิกัดแหล่งจ่าย</span><b data-wire-limit>500 mA</b>
-          <div class="power-meter-track" aria-hidden="true"><span data-wire-limit-bar></span></div>
-        </div>
-        <div class="power-meter">
-          <span>โหลดต้องการช่วงพีก</span><b data-wire-peak>250 mA</b>
-          <div class="power-meter-track" aria-hidden="true"><span data-wire-peak-bar></span></div>
-        </div>
-        <div class="power-meter-axis" aria-hidden="true"><span>0</span><span>2,000 mA</span></div>
-        <div class="power-wire-demo" data-gate="idle">
-          <svg viewBox="0 0 116 48" aria-hidden="true">
-            <rect x="3" y="10" width="36" height="28" rx="5" fill="#1d5268"/>
-            <rect x="9" y="16" width="13" height="11" rx="2" fill="#bedde9"/>
-            <circle cx="30" cy="30" r="3.5" fill="#8dedaa"/>
-            <path d="M40 24h20m-5-5 5 5-5 5" stroke="#317291" stroke-width="2" fill="none"/>
-            <path d="M70 5h28l-5 26H75z" fill="#c5e4f6" stroke="#214e6c" stroke-width="2"/>
-            <path class="power-wire-gate" d="M75 31h19" stroke="#235879" stroke-width="4" stroke-linecap="round"/>
-            <path d="M67 41q0 4 9 4h29q8 0 8-4z" fill="#317291"/>
-            <g class="power-wire-kibble" fill="#944a1c"><circle cx="89" cy="35" r="2.4"/><circle cx="97" cy="39" r="2"/></g>
-          </svg>
-          <strong data-wire-demo-label>ESP32 ติด · ยังไม่สั่งเปิดฝา</strong>
-        </div>
-      </div>
-      <div class="power-lesson-controls">
-        <fieldset class="power-lesson-choices">
-          <legend>เลือกแหล่งจ่าย</legend>
-          <button type="button" data-wire-source="usb" aria-pressed="true">USB 0.5 A</button>
-          <button type="button" data-wire-source="adapter" aria-pressed="false">Adapter 2 A</button>
-        </fieldset>
-        <fieldset class="power-lesson-choices">
-          <legend>เพิ่มโหลดตอนถึงมื้อ</legend>
-          <button type="button" data-wire-load="board" aria-pressed="true">ESP32</button>
-          <button type="button" data-wire-load="servo" aria-pressed="false">ESP32 + Servo</button>
-        </fieldset>
-        <p class="power-lesson-note">วงจรนี้ใช้แหล่งจ่ายเดียว พีกคือกระแสสูงสุดที่โหลดต้องการช่วงสั้น ๆ (1 A = 1,000 mA)</p>
-      </div>
-    </div>
-    <p class="power-lesson-result" role="status" data-wire-result>บอร์ดอย่างเดียวต้องการพีก 250 mA อยู่ในพิกัด USB ตัวอย่าง</p>
-  </section>
-
-  <section class="power-lesson-panel" data-power-step="1" aria-labelledby="aa-story-title" hidden>
-    <h2 id="aa-story-title" tabindex="-1">ถ่าน 4 ก้อน ขนาดเท่าเดิม แรงดันต่างกัน</h2>
-    <p class="power-lesson-prompt">AA และ AAA บอกขนาดก้อน ลองเปลี่ยนชนิดเซลล์ในรัง AA ที่ต่อ 4 ก้อนอนุกรม</p>
-    <div class="power-lesson-layout">
-      <div class="power-lesson-visual power-battery-visual">
-        <div class="power-cells" aria-hidden="true">
-          <div><span>1.5 V</span></div><div><span>1.5 V</span></div><div><span>1.5 V</span></div><div><span>1.5 V</span></div>
-        </div>
-        <div class="power-pack-value"><strong data-aa-pack>6.0 V</strong><span>แรงดันระบุรวม</span></div>
-      </div>
-      <div class="power-lesson-controls">
-        <fieldset class="power-lesson-choices">
-          <legend>ใส่ถ่านชนิดไหน?</legend>
-          <button type="button" data-story-aa="alkaline" aria-pressed="true">อัลคาไลน์</button>
-          <button type="button" data-story-aa="nimh" aria-pressed="false">NiMH</button>
-        </fieldset>
-        <p class="power-battery-summary" data-aa-summary>ใช้ครั้งเดียว · 1.5 V ต่อก้อน</p>
-        <p class="power-lesson-note" data-aa-note>เหมาะกับโหลดเบา เช่น รีโมต ความจุใช้งานจริงขึ้นกับรุ่นและกระแสที่ดึง</p>
-      </div>
-    </div>
-    <p class="power-lesson-result" role="status" data-aa-story-result>อนุกรม 4 ก้อน · 4 × 1.5 V = 6.0 V ตามป้าย เลือกตัวแปลงไฟให้ตรงกับอุปกรณ์ก่อนต่อ</p>
-  </section>
-
-  <section class="power-lesson-panel" data-power-step="2" aria-labelledby="lithium-story-title" hidden>
-    <h2 id="lithium-story-title" tabindex="-1">แบตลิเธียมต้องดูทั้งแรงดันและพลังงาน</h2>
-    <p class="power-lesson-prompt">ลองสลับแบต 1 เซลล์ แล้วดูว่าไฟเปลี่ยนจากตัวเลขบนป้ายอย่างไรเมื่อชาร์จเต็ม</p>
-    <div class="power-lesson-layout">
-      <div class="power-lesson-visual power-lithium-visual">
-        <div class="power-lithium-path">
-          <div class="power-lithium-cell" data-cell-form="pouch">
-            <strong data-cell-voltage>3.7 V</strong><span data-cell-label>LiPo แบบแบน</span>
-          </div>
-          <span class="power-path-arrow" aria-hidden="true">→</span>
-          <div class="power-converter"><strong>5 V</strong><span>หลังแปลงไฟ</span></div>
-        </div>
-        <p class="power-energy"><strong data-pack-energy>7.4 Wh</strong><span data-pack-equation>3.7 V × 2.0 Ah</span></p>
-      </div>
-      <div class="power-lesson-controls">
-        <fieldset class="power-lesson-choices">
-          <legend>เลือกแบตตัวอย่าง</legend>
-          <button type="button" data-story-pack="lipo" aria-pressed="true">LiPo แบบแบน</button>
-          <button type="button" data-story-pack="ion" aria-pressed="false">Li-ion 18650</button>
-        </fieldset>
-        <fieldset class="power-lesson-choices">
-          <legend>ดูค่าแรงดัน</legend>
-          <button type="button" data-pack-charge="nominal" aria-pressed="true">ตามป้าย</button>
-          <button type="button" data-pack-charge="full" aria-pressed="false">ชาร์จเต็ม</button>
-        </fieldset>
-        <p class="power-lesson-note">W บอกว่าโหลดใช้พลังงานเร็วแค่ไหน ส่วน Wh บอกว่าแบตเก็บพลังงานได้ประมาณเท่าไร</p>
-      </div>
-    </div>
-    <p class="power-lesson-result" role="status" data-pack-result>โหลด 5 V × 0.2 A ใช้ 1 W จึงอยู่ได้ราว 7.4 ชม. ก่อนคิดการสูญเสีย</p>
-  </section>
-
-  <section class="power-lesson-panel" data-power-step="3" aria-labelledby="choose-power-title" hidden>
-    <h2 id="choose-power-title" tabindex="-1">งานแบบนี้ควรใช้ไฟจากไหน?</h2>
-    <p class="power-lesson-prompt">เลือกสถานการณ์หนึ่งข้อ แล้วลองเลือกแหล่งจ่ายจากเงื่อนไขของงาน</p>
-    <div class="power-lesson-layout power-choose-layout">
-      <div class="power-lesson-visual power-scenario">
-        <fieldset class="power-lesson-choices">
-          <legend>สถานการณ์</legend>
-          <button type="button" data-power-case="desk" aria-pressed="true">เขียนโค้ด</button>
-          <button type="button" data-power-case="feeder" aria-pressed="false">เครื่องให้อาหาร</button>
-          <button type="button" data-power-case="remote" aria-pressed="false">รีโมต</button>
-          <button type="button" data-power-case="portable" aria-pressed="false">เครื่องพกพา</button>
-        </fieldset>
-        <p data-power-case-prompt>มีคอมอยู่ข้าง ๆ ต้องอัปโหลดโค้ดและอ่าน Serial จาก ESP32</p>
-      </div>
-      <div class="power-lesson-controls">
-        <fieldset class="power-lesson-choices">
-          <legend>ลองเลือกแหล่งจ่าย</legend>
-          <button type="button" data-power-answer="usb" aria-pressed="false">USB จากคอม</button>
-          <button type="button" data-power-answer="adapter" aria-pressed="false">Adapter 5 V</button>
-          <button type="button" data-power-answer="alkaline" aria-pressed="false">ถ่านอัลคาไลน์</button>
-          <button type="button" data-power-answer="lipo" aria-pressed="false">LiPo + ตัวแปลง</button>
-        </fieldset>
-        <p class="power-lesson-note">เช็กแรงดันที่อุปกรณ์รับได้ กระแสพีก และเวลาที่อยากให้ทำงาน</p>
-      </div>
-    </div>
-    <p class="power-lesson-result" role="status" data-power-case-result>ลองเลือกจากสิ่งที่งานต้องใช้</p>
-  </section>
-
-  <section class="power-lesson-panel ff-power" data-power-step="4" data-feeder-power hidden aria-labelledby="feeder-power-title">
-    <h2 id="feeder-power-title" tabindex="-1">ฝาถังขยับได้เมื่อไฟและสัญญาณครบ</h2>
-    <p class="power-lesson-prompt">ลองสั่งเปิดฝาตอนต่อ USB อย่างเดียว แล้วเพิ่มไฟเลี้ยง Servo และ GND ทีละเส้น</p>
-    <div class="ff-power-grid">
-      <svg class="ff-power-svg" viewBox="20 55 570 235" role="img" aria-labelledby="feeder-power-art">
-        <title id="feeder-power-art">USB เลี้ยง ESP32 ขา GPIO18 ส่งสัญญาณเข้า Servo ที่ใช้ไฟ 5 V ภายนอก และกราวด์ทุกฝั่งต่อร่วมกัน</title>
-        <g fill="none" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
-          <path class="ff-power-wire ff-usb-wire" d="M174 114h60"/>
-          <path class="ff-power-wire ff-adapter-wire" d="M163 240h50v-56h321v-43"/>
-          <path class="ff-power-wire power-servo-return" d="M163 260h349V142"/>
-          <path class="ff-power-wire ff-ground-wire" d="M305 161v99"/>
-          <path class="ff-power-wire power-signal" d="M352 112h88v18h28"/>
-        </g>
-        <circle class="power-ground-junction" cx="305" cy="260" r="4"/>
-        <rect x="30" y="70" width="144" height="83" rx="11" fill="#f6fbfe" stroke="#5e91ad" stroke-width="2"/>
-        <rect x="62" y="92" width="48" height="30" rx="4" fill="#d3ebf9" stroke="#315e77" stroke-width="2"/>
-        <path d="M56 127h62" stroke="#315e77" stroke-width="3" stroke-linecap="round"/>
-        <text x="123" y="116" class="ff-svg-label">USB</text>
-        <rect x="233" y="71" width="120" height="91" rx="9" fill="#184d5e"/>
-        <circle class="power-demo-lamp" cx="342" cy="145" r="5"/>
-        <rect x="252" y="91" width="82" height="36" rx="6" fill="#afc9d8"/>
-        <text x="264" y="114" class="ff-svg-label">ESP32</text>
-        <text x="359" y="98" class="ff-svg-label">GPIO18</text>
-        <rect x="31" y="213" width="133" height="65" rx="11" fill="#fff6e9" stroke="#b98243" stroke-width="2"/>
-        <text x="44" y="238" class="ff-svg-label">ไฟแยก 5 V</text>
-        <text x="44" y="263" class="ff-svg-label">สำหรับ Servo</text>
-        <text x="311" y="250" class="ff-svg-label">GND ร่วม</text>
-        <text x="420" y="174" class="ff-svg-label">สายไฟ 5 V</text>
-        <rect x="465" y="77" width="108" height="66" rx="10" fill="#d2ebff" stroke="#386c9a" stroke-width="2"/>
-        <path class="ff-test-arm" d="M480 125h65" stroke="#17394b" stroke-width="8" stroke-linecap="round"/>
-        <circle cx="480" cy="125" r="7" fill="#ffd285" stroke="#3c5a72" stroke-width="2"/>
-        <text x="486" y="104" class="ff-svg-label">Servo</text>
-      </svg>
-      <div class="ff-power-controls">
-        <button type="button" data-feeder-wire="usb" aria-pressed="false">USB → ESP32 <small>ยังไม่ต่อ</small></button>
-        <button type="button" data-feeder-wire="adapter" aria-pressed="false">แหล่งจ่าย 5 V → Servo <small>ยังไม่ต่อ</small></button>
-        <button type="button" data-feeder-wire="ground" aria-pressed="false">ต่อ GND ร่วม <small>ยังไม่ต่อ</small></button>
-        <button type="button" data-power-test class="ff-primary">ทดสอบสั่งเปิดฝา</button>
-        <p class="ff-power-status" role="status" data-feeder-power-status>ลองเสียบ USB อย่างเดียวก่อน แล้วทดสอบว่าฝาขยับได้หรือยัง</p>
-      </div>
-    </div>
-    <p class="power-demo-note">GPIO18 ส่งคำสั่ง • แหล่งจ่าย 5 V เลี้ยง Servo • GND ร่วมเป็นจุดอ้างอิงของสัญญาณ</p>
-  </section>
-
-  <details class="power-card power-references power-more">
-    <summary>สำรวจวงจรและโหลดเพิ่มเติม</summary>
-  <nav class="power-picker" aria-label="เลือกแหล่งพลังงาน">
-    <fieldset class="power-picker-group">
-      <legend>On wire</legend>
-      <div class="power-picker-options">
-        <button type="button" data-source="usb" aria-pressed="true"><strong>USB จากคอม</strong><span>ทดลองบนโต๊ะ</span></button>
-        <button type="button" data-source="adapter" aria-pressed="false"><strong>Adapter 5V 2A</strong><span>ตั้งใช้งานประจำ</span></button>
-      </div>
-    </fieldset>
-    <fieldset class="power-picker-group">
-      <legend>On battery</legend>
-      <div class="power-picker-options">
-        <button type="button" data-source="aa" aria-pressed="false"><strong>ถ่าน AA / AAA</strong><span>พกพา · งานกินไฟน้อย</span></button>
-        <button type="button" data-source="lithium" aria-pressed="false"><strong>LiPo / Li-ion</strong><span>อุปกรณ์พกพาถึงโดรน</span></button>
-      </div>
-    </fieldset>
-  </nav>
-
-  <section id="usb-panel" class="power-card" aria-labelledby="usb-title">
-    <div class="power-card-heading">
-      <div><h2 id="usb-title">USB จาก Laptop / Desktop</h2><p>ตัวอย่างโน้ตบุ๊กเก่า จ่าย <strong>4.90V</strong> ที่ต้นสาย ใช้เพดานจำลอง <strong>500mA</strong> ตามกรณี USB 2.0 ที่อนุญาตกระแสระดับนี้</p></div>
-      <button type="button" class="power-action" id="usb-connect">เสียบสาย USB</button>
-    </div>
-    <div class="usb-controls">
-      <fieldset class="power-options">
-        <legend>เลือกอุปกรณ์ที่ต่อกับ ESP32</legend>
-        <button type="button" data-load="board" aria-pressed="true">บอร์ดอย่างเดียว</button>
-        <button type="button" data-load="led" aria-pressed="false">LED + R</button>
-        <button type="button" data-load="servo" aria-pressed="false">Servo</button>
-        <button type="button" data-load="motor" aria-pressed="false">DC Motor + Driver</button>
       </fieldset>
-      <div id="motor-actions" class="motor-actions" hidden>
-        <button type="button" id="motor-stall">จำลองมือหยุดล้อ</button>
-        <button type="button" id="motor-brake">ดูไฟย้อนขณะเบรก</button>
-        <button type="button" id="motor-reset">ให้ล้อหมุนใหม่</button>
+      <fieldset class="workbench-field">
+        <legend>เอาไปใช้ที่ไหน?</legend>
+        <div class="workbench-location">
+          <button type="button" data-location="desk" aria-pressed="true">บนโต๊ะ</button>
+          <button type="button" data-location="portable" aria-pressed="false">พกพา</button>
+        </div>
+      </fieldset>
+      <fieldset class="workbench-field workbench-pack" data-pack-settings hidden>
+        <legend>ตั้งค่าแบต</legend>
+        <select data-aa-battery aria-label="ชนิดถ่านในรัง 4 ก้อน"><option value="aa-alkaline">AA อัลคาไลน์</option><option value="aa-nimh">AA NiMH</option><option value="aaa-alkaline">AAA อัลคาไลน์</option><option value="aaa-nimh">AAA NiMH</option></select>
+        <select data-li-battery aria-label="ชนิดแพ็กลิเธียม" hidden><option value="lipo">LiPo แบบแบน</option><option value="ion">Li-ion 18650</option></select>
+        <select data-regulated aria-label="วิธีจ่ายไฟจากแบต"><option value="yes">ผ่านตัวแปลง 5 V</option><option value="no">ใช้แรงดันจากแบต</option></select>
+        <p data-raw-voltage></p>
+      </fieldset>
+      <div class="workbench-status" data-workbench-status data-state="idle" role="status" aria-atomic="true">
+        <strong data-trial-title>วงจรรอรับไฟ 5 V DC</strong>
+        <p data-trial-text>Servo กับ ESP32 ต้องการกระแสช่วงพีก 650 mA ลองเลือก USB แล้วเทียบกับ Adapter</p>
       </div>
-    </div>
-    <p class="power-narrow">เลื่อนภาพด้านข้างเพื่อดูเส้นทางไฟทั้งหมด</p>
-    <div class="power-scene-scroll" tabindex="0" role="region" aria-label="ภาพการจ่ายไฟจาก USB เลื่อนดูด้านข้างได้">
-      <svg id="usb-scene" class="usb-scene" viewBox="0 0 940 350" role="img" aria-labelledby="usb-scene-title"></svg>
-    </div>
-    <div id="power-live" class="power-live" data-zone="off" role="status">
-      <div class="power-status-head"><strong id="power-zone">ยังไม่ได้เสียบสาย</strong><span id="power-total">—</span></div>
-      <div class="current-scale" id="current-scale" role="img" aria-label="กระแสที่โหลดต้องการเทียบกับพิกัด USB">
-        <div class="current-track"><span id="current-fill"></span></div>
-        <div class="usb-limit"><span>พิกัด 500 mA</span></div>
-      </div>
-      <div class="power-current-parts" id="power-current-parts"></div>
-      <p id="power-message"></p>
-    </div>
-    <div class="power-quick">
-      <p><strong>พิกัดฉากนี้</strong> 4.9V × 0.5A ≈ 2.45W ดูพิกัดพอร์ตและสายจริงก่อนใช้งาน</p>
-      <p><strong>เหมาะกับ</strong> อัปโหลดโค้ด ทดลองบอร์ด เซนเซอร์หรือ LED เล็ก ๆ ที่รวมแล้วอยู่ในพิกัด</p>
-    </div>
-  </section>
-
-  <section id="other-panel" class="power-card" aria-labelledby="other-title" hidden></section>
-
-  </details>
-  <details class="power-card power-references">
-    <summary>แหล่งอ้างอิง</summary>
-    <ul>
-      <li><a href="https://compliance.usb.org/index.asp?Format=Standard&amp;UpdateFile=Policies" target="_blank" rel="noopener">USB-IF · พิกัดกระแสพอร์ตข้อมูล USB</a></li>
-      <li><a href="https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html#power-supply-options" target="_blank" rel="noopener">Espressif · ตัวเลือกไฟเลี้ยง ESP32-DevKitC</a></li>
-      <li><a href="https://www.es.co.th/Schemetic/PDF/ET-SW-ADAP-5V-2A.PDF" target="_blank" rel="noopener">ETT · ตัวอย่าง Adapter 5 V 2 A</a></li>
-      <li><a href="https://energizer.com/apac/australia/wp-content/uploads/sites/3/2024/05/e91_max_na_AA.pdf" target="_blank" rel="noopener">Energizer · ถ่านอัลคาไลน์ AA</a> และ <a href="https://www.panasonic.com/global/energy/products/eneloop/en/lineup/eneloop.html" target="_blank" rel="noopener">Panasonic · ถ่านชาร์จ NiMH AA/AAA</a></li>
-      <li><a href="https://www.molicel.com/product/inr-18650-p28a/" target="_blank" rel="noopener">Molicel · Li-ion 18650</a> และ <a href="https://www.adafruit.com/product/2011" target="_blank" rel="noopener">Adafruit · LiPo 1 เซลล์ 2.0 Ah</a></li>
-      <li><a href="https://learn.adafruit.com/using-servos-with-circuitpython/hardware" target="_blank" rel="noopener">Adafruit · การต่อไฟแยกและ GND ร่วมให้ Servo</a></li>
-      <li><a href="https://display.meanwell.com/qa.aspx?c=9" target="_blank" rel="noopener">MEAN WELL · การป้องกันโหลดเกิน</a> และ <a href="https://www.ti.com/document-viewer/lit/html/SLVAFQ3" target="_blank" rel="noopener">Texas Instruments · กระแสมอเตอร์ติดขัด</a></li>
-    </ul>
-  </details>
+      <button type="button" class="workbench-reset" data-workbench-reset disabled>ถอดแหล่งจ่าย</button>
+    </aside>
+  </div>
+  <footer class="workbench-footer"><span>ตัวเลขเป็นพิกัดของชุดจำลอง</span><a href="lesson-power-source-reference.html" target="_blank" rel="noopener">เปิดแล็บแบตและวงจรแบบละเอียด ↗</a></footer>
 </main>
-<script type="module" src="../scripts/feeder-foundations.js"></script>
 <script defer src="../scripts/slide-support.js"></script>
-<script type="module" src="../scripts/power-source/app.js"></script>
-<script type="module" src="../scripts/power-source/story.js"></script>
+<script type="module" src="../scripts/power-source/workbench.js"></script>
 </body>
 </html>
