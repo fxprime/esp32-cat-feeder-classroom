@@ -25,14 +25,14 @@ export const PHASES = [
   },
   {
     id: 3,
-    title: "ช่วงที่ 3: ลงมือประกอบและทบทวนวงจร (สไลด์ 13–18)",
+    title: "ช่วงที่ 3: ลงมือประกอบและทบทวนวงจร (สไลด์ 13–19)",
     shortTitle: "ช่วงที่ 3: Lab และวงจร",
     description:
       "รวมระบบใน Wokwi ทบทวน Breadboard ไฟเลี้ยง และ GND ร่วม แล้วลองใช้มัลติมิเตอร์หาสาเหตุที่ฝาไม่ขยับ",
     badgeColor: "from-emerald-500 to-teal-600",
     borderColor: "border-emerald-200",
     lightBg: "bg-emerald-50/50",
-    slides: [10, 5, 4, 14, 18, 13],
+    slides: [10, 5, 4, 14, 18, 13, 19],
   },
 ];
 
@@ -336,5 +336,22 @@ export const LESSONS = [
     gradient: "from-cyan-500 to-blue-600",
     bgGradient: "from-cyan-50 via-sky-50 to-indigo-50",
     estMinutes: "15 นาที",
+  },
+  {
+    id: 19,
+    slideNum: 19,
+    phaseId: 3,
+    title: "แถม",
+    fullName: "19. แถม",
+    subtitle: "ESP32 Relay Workbench",
+    description: "เปิด Workbench สำหรับทดลองเรื่องรีเลย์กับ ESP32",
+    file: "lesson-relay-bonus.html",
+    allowExternalTabs: true,
+    tag: "Relay · Workbench",
+    icon: "Sparkles",
+    themeColor: "cyan",
+    gradient: "from-cyan-500 to-blue-600",
+    bgGradient: "from-cyan-50 via-sky-50 to-indigo-50",
+    estMinutes: "ตามสะดวก",
   },
 ];
