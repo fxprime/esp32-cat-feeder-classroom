@@ -34,12 +34,15 @@ for(const id of examples.filter(e=>!['timing','serial','function',logicLesson.id
 }
 assert.equal(logicRules.equal.test({roomCode:7}),true);
 assert.equal(logicRules.equal.test({roomCode:6}),false);
-for(const [hasCard,hasPass,and,or] of [
- [false,false,false,false],[false,true,false,true],[true,false,false,true],[true,true,true,true],
+for(const [hasTicket,age,expected] of [
+ [false,19,false],[true,19,false],[false,20,false],[true,20,true],[true,21,true],
 ]){
- const tickets={hasCard,hasPass};
- assert.equal(logicRules.and.test(tickets),and);
- assert.equal(logicRules.or.test(tickets),or);
+ assert.equal(logicRules.and.test({hasTicket,age}),expected);
+}
+for(const [hasCard,hasPass,expected] of [
+ [false,false,false],[false,true,true],[true,false,true],[true,true,true],
+]){
+ assert.equal(logicRules.or.test({hasCard,hasPass}),expected);
 }
 assert.equal(logicRules.not.test({isClosed:true}),false);
 assert.equal(logicRules.not.test({isClosed:false}),true);

@@ -2,10 +2,7 @@ import { highlightLines } from '../vendor/code-highlight.js';
 
 export const logicLesson = { id: 'logic', label: 'ตัวเปรียบเทียบ / Logic' };
 
-const ticketVariables = [
-  ['bool', 'hasCard', 'บัตรสมาชิก'],
-  ['bool', 'hasPass', 'คูปอง'],
-];
+const pubAge = 20;
 
 export const logicRules = {
   equal: {
@@ -18,14 +15,17 @@ export const logicRules = {
   },
   and: {
     symbol: '&&', label: 'และ',
-    condition: 'hasCard && hasPass', group: 'tickets', variables: ticketVariables,
-    rule: 'กติกานี้ต้องมีทั้งบัตรสมาชิกและคูปอง',
-    tip: 'ลองติ๊กทีละช่อง เปิดประตูได้เมื่อทั้งสองค่าเป็น true พร้อมกัน',
-    test: ({hasCard, hasPass}) => hasCard && hasPass,
+    title: 'เช็กบัตรและอายุหน้าผับ',
+    condition: `hasTicket && age >= ${pubAge}`, group: 'pub',
+    variables: [['bool', 'hasTicket', 'บัตรเข้า'], ['int', 'age', 'อายุ (ปี)']],
+    rule: `ผับในตัวอย่างให้เข้าเมื่อมีบัตรและอายุอย่างน้อย ${pubAge} ปี`,
+    tip: `ลองเปลี่ยนอายุจาก ${pubAge-1} เป็น ${pubAge} ปี แล้วเอาบัตรออก ดูว่าประตูปิดอีกครั้งเมื่อเงื่อนไขข้อใดข้อหนึ่งเป็น false`,
+    test: ({hasTicket, age}) => hasTicket && age >= pubAge,
   },
   or: {
     symbol: '||', label: 'หรือ',
-    condition: 'hasCard || hasPass', group: 'tickets', variables: ticketVariables,
+    condition: 'hasCard || hasPass', group: 'tickets',
+    variables: [['bool', 'hasCard', 'บัตรสมาชิก'], ['bool', 'hasPass', 'คูปอง']],
     rule: 'กติกานี้ใช้บัตรสมาชิกหรือคูปองอย่างใดอย่างหนึ่งก็เข้าได้',
     tip: 'ลองติ๊กทั้งสองช่อง ผลยังเป็น true เพราะมีอย่างน้อยหนึ่งอย่าง',
     test: ({hasCard, hasPass}) => hasCard || hasPass,
@@ -43,7 +43,7 @@ export const logicRules = {
 export function logicHTML() {
   return `<div class="cl-panel-inner cl-logic" data-logic>
     <div class="cl-example-heading">
-      <h2>เช็กเงื่อนไขที่ประตูห้องเกม</h2>
+      <h2 data-logic-heading>เช็กเงื่อนไขที่ประตูห้องเกม</h2>
       <p>เลือกกติกา แล้วเปลี่ยนค่าด้านล่าง ดูว่าเงื่อนไขใน <code>if</code> ได้ <code>true</code> หรือ <code>false</code> และโปรแกรมทำบรรทัดไหนต่อ</p>
     </div>
     <div class="cl-logic-switch" role="group" aria-label="เลือกตัวดำเนินการ">${Object.entries(logicRules).map(([id, rule]) =>
@@ -55,6 +55,12 @@ export function logicHTML() {
           <label data-logic-group="code">รหัสหน้าประตู
             <select data-logic-input="roomCode"><option>6</option><option>7</option><option>8</option></select>
           </label>
+          <div data-logic-group="pub" hidden>
+            <label for="logic-ticket"><input id="logic-ticket" type="checkbox" data-logic-input="hasTicket" checked> มีบัตรเข้า</label>
+            <label for="logic-age">อายุ (ปี)
+              <select id="logic-age" data-logic-input="age"><option>${pubAge-1}</option><option>${pubAge}</option><option>${pubAge+1}</option></select>
+            </label>
+          </div>
           <div data-logic-group="tickets" hidden>
             <label><input type="checkbox" data-logic-input="hasCard" checked> มีบัตรสมาชิก</label>
             <label><input type="checkbox" data-logic-input="hasPass"> มีคูปอง</label>
@@ -71,6 +77,7 @@ export function logicHTML() {
       <div class="cl-logic-output">
         <svg viewBox="0 0 240 136" aria-hidden="true">
           <rect width="240" height="136" rx="13" fill="#dbeafe"/>
+          <text x="120" y="18" fill="#314c69" text-anchor="middle" font-size="10" font-weight="700" data-logic-venue>GAME ROOM</text>
           <path d="M27 119h186" stroke="#8ab2db" stroke-width="3" stroke-linecap="round"/>
           <path d="M59 118V48a10 10 0 0 1 10-10h102a10 10 0 0 1 10 10v70Z" fill="#314c69"/>
           <path d="M71 118V51h98v67Z" fill="#152a4b"/>
@@ -98,6 +105,9 @@ export function initLogicLesson(root) {
   const inputs = [...root.querySelectorAll('[data-logic-input]')];
   const inputValue = input => input.type === 'checkbox' ? input.checked : Number(input.value);
   const values = Object.fromEntries(inputs.map(input => [input.dataset.logicInput, inputValue(input)]));
+  const heading = root.querySelector('[data-logic-heading]');
+  const gameTitle = heading.textContent;
+  const venue = root.querySelector('[data-logic-venue]');
   let active = 'equal';
 
   function paint() {
@@ -106,6 +116,8 @@ export function initLogicLesson(root) {
     for (const button of buttons) button.setAttribute('aria-pressed', String(button.dataset.logicRule === active));
     for (const group of groups) group.hidden = group.dataset.logicGroup !== rule.group;
     root.dataset.logicOpen = String(accepted);
+    heading.textContent = rule.title ?? gameTitle;
+    venue.textContent = active === 'and' ? 'PUB' : 'GAME ROOM';
     root.querySelector('[data-logic-rule-text]').textContent = rule.rule;
     root.querySelector('[data-logic-tip]').textContent = rule.tip;
     root.querySelector('[data-logic-bool]').textContent = String(accepted);
