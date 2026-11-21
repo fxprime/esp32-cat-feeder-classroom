@@ -127,8 +127,8 @@ export const LESSONS = [
     id: 6,
     slideNum: 6,
     phaseId: 1,
-    title: "แสงสะท้อน กับเม็ดอาหารกระทบ",
-    fullName: "6. แสงสะท้อน กับเม็ดอาหารกระทบ",
+    title: "ศึกษา digital / analog จากบางส่วน inputของโปรเจค",
+    fullName: "6. ศึกษา digital / analog จากบางส่วน inputของโปรเจค",
     subtitle: "เทียบสัญญาณจาก IR สะท้อนกับกราฟแรงดันจาก Piezo",
     description:
       "ให้แมวเข้าระยะ IR สะท้อนแล้วดูสถานะ 0/1 แล้วดูแผ่น Piezo ที่สั่นเมื่อเม็ดตก เปิดเรื่อง ADC และ PWM เพิ่มได้",
