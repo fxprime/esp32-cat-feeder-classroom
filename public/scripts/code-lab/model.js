@@ -1,12 +1,11 @@
 import {buildProgram} from './content.js';
-import {executeFeederHumidity,feederHumidityLesson} from './feeder-humidity.js';
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 export const createLessonState=()=>({time:0,wait:0,setupCount:0,loopCount:0,phase:'พร้อม',line:null,message:'กดเดินทีละคำสั่งเพื่อเริ่ม',leds:{23:0,22:0,21:0},pins:{},vars:{},stack:[],log:[]});
 export class LessonMachine{
  constructor(id,options={},inputs={}){
   this.program=buildProgram(id,options);
   this.id=id;
-  this.inputs={button:false,raw:2048,humidity:55,...inputs};
+  this.inputs={button:false,raw:2048,...inputs};
   this.inputHistory=[];
   this.initializeExecution();
  }
@@ -52,7 +51,6 @@ export class LessonMachine{
  *delay(line,ms){yield* this.e(line,`ค้างที่ delay(${ms}) ขา LED ยังเป็นสถานะเดิม`,s=>{s.wait=ms;});}
  *write(line,pin,duty){yield* this.e(line,`สั่ง GPIO${pin} เป็น ${duty>0?duty===255?'HIGH':'PWM '+duty:'LOW'}`,s=>{s.leds[pin]=duty;});}
  *execute(){const id=this.id,{delay}=this.program.options;
- if(id===feederHumidityLesson.id){yield* executeFeederHumidity(this);return;}
  if(id==='for')yield* this.e('pins','เก็บ array pins = {23,22,21} ไว้ใช้เลือกขา',s=>{s.vars.pins={value:'{23, 22, 21}',scope:'global'};});
  else yield* this.e('led-pin','กำหนด LED_PIN = 23 ก่อนเข้า setup()',s=>{s.vars.LED_PIN={value:23,scope:'global / const'};});
  if(id==='blink')yield* this.e('wait-var',`กำหนด waitMs = ${delay}`,s=>{s.vars.waitMs={value:delay,scope:'global / const'};});

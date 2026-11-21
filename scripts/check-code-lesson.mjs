@@ -10,6 +10,7 @@ import {carPose, createDriveRace, driveCourse, driveKinds, driveTrack, heightAt,
 import {checkDriveFirmwareSource} from './build-drive-firmware.mjs';
 import {buildProgram,examples} from '../public/scripts/code-lab/content.js';
 import {lessonHTML} from '../public/scripts/code-lab/render.js';
+import {logicLesson,logicRules} from '../public/scripts/code-lab/logic-lesson.js';
 import {highlightCode,highlightLines} from '../public/scripts/vendor/code-highlight.js';
 import {mapValue} from '../public/scripts/code-lab/map-model.js';
 import {indexExecutionScopes} from '../public/scripts/code-lab/scope-view.js';
@@ -18,7 +19,7 @@ const b=new LessonMachine('blink');let s=until(b,s=>s.line==='wait-on'&&s.wait>0
 const c=new LessonMachine('condition');until(c,s=>s.line==='read-button');c.setInputs({button:true});s=until(c,s=>s.line==='low');assert.equal(s.vars.state.value,'HIGH');assert.equal(s.leds[23],0);s=until(c,s=>s.line==='high');assert.equal(s.vars.state.value,'LOW');assert.equal(s.leds[23],255);
 const a=new LessonMachine('sensor',{}, {raw:2048});until(a,s=>s.line==='read-raw');a.setInputs({raw:4095});s=until(a,s=>s.line==='write-duty');assert.equal(s.vars.raw.value,2048);assert.equal(s.vars.duty.value,127);assert.equal(s.leds[23],127);assert.deepEqual(s.log,[]);assert.deepEqual(s.stack,['loop()']);s=a.step();assert.deepEqual(s.log,['2048']);s=until(a,s=>s.line==='write-duty'&&s.loopCount===2);assert.equal(s.vars.raw.value,4095);assert.equal(s.leds[23],255);
 const f=new LessonMachine('for',{delay:250}),pins=[];for(let i=0;i<100;i++){s=f.step();if(s.line==='high')pins.push(Object.entries(s.leds).find(([,v])=>v)?.[0]);if(s.line==='loop-close')break;}assert.deepEqual(pins,['23','22','21']);assert.equal(s.time,750);assert(Object.values(s.leds).every(v=>v===0));assert.deepEqual(s.pins,{21:'OUTPUT',22:'OUTPUT',23:'OUTPUT'});
-for(const id of examples.filter(e=>!['timing','serial','function'].includes(e.id)).map(e=>e.id)){
+for(const id of examples.filter(e=>!['timing','serial','function',logicLesson.id].includes(e.id)).map(e=>e.id)){
  const p=buildProgram(id);assert.equal(syntaxExample(p).error,null);assert(p.lines.some(l=>l.id==='setup-open'));assert(p.lines.some(l=>l.id==='loop-open'));
  const machine=new LessonMachine(id), history=[machine.snapshot()];
  for(let i=0;i<50;i++){
@@ -31,18 +32,17 @@ for(const id of examples.filter(e=>!['timing','serial','function'].includes(e.id
  }
  assert.equal(machine.canRewind,false);
 }
-const feeder=new LessonMachine('feeder-humidity',{}, {humidity:69});
-s=until(feeder,s=>s.line==='read-humidity');
-assert.equal(s.vars.humidityRH.value,69);
-feeder.setInputs({humidity:70});
-s=until(feeder,s=>s.line==='low');
-assert.equal(s.leds[23],0);
-s=until(feeder,s=>s.line==='high');
-assert.equal(s.vars.humidityRH.value,70);
-assert.equal(s.leds[23],255);
-assert.equal(s.setupCount,1);
-const unreadable=new LessonMachine('feeder-humidity',{}, {humidity:null});
-assert.equal(until(unreadable,s=>s.line==='high').vars.humidityRH.value,'NaN');
+assert.equal(logicRules.equal.test({roomCode:7}),true);
+assert.equal(logicRules.equal.test({roomCode:6}),false);
+for(const [hasCard,hasPass,and,or] of [
+ [false,false,false,false],[false,true,false,true],[true,false,false,true],[true,true,true,true],
+]){
+ const tickets={hasCard,hasPass};
+ assert.equal(logicRules.and.test(tickets),and);
+ assert.equal(logicRules.or.test(tickets),or);
+}
+assert.equal(logicRules.not.test({isClosed:true}),false);
+assert.equal(logicRules.not.test({isClosed:false}),true);
 assert.deepEqual(feederTimingObservations(450), {delay:null,millis:500});
 assert.deepEqual(feederTimingObservations(1050), {delay:1100,millis:1100});
 const branch=new LessonMachine('sensor');

@@ -1,9 +1,9 @@
 import {functionLessons,functionProgram} from './function-lessons.js';
 import {serialLesson,serialProgram} from './serial-lesson.js';
-import {feederHumidityLesson,feederHumidityProgram} from './feeder-humidity.js';
+import {logicLesson} from './logic-lesson.js';
 export const examples=[
  {id:'blink',label:'setup / loop',title:'รู้จัก setup() และ loop() ด้วยไฟแดงดวงเดิม',intro:'setup() เตรียมขา LED ครั้งเดียว จากนั้น loop() เปิดไฟ รอ ปิดไฟ แล้วเริ่มรอบใหม่ ลองดูว่าพอกลับรอบที่ 2 โปรแกรมย้อนเข้า setup() หรือไม่',challenge:'เปลี่ยนเวลารอเป็น 1000 ms ไฟจะเปลี่ยนช้าหรือเร็วขึ้น?',wiring:'GPIO23 → R 330Ω → LED (+), LED (−) → GND',file:'01_setup_loop.ino'},
- feederHumidityLesson,
+ logicLesson,
  {id:'condition',label:'if / else',title:'อ่านปุ่ม แล้วเลือกทางทำงาน',intro:'ปุ่มนี้ต่อระหว่าง GPIO18 กับ GND และเปิด INPUT_PULLUP ไว้ ไม่กดอ่านได้ HIGH กดแล้วอ่านได้ LOW โปรแกรมอ่านค่าก่อน แล้วจึงเลือกทาง if หรือ else',challenge:'อ่านค่าปุ่มแล้วลองเปลี่ยนปุ่มก่อนถึง if โปรแกรมจะใช้ค่าใหม่หรือค่าที่อ่านเก็บไว้?',wiring:'ปุ่ม: GPIO18 ↔ GND (INPUT_PULLUP) · LED: GPIO23 → 330Ω → LED → GND',file:'02_if_else.ino'},
  {id:'sensor',label:'ตัวแปร / return',title:'รับค่าเซนเซอร์ เก็บไว้ แล้วคำนวณต่อ',intro:'analogRead() อ่านค่ามาเก็บใน raw ฟังก์ชัน toDuty() แปลงช่วงตัวเลขแล้วส่งผลกลับมาเก็บใน duty จากนั้น ledcWrite() จึงปรับไฟ ลองเลื่อนเซนเซอร์ระหว่างแต่ละคำสั่ง',challenge:'ถ้าเลื่อนเซนเซอร์หลังอ่าน raw แล้ว ไฟจะเปลี่ยนทันทีหรือรออ่านรอบถัดไป?',wiring:'ปุ่มหมุน: ขากลาง → GPIO34, ปลาย → 3.3V/GND · LED ที่ GPIO23 ผ่าน 330Ω',file:'03_variables_return.ino'},
  {id:'for',label:'for / array',title:'ใช้โค้ดชุดเดียว ไล่เปิด LED 3 ดวง',intro:'array เก็บหมายเลขขาไว้ 3 ค่า ส่วน i เป็นตำแหน่งที่กำลังเลือก เริ่มจาก 0, 1, 2 เมื่อ i เป็น 3 เงื่อนไข i < 3 จะเป็นเท็จและออกจาก for',challenge:'รอบที่ i = 1 โปรแกรมกำลังเปิด GPIO ใด? ทำไมไม่ใช่ขา 1?',wiring:'GPIO23, GPIO22, GPIO21 → ตัวต้านทาน 330Ω และ LED แยกดวง → GND ร่วม',file:'04_for_array.ino'},
@@ -14,7 +14,6 @@ export const examples=[
 const line=(id,code,title,explain)=>({id,code,title,explain});
 export function buildProgram(id,options={}){
  if(id===serialLesson.id)return serialProgram();
- if(id===feederHumidityLesson.id)return feederHumidityProgram();
  if(functionLessons.some(lesson=>lesson.id===id))return functionProgram(id);
  const delay=Math.min(1500,Math.max(250,Number(options.delay)||500)),a=[];
  const add=(...args)=>a.push(line(...args));

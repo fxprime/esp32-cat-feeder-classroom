@@ -12,6 +12,7 @@ import {setupFeederTiming} from './feeder-timing.js';
 import {codeRows} from './render.js';
 import {StepMotion, renderMemory} from './step-motion.js';
 import {indexExecutionScopes} from './scope-view.js';
+import {initLogicLesson, logicLesson} from './logic-lesson.js';
 if(!Object.hasOwn(HTMLElement.prototype,'focusGroup')){await import('../vendor/focusgroup-polyfill.js');}
 const tabs=[...document.querySelectorAll('[data-tab]')],panels=[...document.querySelectorAll('[data-example]')],controllers=new Map();
 let active='blink';
@@ -23,7 +24,7 @@ function showAllCode(show){
  }
 }
 class Controller{
- constructor(root,id,continuous=false){this.root=root;this.id=id;this.continuous=continuous;this.catExample=functionLessons.some(lesson=>lesson.id===id);this.compiled=continuous||id==='serial'||this.catExample;this.motion=new StepMotion(root);this.timer=null;this.playing=false;this.fault='none';this.options={delay:500};this.inputs={button:false,raw:2048,humidity:55};this.reset();
+ constructor(root,id,continuous=false){this.root=root;this.id=id;this.continuous=continuous;this.catExample=functionLessons.some(lesson=>lesson.id===id);this.compiled=continuous||id==='serial'||this.catExample;this.motion=new StepMotion(root);this.timer=null;this.playing=false;this.fault='none';this.options={delay:500};this.inputs={button:false,raw:2048};this.reset();
  root.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(b){const a=b.dataset.action;if(a==='step'){this.pause();this.step();}if(a==='back')this.rewind();if(a==='scope-view')showAllCode(b.getAttribute('aria-pressed')!=='true');if(a==='play')this.playing?this.pause():this.play();if(a==='reset'){this.reset();this.paint();}if(a==='download')this.download();}const l=e.target.closest('[data-line]');if(l)this.explain(l.dataset.line);});
  root.querySelectorAll('[data-option]').forEach(el=>el.addEventListener('change',()=>{if(el.dataset.option==='fault')this.fault=el.value;else this.options[el.dataset.option]=Number(el.value);this.reset();this.paint();}));
  const speed=this.q('[data-speed]');
@@ -33,19 +34,6 @@ class Controller{
   this.reschedule?.();
  });
  const button=root.querySelector('[data-button]');if(button)this.releaseButton=bindTactile(button,pressed=>{this.inputs.button=pressed;this.machine.setInputs(this.inputs);this.q('[data-input-label]').textContent=pressed?'กด · LOW':'ปล่อย · HIGH';this.q('[data-bench]').innerHTML=benchSVG(this.id,this.machine.state,this.inputs);});
- const humidity = root.querySelector('[data-humidity]');
- const missing = root.querySelector('[data-humidity-missing]');
- if (humidity && missing) {
-  const changeHumidity = () => {
-   humidity.disabled = missing.checked;
-   this.inputs.humidity = missing.checked ? null : Number(humidity.value);
-   this.machine.setInputs(this.inputs);
-   root.querySelector('[data-humidity-value]').textContent = missing.checked ? 'อ่านไม่ได้' : humidity.value + '% RH';
-   this.paint();
-  };
-  humidity.addEventListener('input', changeHumidity);
-  missing.addEventListener('change', changeHumidity);
- }
  root.querySelector('[data-raw]')?.addEventListener('input',e=>{this.inputs.raw=Number(e.target.value);this.machine.setInputs(this.inputs);this.paint();});this.paint();}
  q(s){return this.root.querySelector(s);}
  reset(){this.pause();this.motion.reset();this.pending=null;this.machine=this.compiled?new TimingMachine(this.id):new LessonMachine(this.id,this.options,this.inputs);this.syntax=syntaxExample(this.machine.program,this.fault);this.scopes=indexExecutionScopes(this.machine.program.lines);this.q('.cl-code-list').innerHTML=codeRows(this.syntax.lines);this.explain(this.machine.program.lines[0].id);}
@@ -194,7 +182,8 @@ function selectFunction(id){
 for(const button of functionChoices)button.addEventListener('click',()=>selectFunction(button.dataset.functionChoice));
 for(const view of functionViews)view.addEventListener('beforematch',()=>selectFunction(view.dataset.functionView));
 selectFunction(functionMode);
-for(const e of examples.filter(e=>!['timing','function'].includes(e.id)))controllers.set(e.id,new Controller(document.querySelector(`[data-example="${e.id}"]`),e.id));
+for(const e of examples.filter(e=>!['timing','function',logicLesson.id].includes(e.id)))controllers.set(e.id,new Controller(document.querySelector(`[data-example="${e.id}"]`),e.id));
+initLogicLesson(document.querySelector('[data-logic]'));
 function select(id){if(active!==id){const previous=controllers.get(active==='function'?functionMode:active);previous?.pause();previous?.releaseButton?.();if(active==='timing')pauseTiming();}active=id;for(const t of tabs){const chosen=t.dataset.tab===id;t.setAttribute('aria-selected',String(chosen));t.toggleAttribute('focusgroupstart',chosen);}for(const p of panels)p.hidden=p.dataset.example===id?false:'until-found';const tab=tabs.find(t=>t.dataset.tab===id);tab.scrollIntoView({block:'nearest',inline:'nearest',container:'nearest'});}
 tabs.forEach(t=>t.addEventListener('click',()=>select(t.dataset.tab)));
 // Focusgroup handles arrows; native buttons activate selection with Enter/Space.
