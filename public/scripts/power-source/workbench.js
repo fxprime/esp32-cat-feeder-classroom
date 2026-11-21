@@ -49,9 +49,11 @@ function updatePack() {
 function complete(trial) {
   const { state, reason, spec, peakMa } = trial;
   view.dataset.outcome = state;
+  view.dataset.reason = reason;
   const messages = {
     matched: ['ทำงานได้', `${spec.name} จ่าย 5 V ได้ถึง ${ma(spec.limitMa ?? 0)} ในฉากนี้ โหลดต้องการพีก ${ma(peakMa)}`],
     current: ['ทำงานไม่ได้ · กระแสไม่พอ', `ได้ 5 V ตามที่ต้องการ แต่โหลดขอพีก ${ma(peakMa)} แหล่งนี้รองรับ ${ma(spec.limitMa ?? 0)} ในฉากนี้`],
+    'usb-port': ['จำลองพอร์ต USB ของคอมเสีย', `โหลดขอพีก ${ma(peakMa)} พอร์ตตัวอย่างรองรับ ${ma(spec.limitMa ?? 0)} คอมจริงอาจตัดไฟเพื่อป้องกันพอร์ต`],
     portable: ['ทำงานไม่ได้ · ไม่มีแหล่งไฟที่หน้างาน', 'โจทย์พกพานี้ไม่มีคอมและปลั๊ก ลองรังถ่านหรือแพ็กแบตที่แปลงเป็น 5 V และจ่ายกระแสพอ'],
     unregulated: ['ทำงานไม่ได้ · แรงดันยังไม่นิ่งที่ 5 V', `แพ็กให้ ${spec.voltage} V ตามป้ายและเปลี่ยนตามประจุ ลองใช้ตัวแปลงให้ได้ราง 5 V`],
     overvoltage: ['บอร์ดเสีย · แรงดันเกิน', `${spec.voltage} V ตามป้ายเกินพิกัดอินพุต 5 V ของชุดทดลองนี้ ใช้ตัวแปลงให้ตรงกับโหลด`],
@@ -59,7 +61,10 @@ function complete(trial) {
   };
   report(state, ...messages[reason]);
   reset.disabled = false;
-  reset.textContent = state === 'damage' ? 'เปลี่ยนบอร์ด' : 'ถอดแหล่งจ่าย';
+  if (state === 'damage') {
+    reset.textContent = reason === 'usb-port' ? 'เปลี่ยนคอม' : 'เปลี่ยนบอร์ด';
+    reset.focus({ preventScroll: true });
+  }
 }
 
 function run(picked) {
@@ -73,6 +78,7 @@ function run(picked) {
   reset.disabled = damageLocked;
   result = trial;
   view.dataset.outcome = 'testing';
+  delete view.dataset.reason;
   const token = ++currentTrial;
   const finished = () => { if (token === currentTrial) complete(trial); };
   if (model) {
@@ -90,6 +96,7 @@ function disconnect() {
   select('data-supply', null);
   updatePack();
   view.dataset.outcome = 'idle';
+  delete view.dataset.reason;
   view.dataset.load = load;
   reset.disabled = true;
   reset.textContent = 'ถอดแหล่งจ่าย';

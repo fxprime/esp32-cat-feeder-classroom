@@ -24,6 +24,7 @@
           <path d="M98 87l449-18 90 211-597 17z" fill="#ded1ae" stroke="#887957" stroke-width="3"/>
           <path d="M40 297l597-17v30l-592 21z" fill="#a88d66"/>
           <path d="M201 168l274-6 37 93-351 4z" fill="#427e74" stroke="#2e5b54" stroke-width="4"/>
+          <path d="M92 114h47v24H92zm-4 24h56l8 6H80z" fill="#334b62"/>
           <path d="M84 145q34-38 67-12t25-9" stroke="#273c53" stroke-width="6" fill="none"/>
           <rect x="199" y="113" width="46" height="27" rx="5" fill="#2c394c"/>
           <g fill="#c99247"><rect x="286" y="114" width="43" height="10" rx="3"/><rect x="286" y="127" width="43" height="10" rx="3"/></g>
@@ -34,7 +35,9 @@
           <circle class="workbench-flat-led" cx="338" cy="218" r="6" fill="#456b75"/>
           <g class="workbench-flat-fixture" fill="#347bb1" stroke="#193d59" stroke-width="3"><rect x="353" y="198" width="42" height="32" rx="5"/><path d="M370 215h32" stroke="#e7f2f6" stroke-width="5"/></g>
           <path d="M623 380H516q-12-60 24-78 41-22 39-51-1-17-26-12l-33 18q-16 3-24-9 18-36 62-41 42-4 49 45 11 46 16 128Z" fill="#1d4158"/>
+          <path class="workbench-flat-mains-lead" d="M524 131C521 163 487 156 449 179S405 214 343 216" stroke="#b54933" stroke-width="6" stroke-linecap="round" fill="none"/>
           <g class="workbench-flat-fire"><path d="M308 212Q284 180 319 160Q319 185 331 180Q341 163 345 150Q376 202 350 215Z" fill="#ec793d"/><path d="M319 209q-4-21 13-33 1 15 13 19l-1 14Z" fill="#ffd17a"/></g>
+          <g class="workbench-flat-port"><circle cx="141" cy="135" r="17" fill="#9d2d1e"/><path d="m145 122-11 14h7l-4 11 12-15h-6z" fill="#ffe676"/></g>
         </svg>
       </div>
       <div class="workbench-docks" role="group" aria-label="เลือกแหล่งจ่าย">
@@ -45,6 +48,7 @@
         <button type="button" data-supply="mains" aria-pressed="false"><b>ไฟบ้าน</b><small>220 V AC</small></button>
       </div>
       <button type="button" class="workbench-project" data-project>เลือกโหลดบนโต๊ะ</button>
+      <p class="workbench-cue" data-workbench-cue aria-hidden="true" hidden></p>
       <p class="workbench-safety">ไฟบ้านใช้จำลองเท่านั้น</p>
     </section>
     <aside class="workbench-panel" aria-label="ควบคุมการทดลอง">

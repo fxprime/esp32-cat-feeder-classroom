@@ -2,10 +2,44 @@ import * as THREE from '../vendor/three.module.min.js';
 import { makeTableModels } from './table-models.js';
 
 const supplies = ['usb', 'adapter', 'aa', 'lithium', 'mains'];
-const cableColors = { usb: 0x263a51, adapter: 0x233d49, aa: 0x9d502f, lithium: 0x47588a };
+const cableColors = { usb: 0x263a51, adapter: 0x233d49, aa: 0x9d502f, lithium: 0x47588a, mains: 0xc73d22 };
 const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const vector = (x, y, z) => new THREE.Vector3(x, y, z);
 const easing = (t) => t * t * (3 - 2 * t);
+const between = (progress, start, end) => THREE.MathUtils.clamp((progress - start) / (end - start), 0, 1);
+const pickupAt = .21;
+const connectedAt = .56;
+const poweredAt = .62;
+const wideAt = .86;
+
+function buildPlug(surface) {
+  const plug = new THREE.Group();
+  const grip = new THREE.Mesh(new THREE.BoxGeometry(.21, .14, .29), surface);
+  grip.position.z = -.16;
+  const tip = new THREE.Mesh(new THREE.BoxGeometry(.13, .076, .095), new THREE.MeshStandardMaterial({ color: 0xc4d6dc, metalness: .56, roughness: .38 }));
+  tip.position.z = -.028;
+  plug.add(grip, tip);
+  plug.visible = false;
+  return plug;
+}
+
+function buildPortFault() {
+  const fault = new THREE.Group();
+  const bolt = new THREE.Shape();
+  bolt.moveTo(.10, .27);
+  bolt.lineTo(-.17, -.03);
+  bolt.lineTo(-.015, -.03);
+  bolt.lineTo(-.10, -.27);
+  bolt.lineTo(.19, .055);
+  bolt.lineTo(.027, .055);
+  bolt.lineTo(.10, .27);
+  const disk = new THREE.Mesh(new THREE.CircleGeometry(.32, 32), new THREE.MeshBasicMaterial({ color: 0x9d2d1e, side: THREE.DoubleSide }));
+  const icon = new THREE.Mesh(new THREE.ShapeGeometry(bolt), new THREE.MeshBasicMaterial({ color: 0xffe676, side: THREE.DoubleSide }));
+  icon.position.z = .005;
+  fault.add(disk, icon);
+  fault.visible = false;
+  return fault;
+}
 
 function buildFire() {
   const group = new THREE.Group();
@@ -129,11 +163,26 @@ export function setupWorkbench(view, handlers) {
   scene.add(mainCables);
   const cableSurface = new THREE.MeshStandardMaterial({ color: 0x273648, roughness: .55 });
   const branchSurface = new THREE.MeshStandardMaterial({ color: 0x8e3d45, roughness: .6 });
-  const pulse = new THREE.Mesh(new THREE.SphereGeometry(.073, 12, 8), new THREE.MeshBasicMaterial({ color: 0xf7c159 }));
-  pulse.visible = false;
-  scene.add(pulse);
+  const plug = buildPlug(cableSurface);
+  const portFault = buildPortFault();
+  scene.add(plug, portFault);
+  const cue = view.querySelector('[data-workbench-cue]');
+  const wideEye = vector(0, 0, 0);
+  const wideTarget = vector(0, 0, 0);
+  const aimedAt = vector(0, 0, 0);
+  const cameraEye = vector(0, 0, 0);
+  const cameraTarget = vector(0, 0, 0);
+  const plugAxis = vector(0, 0, 1);
+  const cableTangent = vector(0, 0, 0);
+  const plugPoint = vector(0, 0, 0);
+  const cableFocus = vector(0, 0, 0);
   let lead;
+  let branch;
   let cablePath;
+  let dockShot;
+  let landingShot;
+  let faultShot;
+  let burnPoint;
   let request = 0;
   let load = 'servo';
   let usable = true;
@@ -142,8 +191,25 @@ export function setupWorkbench(view, handlers) {
 
   function draw(updateShadows = false) {
     if (!usable || disposed) return;
+    portFault.quaternion.copy(camera.quaternion);
     if (updateShadows) renderer.shadowMap.needsUpdate = true;
     renderer.render(scene, camera);
+  }
+
+  function aim(eye, target) {
+    camera.position.copy(eye);
+    aimedAt.copy(target);
+    camera.lookAt(aimedAt);
+    camera.updateMatrixWorld();
+  }
+
+  function overview() {
+    aim(wideEye, wideTarget);
+    supplies.forEach((id, index) => {
+      const labelPoint = sources[id].model.position.clone().add(vector((index - 2) * .42, .92, -1.02));
+      placeButton(view.querySelector(`[data-supply="${id}"]`), labelPoint);
+    });
+    placeButton(view.querySelector('[data-project]'), vector(-.13, .07, 2.34));
   }
 
   function placeButton(button, point) {
@@ -162,25 +228,32 @@ export function setupWorkbench(view, handlers) {
     camera.aspect = width / height;
     const compact = camera.aspect < 1.35;
     camera.fov = compact ? 33 : 31;
-    camera.position.set(compact ? 3.8 : 4.05, compact ? 10.2 : 8.4, compact ? 15.5 : 12.4);
-    camera.lookAt(0, .12, compact ? -.25 : .02);
+    wideEye.set(compact ? 3.8 : 4.05, compact ? 10.2 : 8.4, compact ? 15.5 : 12.4);
+    wideTarget.set(0, .12, compact ? -.25 : .02);
     camera.updateProjectionMatrix();
-    camera.updateMatrixWorld();
-    supplies.forEach((id, index) => {
-      const labelPoint = sources[id].model.position.clone().add(vector((index - 2) * .42, .92, -1.02));
-      placeButton(view.querySelector(`[data-supply="${id}"]`), labelPoint);
-    });
-    placeButton(view.querySelector('[data-project]'), vector(-.13, .07, 2.34));
+    if (!finishTrial) overview();
     draw(true);
+  }
+
+  function setCue(phase, caption = '') {
+    if (phase === view.dataset.shot) return;
+    if (phase) view.dataset.shot = phase;
+    else delete view.dataset.shot;
+    cue.textContent = caption;
+    cue.hidden = !phase;
   }
 
   function clear() {
     cancelAnimationFrame(request);
     finishTrial = undefined;
+    setCue();
     mainCables.children.slice().forEach((mesh) => { mainCables.remove(mesh); mesh.geometry.dispose(); });
     lead = undefined;
+    branch = undefined;
+    cablePath = undefined;
     halo.visible = false;
-    pulse.visible = false;
+    plug.visible = false;
+    portFault.visible = false;
     fire.group.visible = false;
     ledSurface.color.setHex(0x9a3b33);
     ledSurface.emissive.setHex(0xee2e20);
@@ -200,72 +273,145 @@ export function setupWorkbench(view, handlers) {
     return cord;
   }
 
+  function shotAt(point, offset, height = .19) {
+    const target = point.clone().add(vector(0, height, 0));
+    return { target, eye: target.clone().add(offset), offset, height };
+  }
+
   function prepare(id, trial) {
-    if (trial.reason === 'portable' || trial.reason === 'mains') {
-      halo.position.copy(sources[id].model.position);
+    const source = sources[id];
+    const output = source.model.localToWorld(source.outlet.clone());
+    const overhead = vector(2.1, 2.72, 3.78);
+    dockShot = shotAt(output.clone().lerp(source.model.position, .42), overhead, .16);
+    if (trial.reason === 'portable') {
+      halo.position.copy(source.model.position);
       halo.position.y = .05;
-      halo.material.color.setHex(trial.reason === 'mains' ? 0xc4553c : 0xbc8b39);
+      halo.material.color.setHex(0xbc8b39);
       halo.scale.setScalar(1.88);
       halo.visible = true;
       return;
     }
-    const output = sources[id].model.localToWorld(sources[id].outlet.clone());
-    const input = loads.board.model.localToWorld(loads.board.inlet.clone());
+    const board = loads.board;
+    const mains = id === 'mains';
+    // The AC lead is an abstract fault marker on the board surface.
+    const input = board.model.localToWorld(mains ? vector(.67, .261, .38) : board.inlet.clone());
+    burnPoint = mains ? input : board.model.localToWorld(vector(-.45, .458, .04));
+    landingShot = shotAt(input, overhead);
     cableSurface.color.setHex(cableColors[id]);
+    plug.children[1].visible = !mains;
+    plug.scale.setScalar(mains ? 1.35 : 1);
     cablePath = new THREE.CatmullRomCurve3([
       output,
-      output.clone().add(vector(-.08, .08, .31)),
-      vector((output.x + input.x) * .55, .08, .47),
-      vector(input.x - .57, .09, 1.8),
-      input.clone().add(vector(.08, -.06, .42)),
+      output.clone().add(vector(-.05, .28, .35)),
+      vector((output.x + input.x) * .5, .28, mains ? 2.02 : .67),
+      vector(input.x + (mains ? .42 : -.55), .46, input.z + .70),
+      input.clone().add(mains ? vector(.11, .36, .04) : vector(.033, -.007, .26)),
       input,
     ]);
-    lead = makeCable(cablePath, cableSurface, .053);
-    if (load !== 'board') {
+    lead = makeCable(cablePath, cableSurface, mains ? .068 : .053);
+    lead.geometry.setDrawRange(0, 0);
+    if (load !== 'board' && !mains) {
       const fixture = loads[load];
-      const branchFrom = loads.board.model.localToWorld(vector(.95, .23, .83));
+      const branchFrom = board.model.localToWorld(vector(.95, .23, .83));
       const branchTo = fixture.model.localToWorld(fixture.inlet.clone());
-      makeCable(new THREE.CatmullRomCurve3([
+      branch = makeCable(new THREE.CatmullRomCurve3([
         branchFrom, vector(.12, .12, 1.59), vector(.91, .10, 1.72), branchTo.clone().add(vector(.18, -.03, .25)), branchTo,
       ]), branchSurface, .037);
+      branch.visible = false;
+    }
+    if (trial.reason === 'usb-port') {
+      const port = source.model.localToWorld(vector(-.50, .085, .30));
+      portFault.position.copy(port).add(vector(-.15, .5, .19));
+      faultShot = shotAt(port, vector(1.9, 2.23, 3.20), .32);
+    } else {
+      faultShot = landingShot;
     }
   }
 
-  function pose(trial, progress, total) {
+  function pose(trial, progress, animated) {
     const { state, reason } = trial;
-    const leadProgress = Math.min(progress * (state === 'damage' ? 2.8 : 1.7), 1);
-    const poweredProgress = Math.max(0, (progress - .56) * 2.27);
+    const leadProgress = easing(between(progress, pickupAt, connectedAt));
+    const poweredProgress = between(progress, poweredAt, .87);
     const moving = loads[load].moving;
-    const needsIgnition = reason === 'mains';
     if (lead) {
-      const count = lead.geometry.index.count;
-      lead.geometry.setDrawRange(0, Math.floor(count * leadProgress / 3) * 3);
-      pulse.visible = progress > .03 && leadProgress < 1;
-      if (pulse.visible) pulse.position.copy(cablePath.getPoint(leadProgress));
+      const indicesPerSegment = 7 * 6;
+      lead.geometry.setDrawRange(0, Math.round(leadProgress * 56) * indicesPerSegment);
+      cablePath.getPointAt(leadProgress, plugPoint);
+      cablePath.getTangentAt(leadProgress, cableTangent).normalize();
+      plug.position.copy(plugPoint);
+      plug.quaternion.setFromUnitVectors(plugAxis, cableTangent);
+      plug.visible = true;
+      if (branch) branch.visible = progress >= connectedAt;
     }
-    if (state === 'works' && progress >= .55) {
+    if (state === 'works' && progress >= poweredAt) {
       ledSurface.emissiveIntensity = 2.25;
       if (load === 'servo') moving.rotation.y = 1.22 * easing(poweredProgress);
       if (load === 'motor') moving.rotation.y = Math.PI * 3 * easing(poweredProgress);
     }
-    if (state === 'blocked' && moving && reason === 'current' && progress > .55) {
+    if (moving && (reason === 'current' || reason === 'usb-port') && animated) {
       moving.rotation.y = Math.sin(poweredProgress * Math.PI) * .26;
     }
-    if (state === 'damage' && progress > .24) {
-      fire.group.position.copy(loads.board.model.localToWorld(vector(-.45, .458, .04)));
+    if (reason === 'usb-port' && progress >= poweredAt) {
+      portFault.visible = true;
+      const strike = between(progress, poweredAt, .76);
+      const rebound = Math.sin(Math.PI * strike) * .22;
+      portFault.scale.setScalar(.6 + easing(strike) * .4 + rebound);
+    } else if (state === 'damage' && progress >= poweredAt) {
+      fire.group.position.copy(burnPoint);
       fire.group.visible = true;
-      fire.pose((progress - .24) / .76, needsIgnition);
+      fire.pose(between(progress, poweredAt, 1), reason === 'mains');
       ledSurface.emissiveIntensity = .01;
       ledSurface.color.setHex(0x3e3031);
     }
-    if (total) person.rotation.z = Math.sin(progress * Math.PI) * (state === 'damage' ? -.095 : .028);
+    if (animated) person.rotation.z = Math.sin(progress * Math.PI) * (state === 'damage' ? -.095 : .028);
+  }
+
+  function moveCamera(from, to, progress) {
+    const blend = easing(progress);
+    cameraEye.lerpVectors(from.eye, to.eye, blend);
+    cameraTarget.lerpVectors(from.target, to.target, blend);
+    aim(cameraEye, cameraTarget);
+  }
+
+  function frameCamera(start, trial, progress) {
+    const wide = { eye: wideEye, target: wideTarget };
+    const mains = trial.reason === 'mains';
+    if (trial.reason === 'portable') {
+      if (progress < .42) moveCamera(start, dockShot, between(progress, 0, .42));
+      else moveCamera(dockShot, wide, between(progress, .65, 1));
+      setCue('unavailable', 'หน้างานไม่มีแหล่งจ่ายนี้');
+      return;
+    }
+    if (progress < pickupAt) {
+      moveCamera(start, dockShot, between(progress, 0, .17));
+      setCue('pickup', mains ? 'จำลองไฟบ้าน 220 V AC' : 'หยิบหัวสายจากแหล่งจ่าย');
+    } else if (progress < connectedAt) {
+      cableFocus.copy(plugPoint).y += landingShot.height;
+      cameraEye.copy(cableFocus).add(landingShot.offset);
+      const follow = easing(between(progress, pickupAt, pickupAt + .10));
+      cameraTarget.lerpVectors(dockShot.target, cableFocus, follow);
+      cameraEye.lerpVectors(dockShot.eye, cameraEye, follow);
+      aim(cameraEye, cameraTarget);
+      setCue('pull', mains ? 'เส้นทางแรงดันจำลองไปยัง Breadboard' : 'ลากสายเข้าหาวงจร');
+    } else if (progress < poweredAt) {
+      aim(landingShot.eye, landingShot.target);
+      setCue('connected', mains ? 'ไฟบ้านถึง Breadboard ในฉากจำลอง' : 'หัวสายถึงวงจรแล้ว');
+    } else {
+      if (progress < wideAt) moveCamera(landingShot, faultShot, between(progress, poweredAt, .78));
+      else moveCamera(faultShot, wide, between(progress, wideAt, 1));
+      if (trial.reason === 'usb-port') setCue('usb-fault', 'พอร์ต USB ของคอมเสีย');
+      else if (mains) setCue('board-fire', 'แรงดันเกิน · Breadboard ไหม้');
+      else setCue('testing', 'ดูผลที่วงจร');
+    }
   }
 
   function show(id, trial) {
     if (!usable) return;
     clear();
     prepare(id, trial);
-    pose(trial, 1, 0);
+    pose(trial, 1, false);
+    if (trial.reason === 'mains' && motion.matches) fire.pose(.68, true);
+    overview();
     draw();
   }
 
@@ -275,20 +421,27 @@ export function setupWorkbench(view, handlers) {
       complete();
       return;
     }
+    const firstShot = { eye: camera.position.clone(), target: aimedAt.clone() };
     clear();
     prepare(id, result);
     finishTrial = complete;
-    const duration = result.state === 'damage' ? 2250 : result.reason === 'portable' ? 500 : 1350;
+    const duration = result.reason === 'portable' ? 1450 : result.state === 'damage' ? 3900 : 3300;
     const started = performance.now();
     function frame(now) {
-      const progress = Math.min((now - started) / duration, 1);
-      pose(result, progress, duration);
-      draw();
-      if (progress < 1) request = requestAnimationFrame(frame);
-      else {
+      const reducedMotion = motion.matches;
+      const progress = reducedMotion ? 1 : Math.min((now - started) / duration, 1);
+      pose(result, progress, progress < 1);
+      if (progress < 1) {
+        frameCamera(firstShot, result, progress);
+        request = requestAnimationFrame(frame);
+      } else {
+        if (result.reason === 'mains' && reducedMotion) fire.pose(.68, true);
+        setCue();
+        overview();
         finishTrial = undefined;
         complete();
       }
+      draw();
     }
     request = requestAnimationFrame(frame);
   }
@@ -296,6 +449,7 @@ export function setupWorkbench(view, handlers) {
   function reset(nextLoad) {
     load = nextLoad;
     clear();
+    overview();
     draw(true);
   }
 

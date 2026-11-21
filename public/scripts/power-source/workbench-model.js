@@ -44,6 +44,7 @@ export function tryPower({ source, load, portable, battery, regulated }) {
     return { state: tooHigh ? 'damage' : 'blocked', reason: tooHigh ? 'overvoltage' : 'unregulated', spec, peakMa };
   }
   if (portable && (source === 'usb' || source === 'adapter')) return { state: 'blocked', reason: 'portable', spec, peakMa };
+  if (source === 'usb' && peakMa > spec.limitMa) return { state: 'damage', reason: 'usb-port', spec, peakMa };
   if (peakMa > spec.limitMa) return { state: 'blocked', reason: 'current', spec, peakMa };
   return { state: 'works', reason: 'matched', spec, peakMa };
 }

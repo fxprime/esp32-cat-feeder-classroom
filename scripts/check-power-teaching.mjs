@@ -37,7 +37,15 @@ assert.equal(estimateRunHours(lipo.energyWh, 0), null);
 
 const bench = (choice) => tryPower({ source: "usb", load: "servo", portable: false, regulated: true, ...choice });
 assert.equal(bench({ load: "board" }).state, "works");
-assert.equal(bench({}).reason, "current");
+for (const [load, expectedPeakMa] of [["servo", 650], ["motor", 900]]) {
+  const { state, reason, spec, peakMa } = bench({ load });
+  assert.equal(state, "damage");
+  assert.equal(reason, "usb-port");
+  assert.equal(spec.limitMa, 500);
+  assert.equal(peakMa, expectedPeakMa);
+}
+assert.equal(bench({ portable: true }).reason, "portable");
+assert.equal(bench({ source: "adapter" }).state, "works");
 assert.equal(bench({ source: "adapter", load: "motor" }).state, "works");
 assert.equal(bench({ source: "adapter", portable: true }).reason, "portable");
 assert.equal(bench({ source: "aa", load: "board", battery: "aaa-nimh" }).state, "works");
@@ -49,4 +57,4 @@ assert.equal(bench({ source: "lithium", battery: "lipo", load: "motor" }).reason
 assert.equal(bench({ source: "lithium", battery: "lipo", regulated: false }).reason, "unregulated");
 assert.equal(bench({ source: "mains", portable: true }).state, "damage");
 
-console.log("Power teaching checks passed: peak current, source limits, series packs, and ideal runtime.");
+console.log("Power teaching checks passed: peak current, USB port damage, source limits, series packs, and ideal runtime.");
