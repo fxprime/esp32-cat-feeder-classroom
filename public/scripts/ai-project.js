@@ -93,7 +93,8 @@ const aiResultDialog = document.querySelector('#ap-ai-result');
 const aiResultButton = document.querySelector('#ap-show-ai-result');
 const output = document.querySelector('#ap-output');
 const outputText = document.querySelector('#ap-output-text');
-const typingText = document.querySelector('#ap-typing-text');
+const outputParts = createPromptParts(document.querySelector('#ap-request-mark'));
+const typingParts = createPromptParts(document.querySelector('#ap-typing-mark'));
 const typingOption = document.querySelector('#ap-animate');
 const status = document.querySelector('#ap-status');
 const idea = form.elements.namedItem('idea');
@@ -104,20 +105,39 @@ const playedTopics = new Set();
 const motion = matchMedia('(prefers-reduced-motion: no-preference)');
 const graphemes = typeof Intl.Segmenter === 'function' ? new Intl.Segmenter('th', { granularity: 'grapheme' }) : null;
 const typingPreferenceKey = 'feeder-ai-prompt-typing';
+const promptIntro = 'ฉันเป็นนักเรียน ม.4 เพิ่งเริ่มทำโปรเจกต์ ESP32 ช่วยตอบเป็นภาษาไทยที่อ่านง่าย\n\n';
 const characterMs = 8;
 const linePauseMs = 155;
 let typingFrame = 0;
 let typingEnabled = true;
 let buildPlan;
 
+function createPromptParts(mark) {
+  const intro = new Text();
+  const instructions = new Text();
+  const details = new Text();
+  mark.before(intro);
+  mark.append(instructions);
+  mark.after(details);
+  return [intro, instructions, details];
+}
+
+function revealPromptParts(nodes, parts, remaining = Infinity) {
+  for (const [index, part] of parts.entries()) {
+    const visible = part.slice(0, remaining);
+    if (nodes[index].data !== visible) nodes[index].data = visible;
+    remaining = Math.max(0, remaining - part.length);
+  }
+}
+
 function finishTyping() {
   cancelAnimationFrame(typingFrame);
   typingFrame = 0;
   output.removeAttribute('data-typing');
-  typingText.textContent = '';
+  for (const part of typingParts) part.data = '';
 }
 
-function typePrompt(prompt) {
+function typePrompt(prompt, parts) {
   finishTyping();
   const characters = [...graphemes.segment(prompt)];
   let characterIndex = 0;
@@ -136,7 +156,7 @@ function typePrompt(prompt) {
       finishTyping();
       return;
     }
-    if (endOffset) typingText.textContent = prompt.slice(0, endOffset);
+    if (endOffset) revealPromptParts(typingParts, parts, endOffset);
     typingFrame = requestAnimationFrame(reveal);
   }
 
@@ -181,11 +201,7 @@ function renderPrompt({ topicSelected = false } = {}) {
   document.querySelector('#ap-format-field').hidden = !explaining;
   const request = explaining ? `${requests.explain}\n${explainFormats[read('format')]}` : requests[mode];
   const test = feederBrief ? feederTests[selectedFeederTest] : null;
-  const prompt = [
-    'ฉันเป็นนักเรียน ม.4 เพิ่งเริ่มทำโปรเจกต์ ESP32 ช่วยตอบเป็นภาษาไทยที่อ่านง่าย',
-    '',
-    request,
-    '',
+  const details = [
     `ไอเดีย: ${read('idea') || 'ยังไม่ได้ระบุ'}`,
     `ผลที่อยากให้เห็นตอนสาธิต: ${read('goal') || 'ช่วยเสนอผลที่วัดได้'}`,
     `งบสูงสุด: ${read('budget') ? `${read('budget')} บาท` : 'ยังไม่กำหนด'}`,
@@ -200,11 +216,13 @@ function renderPrompt({ topicSelected = false } = {}) {
       ...(mode === 'poc' ? ['ช่วยวางขั้นตอนทดลองให้ทำซ้ำได้ ระบุว่าจะดูค่าไหนบน Serial หรือหน้าเครื่อง และเสนอกรณีใกล้ขอบเงื่อนไขอีกหนึ่งกรณี'] : []),
     ] : []),
   ].join('\n');
+  const parts = [promptIntro, request, `\n\n${details}`];
+  const prompt = parts.join('');
   const firstSelection = topicSelected && !playedTopics.has(mode);
   const promptChanged = prompt !== outputText.textContent;
   if (firstSelection) playedTopics.add(mode);
-  if (promptChanged) outputText.textContent = prompt;
-  if (firstSelection && typingOption.checked) typePrompt(prompt);
+  if (promptChanged) revealPromptParts(outputParts, parts);
+  if (firstSelection && typingOption.checked) typePrompt(prompt, parts);
   else if (promptChanged) finishTyping();
   const matchesSample = mode === 'poc' && test === feederTests.normal && !buildPlan
     && fields.every(field => read(field) === presets.feeder[field]);
