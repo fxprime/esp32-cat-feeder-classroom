@@ -21,7 +21,7 @@
   border-radius: .65rem;
   background: #fff;
   color: #1e40af;
-  font: 600 .82rem/1.35 Prompt, system-ui, sans-serif;
+  font: 600 .82rem/1.35 var(--lesson-ui-font);
   text-decoration: none;
   cursor: pointer;
 }
@@ -46,7 +46,7 @@
   padding: .55rem .68rem;
   background: #f8fbff;
   color: #1e293b;
-  font: 400 .86rem/1.6 Prompt, system-ui, sans-serif;
+  font: 400 .86rem/1.6 var(--lesson-ui-font);
 }
 .ap-field textarea { resize: vertical; }
 .ap-field :is(input,textarea)::placeholder { color: #526580; }
@@ -82,7 +82,7 @@
   border-radius: .7rem;
   background: #f6faff;
   color: #233b59;
-  font: 400 clamp(.94rem, 1.65vw, 1.05rem)/1.63 Prompt, system-ui, sans-serif;
+  font: 400 clamp(.94rem, 1.65vw, 1.05rem)/1.63 var(--lesson-ui-font);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }

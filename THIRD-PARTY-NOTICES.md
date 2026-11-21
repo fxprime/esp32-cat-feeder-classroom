@@ -30,6 +30,12 @@ Copyright (c) 2009 Chatnarong Jingsuphatada. The original font file is bundled w
 
 [Font release](https://www.f0nt.com/release/supermarket/) · [License terms](https://www.f0nt.com/about/license/)
 
+## Noto Sans Thai Looped and Noto Sans Symbols
+
+The classroom bundles two Google Fonts WOFF2 subsets under the SIL Open Font License 1.1. Noto Sans Thai Looped supplies the Thai glyphs used in the course, and Noto Sans Symbols supplies the direct-current sign (U+2393). Each font's OFL notice is included alongside the font in `public/assets/fonts/`.
+
+[Noto Sans Thai Looped source](https://github.com/notofonts/thai) · [Noto Sans Symbols source](https://github.com/notofonts/symbols)
+
 ## invokers-polyfill 1.0.4
 
 Conditional Invoker Commands fallback, bundled locally for slide 6.

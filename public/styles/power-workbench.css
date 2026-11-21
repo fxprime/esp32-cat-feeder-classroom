@@ -1,7 +1,7 @@
 :root {
   color: #203d53;
   background: radial-gradient(ellipse at top, #dbf3ff, transparent 53rem), #eff5fd;
-  font-family: Prompt, system-ui, sans-serif;
+  font-family: var(--lesson-ui-font);
 }
 * { box-sizing: border-box; }
 body { margin: 0; }
@@ -83,7 +83,7 @@ h1, p { margin: 0; }
   box-shadow: 0 3px 9px #243f5b38;
   font-size: clamp(.62rem, 1.38vw, .92rem);
 }
-.workbench-docks small { font: 600 .83em/1.2 'JetBrains Mono', monospace; white-space: nowrap; }
+.workbench-docks small { font: 600 .83em/1.2 var(--lesson-ui-font); white-space: nowrap; }
 .workbench-docks button[data-supply="mains"] { color: #86351f; background: #fff4e7; border-color: #bd784d; }
 .workbench-docks button[data-supply="mains"][aria-pressed="true"] { background: #ffdfd2; box-shadow: inset 0 -3px #aa452c; }
 .workbench-project {
@@ -147,7 +147,7 @@ h1, p { margin: 0; }
 .workbench-loads button, .workbench-location button { padding: .21rem .15rem; font-size: .9rem; }
 .workbench-pack { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .25rem; }
 .workbench select { inline-size: 100%; min-inline-size: 0; padding: .13rem .2rem; font-size: .79rem; }
-.workbench-pack p { grid-column: 1 / -1; color: #436178; font: 600 .78rem/1.4 Prompt, sans-serif; }
+.workbench-pack p { grid-column: 1 / -1; color: #436178; font: 600 .78rem/1.4 var(--lesson-ui-font); }
 .workbench-status {
   display: grid;
   gap: .12rem;

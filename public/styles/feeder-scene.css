@@ -24,7 +24,7 @@
 .fs-clock-due { fill: #9b430d; font-size: 15px; font-weight: 700; }
 .fs-lab[data-input="clock"] .fs-clock-art rect { fill: #e7f5ff; stroke: #5f9fc7; }
 .fs-lab[data-clock-due="true"] .fs-clock-art rect { fill: #fff5e4; stroke: #df954e; }
-.fs-servo-callout [data-art-command] { fill: #24466e; font: 700 15px ui-monospace, SFMono-Regular, Consolas, monospace; }
+.fs-servo-callout [data-art-command] { fill: #24466e; font: 700 15px var(--lesson-code-font); }
 .fs-lab:is([data-servo="open"], [data-servo="closing"]) .fs-servo-callout rect { fill: #d3f4e3; stroke: #6bbb94; }
 .fs-lab[data-wet="true"] .fs-art-humidity .fs-art-number { fill: #ac2347; }
 .fs-guide { fill: none; stroke: #6a94b8; stroke-width: 2.7; stroke-dasharray: 5 6; }
@@ -187,7 +187,7 @@
   border-radius: .36rem;
   background: #e2edf5;
   color: #194263;
-  font: 700 .93rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
+  font: 700 .93rem/1.45 var(--lesson-code-font);
 }
 .fs-lab[data-servo="open"] .fs-node code,
 .fs-lab[data-servo="closing"] .fs-node code { background: #d3f4e3; color: #12603d; outline: 1px solid #6bbb94; }

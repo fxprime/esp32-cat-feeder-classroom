@@ -15,7 +15,7 @@
   border-radius: .6rem;
   background: #26374e;
   color: #e0f2fe;
-  font: 600 .72rem/1.35 Prompt, system-ui, sans-serif;
+  font: 600 .72rem/1.35 var(--lesson-ui-font);
   cursor: pointer;
 }
 .cl-scope-toggle[aria-pressed="true"] { border-color: #bae6fd; background: #bae6fd; color: #0c4a6e; }
@@ -40,18 +40,18 @@
 .cl-timing-toolbar>.cl-tactile-control{flex-basis:100%;margin:0}
 @media(prefers-reduced-motion:no-preference){.cl-tactile-cap{transition:transform 90ms ease-out}}
 .cl-code-line.cl-code-error{background:#693d37;border-left-color:#fb7185;color:#ffe5d8}
-.cl-map-open{background:#eef2ff;border:1px solid #a5b4fc;border-radius:10px;padding:.75rem 1rem;color:#3730a3;font:600 .78rem Prompt,system-ui;cursor:pointer;min-height:44px}
-.cl-map-dialog{box-sizing:border-box;width:min(1050px,calc(100% - 24px));max-width:none;max-height:90dvh;border:2px solid #c7d2fe;border-radius:22px;padding:0;margin:auto;background:#f8fbff;color:#334155;box-shadow:0 24px 90px #0f172a55;font-family:Prompt,system-ui;overscroll-behavior:contain}
+.cl-map-open{background:#eef2ff;border:1px solid #a5b4fc;border-radius:10px;padding:.75rem 1rem;color:#3730a3;font:600 .78rem var(--lesson-ui-font);cursor:pointer;min-height:44px}
+.cl-map-dialog{box-sizing:border-box;width:min(1050px,calc(100% - 24px));max-width:none;max-height:90dvh;border:2px solid #c7d2fe;border-radius:22px;padding:0;margin:auto;background:#f8fbff;color:#334155;box-shadow:0 24px 90px #0f172a55;font-family:var(--lesson-ui-font);overscroll-behavior:contain}
 .cl-map-dialog::backdrop{background:#0f172a99}
 .cl-map-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid #dbeafe;background:#fff;position:sticky;top:0;z-index:3}
 .cl-map-dialog hgroup{margin:0}.cl-map-dialog h2{font-size:clamp(1rem,2.5vw,1.45rem);margin:0;color:#1e3a8a}
-.cl-map-dialog button{font:600 .75rem Prompt,system-ui;cursor:pointer;border:1px solid #bfdbfe;border-radius:10px;background:#fff;color:#1e40af;padding:10px 14px;min-height:44px}
+.cl-map-dialog button{font:600 .75rem var(--lesson-ui-font);cursor:pointer;border:1px solid #bfdbfe;border-radius:10px;background:#fff;color:#1e40af;padding:10px 14px;min-height:44px}
 .cl-map-dialog button:disabled{opacity:.45;cursor:default}.cl-map-dialog button.cl-primary{background:#2563eb;color:#fff;border-color:#2563eb}
 .cl-map-dialog :is(button,input,[tabindex]):focus-visible{outline:3px solid #0284c7;outline-offset:3px}
 .cl-map-content{padding:16px 20px}.cl-map-content>p{font-size:.76rem;line-height:1.9}.cl-map-intro{margin-top:0}
 .cl-map-call{display:flex;align-items:end;gap:6px;flex-wrap:wrap;background:#282a36;padding:16px;border-radius:14px;color:#f8f8f2;margin:16px 0}
-.cl-map-call>code{font:500 1rem/46px 'JetBrains Mono',monospace}.cl-map-call label{display:flex;flex:1 1 100px;flex-direction:column;min-width:0;max-width:150px;gap:6px}
-.cl-map-call label span{font:500 .65rem Prompt,system-ui;color:#cbd5e1}.cl-map-call input{box-sizing:border-box;width:100%;min-width:0;min-height:46px;font:600 1rem 'JetBrains Mono',monospace;padding:8px 5px 8px 8px;border:1px solid #8290b3;border-radius:8px;background:#44475a;color:#bd93f9;cursor:text}
+.cl-map-call>code{font:500 1rem/46px var(--lesson-code-font)}.cl-map-call label{display:flex;flex:1 1 100px;flex-direction:column;min-width:0;max-width:150px;gap:6px}
+.cl-map-call label span{font:500 .65rem var(--lesson-ui-font);color:#cbd5e1}.cl-map-call input{box-sizing:border-box;width:100%;min-width:0;min-height:46px;font:600 1rem var(--lesson-code-font);padding:8px 5px 8px 8px;border:1px solid #8290b3;border-radius:8px;background:#44475a;color:#bd93f9;cursor:text}
 .cl-map-presets,.cl-map-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.cl-map-presets span{font-size:.7rem}
 .cl-map-flow{position:relative;display:grid;grid-template-columns:1fr 28px 1.35fr 28px 1fr;align-items:center;gap:4px;text-align:center;font-size:.85rem;font-weight:700;color:#1e40af;margin:22px 0 14px;padding-bottom:14px;border-bottom:3px solid #c7d2fe}
 .cl-map-flow b{font-size:1.3rem;color:#818cf8}.cl-map-flow i{position:absolute;left:0;bottom:-8px;width:14px;height:14px;border:2px solid #fff;border-radius:50%;background:#f59e0b;box-shadow:0 0 0 1px #d97706;opacity:0}
@@ -66,7 +66,7 @@
 #map-input-pin::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:var(--slider-thumb-size);height:var(--slider-thumb-size);margin-block-start:calc((var(--slider-track-size) - var(--slider-thumb-size))/2);border:3px solid #fff;border-radius:50%;background:#0284c7;box-shadow:0 0 0 1px #0369a1}
 #map-input-pin::-moz-range-track{height:var(--slider-track-size);border:0;border-radius:999px;background:#0284c7}
 #map-input-pin::-moz-range-thumb{width:var(--slider-thumb-size);height:var(--slider-thumb-size);box-sizing:border-box;border:3px solid #fff;border-radius:50%;background:#0284c7;box-shadow:0 0 0 1px #0369a1}
-.cl-map-symbolic,.cl-map-substitution{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;color:#334155;font:600 .72rem/1.8 'JetBrains Mono',system-ui;text-align:center;overflow-wrap:anywhere}
+.cl-map-symbolic,.cl-map-substitution{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;color:#334155;font:600 .72rem/1.8 var(--lesson-code-font);text-align:center;overflow-wrap:anywhere}
 .cl-map-symbolic{background:#f1f5f9;border-radius:10px;padding:12px 6px;margin-top:18px;font-size:.72rem}.cl-map-substitution{padding:16px 0;color:#6d28d9;font-size:.8rem}
 .cl-map-fraction{display:inline-flex;flex-direction:column;max-width:100%;vertical-align:middle;min-width:0}.cl-map-fraction>span{padding:3px 4px}.cl-map-fraction>span:first-child{border-bottom:1px solid currentColor}
 .cl-map-equation .cl-map-ratio{background:#eff6ff;border-radius:9px;padding:10px;color:#1e40af;margin-top:4px}.cl-map-equation .cl-map-rounding{font-weight:600;color:#6d28d9}
@@ -132,9 +132,9 @@
   color: #312e81;
   box-shadow: 0 2px 3px #1d4ed810;
 }
-.cl-register code { grid-area: name; font: 600 .68rem/1.25 'JetBrains Mono', monospace; }
+.cl-register code { grid-area: name; font: 600 .68rem/1.25 var(--lesson-code-font); }
 .cl-register-ref { color: #0e7490; font-size: .61rem; }
-.cl-register b { grid-area: value; color: #1d4ed8; font: 600 .87rem/1.3 'JetBrains Mono', monospace; white-space: nowrap; }
+.cl-register b { grid-area: value; color: #1d4ed8; font: 600 .87rem/1.3 var(--lesson-code-font); white-space: nowrap; }
 .cl-register-lock { grid-area: lock; color: #5b21b6; display: inline-flex; }
 .cl-register-lock svg { width: .9rem; height: .9rem; overflow: visible; }
 [data-lock-shackle], [data-effect-hand], [data-led-glow] { transform-box: fill-box; transform-origin: center; }
@@ -154,7 +154,7 @@
   gap: .5rem;
   color: #075985;
   background: #e0f2fe;
-  font: 600 .73rem/1.4 Prompt, system-ui, sans-serif;
+  font: 600 .73rem/1.4 var(--lesson-ui-font);
 }
 .cl-effect[hidden] { display: none; }
 .cl-effect [data-effect-label] { overflow-wrap: anywhere; }
@@ -187,7 +187,7 @@
   transform: scaleX(var(--ratio, 1));
   transform-origin: left;
 }
-.cl-effect-map { display: inline-flex; align-items: center; gap: .35rem; font-family: 'JetBrains Mono', monospace; }
+.cl-effect-map { display: inline-flex; align-items: center; gap: .35rem; font-family: var(--lesson-code-font); }
 .cl-effect-map > span:not([aria-hidden]) { display: grid; gap: .16rem; }
 .cl-effect-map i { height: .2rem; border-radius: .25rem; }
 .cl-step-actor {
@@ -202,7 +202,7 @@
   background: #eff6ff;
   box-shadow: 0 3px 8px #17255435;
   color: #1e40af;
-  font: 600 .74rem/1.15 'JetBrains Mono', Prompt, monospace;
+  font: 600 .74rem/1.15 var(--lesson-code-font);
   white-space: nowrap;
   opacity: 0;
 }
@@ -233,7 +233,7 @@
   border-radius: .7rem;
   background: #fff;
   color: #1e3a8a;
-  font: 600 .8rem/1.4 Prompt, system-ui, sans-serif;
+  font: 600 .8rem/1.4 var(--lesson-ui-font);
   cursor: pointer;
 }
 .cl-drive-controls [data-drive-play] { min-inline-size: 7rem; background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
@@ -247,7 +247,7 @@
   white-space: nowrap;
   font-size: .72rem;
 }
-.cl-drive-clock b { margin-inline-start: .22rem; color: #1e40af; font: 600 .88rem 'JetBrains Mono', monospace; }
+.cl-drive-clock b { margin-inline-start: .22rem; color: #1e40af; font: 600 .88rem var(--lesson-code-font); }
 .cl-drive-delay {
   display: grid;
   grid-template-columns: auto auto;
@@ -307,7 +307,7 @@
 }
 .cl-drive-driver[data-drive-kind="delay"] { --cl-car-color: #ca731c; }
 .cl-drive-driver[data-drive-kind="millis"] { --cl-car-color: #087c99; }
-.cl-drive-driver code { color: #1e3a8a; font: 600 .86rem/1.5 'JetBrains Mono', monospace; }
+.cl-drive-driver code { color: #1e3a8a; font: 600 .86rem/1.5 var(--lesson-code-font); }
 .cl-drive-driver span { grid-column: 2 / -1; color: #475569; font-size: .75rem; line-height: 1.52; }
 .cl-drive-driver .cl-drive-lap {
   grid-area: 1 / 3;
@@ -323,7 +323,7 @@
 .cl-drive-pwm { grid-column: 2 / -1; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem; margin-top: .35rem; }
 .cl-drive-pwm strong { grid-column: 1 / -1; margin-bottom: -.35rem; color: #475569; font-size: .61rem; line-height: 1.15; }
 .cl-drive-pwm label { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0 .2rem; color: #475569; font-size: .62rem; }
-.cl-drive-pwm b { color: #1e3a8a; font: 650 .73rem 'JetBrains Mono', monospace; }
+.cl-drive-pwm b { color: #1e3a8a; font: 650 .73rem var(--lesson-code-font); }
 .cl-drive-pwm meter { grid-column: 1 / -1; width: 100%; height: .6rem; }
 .cl-drive-pwm meter::-webkit-meter-bar { background: #dce7f2; border: 0; }
 .cl-drive-pwm meter::-webkit-meter-optimum-value { background: #147c9a; }
@@ -347,7 +347,7 @@
 .cl-drive-traces { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .7rem; }
 .cl-drive-traces[hidden] { display: none; }
 .cl-drive-code-switch { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .55rem; }
-.cl-drive-code-switch button { min-height: 44px; padding: .38rem .65rem; border: 1px solid #c4d8ef; border-radius: .55rem; background: #fff; color: #1e40af; font: 600 .76rem Prompt,system-ui,sans-serif; cursor: pointer; }
+.cl-drive-code-switch button { min-height: 44px; padding: .38rem .65rem; border: 1px solid #c4d8ef; border-radius: .55rem; background: #fff; color: #1e40af; font: 600 .76rem var(--lesson-ui-font); cursor: pointer; }
 .cl-drive-code-switch button[aria-pressed="true"] { background: #dbeafe; border-color: #60a5fa; }
 .cl-drive-trace { min-width: 0; overflow: hidden; border: 1px solid #495b75; border-radius: .85rem; background: #191e2c; }
 .cl-drive-trace header {
@@ -369,7 +369,7 @@
   padding: .25rem 0;
   background: transparent;
   color: #eef4fc;
-  font: 400 .76rem/1.55 'JetBrains Mono', monospace;
+  font: 400 .76rem/1.55 var(--lesson-code-font);
 }
 .cl-drive-code-line {
   display: grid;
@@ -410,7 +410,7 @@
   border-radius: .75rem;
   background: #eff6ff;
   color: #1e40af;
-  font: 600 clamp(.68rem, 3.1vw, .95rem)/1.3 'JetBrains Mono', monospace;
+  font: 600 clamp(.68rem, 3.1vw, .95rem)/1.3 var(--lesson-code-font);
   cursor: pointer;
 }
 .cl-timing-choices button:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
@@ -517,7 +517,7 @@
 }
 .cl-logic-switch button:hover { background: #dbeafe; }
 .cl-logic-switch button[aria-pressed="true"] { border-color: #1d4ed8; background: #1d4ed8; color: #fff; }
-.cl-logic-symbol,.cl-logic-variable { font-family: "JetBrains Mono", monospace; }
+.cl-logic-symbol,.cl-logic-variable { font-family: var(--lesson-code-font); }
 .cl-logic-switch .cl-logic-symbol { margin-right: .2rem; font-size: 1.05rem; }
 .cl-logic-grid { display: grid; grid-template-columns: minmax(145px, 1fr) minmax(0, 2.6fr) minmax(150px, 1fr); gap: .75rem; }
 .cl-logic-inputs,.cl-logic-output {
@@ -547,7 +547,7 @@
 .cl-logic-check { background: #fff; border: 1px solid #ccddee; }
 .cl-logic-check b {
   padding: .07rem .27rem; border-radius: 4px; background: #fbe4e8; color: #9b243d;
-  font-family: "JetBrains Mono", monospace; font-size: .74rem;
+  font-family: var(--lesson-code-font); font-size: .74rem;
 }
 .cl-logic-check b[data-passed="true"] { background: #dff5e7; color: #16613b; }
 .cl-logic-operator { background: #e9e4fa; color: #59359b; font-weight: 750; }

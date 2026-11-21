@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    * { font-family: 'Prompt', sans-serif; }
-    .code-font, .code-font * { font-family: 'JetBrains Mono', monospace; }
+    * { font-family: var(--lesson-ui-font); }
+    .code-font, .code-font * { font-family: var(--lesson-code-font); }
 
     body {
       background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 50%, #fefce8 100%);
@@ -561,7 +561,7 @@
         lab.wiring.forEach((w) => {
           const item = document.createElement('div');
           item.className = 'bg-white rounded-xl px-3 py-2 border border-slate-200 flex items-center justify-between gap-2';
-          item.innerHTML = `<span class="font-bold text-slate-700">${w.from}</span><span class="font-extrabold text-cyan-700 code-font text-xs">➔ ${w.to}</span>`;
+          item.innerHTML = `<span class="min-w-0 break-words font-bold text-slate-700">${w.from}</span><span class="min-w-0 break-words font-extrabold text-cyan-700">→ ${w.to}</span>`;
           wiringList.appendChild(item);
         });
 

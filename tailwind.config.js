@@ -10,7 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Prompt", "sans-serif"],
+        sans: ["var(--lesson-ui-font, Prompt, sans-serif)"],
+        mono: ["var(--lesson-code-font, ui-monospace, monospace)"],
       },
       colors: {
         arduino: {

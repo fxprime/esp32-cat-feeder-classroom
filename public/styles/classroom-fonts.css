@@ -1,0 +1,23 @@
+@font-face {
+  font-family: "Noto Sans Thai Looped";
+  src: url("../assets/fonts/noto-sans-thai-looped-thai.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  unicode-range: U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+
+@font-face {
+  font-family: "Noto Sans Symbols";
+  src: url("../assets/fonts/noto-sans-symbols-dc.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+2393;
+}
+
+:root {
+  --lesson-thai-fallback: "Noto Sans Thai Looped", "Noto Sans Symbols", "Leelawadee UI", Thonburi;
+  --lesson-ui-font: Prompt, var(--lesson-thai-fallback), system-ui, sans-serif;
+  --lesson-code-font: "JetBrains Mono", var(--lesson-thai-fallback), ui-monospace, monospace;
+}

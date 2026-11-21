@@ -4,7 +4,7 @@
 
 @layer base {
   * {
-    font-family: var(--classroom-font, "Prompt", sans-serif);
+    font-family: var(--classroom-font, var(--lesson-ui-font, "Prompt", sans-serif));
   }
 }
 
@@ -17,7 +17,7 @@
 }
 
 .classroom-home {
-  --classroom-font: "Supermarket", "Prompt", sans-serif;
+  --classroom-font: "Supermarket", var(--lesson-ui-font, "Prompt", sans-serif);
   font-size-adjust: from-font;
 }
 

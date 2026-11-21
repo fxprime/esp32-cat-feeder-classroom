@@ -3,7 +3,7 @@
   min-block-size: 100vh;
   background: linear-gradient(135deg, #eef2ff, #e0f2fe 58%, #ecfdf5);
   color: #203955;
-  font-family: Prompt, system-ui, sans-serif;
+  font-family: var(--lesson-ui-font);
 }
 
 .flow-shell { inline-size: min(100%, 72rem); margin-inline: auto; padding: .8rem clamp(.6rem, 2.2vw, 1.4rem) 1.35rem; }
