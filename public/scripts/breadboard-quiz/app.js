@@ -25,24 +25,52 @@ try{
 function persist(){try{localStorage.setItem(storageKey,JSON.stringify({version:3,completed}));}catch{const note=$('#quiz-storage-note');if(note)note.textContent='เบราว์เซอร์นี้เก็บความคืบหน้าไม่ได้ ทำต่อในหน้านี้ได้ตามปกติ';}}
 function say(message){$('#quiz-status').textContent=message;}
 function clearTimer(){clearTimeout(nextTimer);nextTimer=null;}
+function saveDraft(){
+ if(!solved&&svg)drafts.set(current,{...stateCopy(),attempts,history});
+}
+function openCard(index){
+ const offset=index<current?-24:24;
+ current=index;
+ review=Boolean(completed[index]);
+ renderCard(offset);
+}
 function showMode(quiz){
  const wasQuizVisible=quizVisible;
- if(!quiz&&quizVisible&&!solved&&svg)drafts.set(current,{wires:wires.map(w=>({...w})),poses:structuredClone(poses),attempts});
+ if(wasQuizVisible)saveDraft();
  quizVisible=quiz;root.hidden=!quiz;$('#breadboard-learn').classList.toggle('bb-mode-hidden',quiz);$('#breadboardLearnTools').classList.toggle('bb-mode-hidden',quiz);
  $('#breadboard-learn-tab').setAttribute('aria-pressed',String(!quiz));$('#breadboard-quiz-tab').setAttribute('aria-pressed',String(quiz));
- if(quiz){if(completed.length===challenges.length)showSummary();else{current=completed.length;renderCard();}}
+ if(quiz){if(completed.length===challenges.length)showSummary();else openCard(completed.length);}
  else{clearTimer();cancelPointer();updateFlowMotion();if(wasQuizVisible)$('#breadboard-learn-tab').scrollIntoView({block:'start',behavior:'instant'});}
 }
 $('#breadboard-learn-tab').addEventListener('click',()=>showMode(false));
 $('#breadboard-quiz-tab').addEventListener('click',()=>showMode(true));
 $('#begin-breadboard-quiz').addEventListener('click',()=>{showMode(true);root.scrollIntoView({block:'start',behavior:'instant'});});
-root.addEventListener('click',e=>{if(e.target.closest('[data-return-learn]'))showMode(false);});
+root.addEventListener('click',e=>{
+ if(e.target.closest('[data-return-learn]'))showMode(false);
+ const cardLink=e.target.closest('[data-open-quiz-card]');
+ if(cardLink){saveDraft();openCard(Number(cardLink.dataset.openQuizCard));}
+});
 function backToLearn(){return '<button type="button" class="q-return-learn" data-return-learn>← กลับไปสำรวจ Breadboard</button>';}
-function progress(){return `<div class="q-quiz-nav">${backToLearn()}<div class="q-progress" aria-label="ความคืบหน้าแบบฝึกหัด">${challenges.map((c,i)=>`<span class="${completed[i]?'done':i===current?'current':''}" ${i===current?'aria-current="step"':''}>${completed[i]?'✓':i+1} <span>${i===0?'LED 1 ดวง':'LED หลายดวง'}</span></span>`).join('<i aria-hidden="true"></i>')}</div></div>`;}
-function renderCard(){
+function progress(){
+ let quizLink='';
+ if(current>0){
+  quizLink=`<button type="button" class="q-return-learn" data-open-quiz-card="${current-1}">← ย้อนดู Quiz ${current}</button>`;
+ }else if(review&&completed.length<challenges.length){
+  quizLink=`<button type="button" class="q-return-learn" data-open-quiz-card="${completed.length}">กลับไปทำ Quiz ${completed.length+1} →</button>`;
+ }
+ const steps=challenges.map((_,i)=>`<span class="${completed[i]?'done':i===current?'current':''}" ${i===current?'aria-current="step"':''}>${completed[i]?'✓':i+1} <span>${i===0?'LED 1 ดวง':'LED หลายดวง'}</span></span>`).join('<i aria-hidden="true"></i>');
+ return `<div class="q-quiz-nav"><div class="q-quiz-nav-actions">${backToLearn()}${quizLink}</div><div class="q-progress" role="group" aria-label="ความคืบหน้าแบบฝึกหัด">${steps}</div></div>`;
+}
+function renderCard(offset){
  clearTimer();cancelPointer(false);flowObserver?.disconnect();electrical=null;faultSignature='';const challenge=challenges[current];
- splitRails=!review||completed[current].splitRails!==false;
- wires=(review?completed[current].wires:drafts.get(current)?.wires||[]).map(w=>({...w}));poses=structuredClone((review?completed[current]:drafts.get(current))?.poses||{});selectedPart=null;partDrag=null;history=[];serial=1;attempts=review?completed[current].attempts||1:drafts.get(current)?.attempts||0;selected=null;pending=null;solved=review;
+ const saved=review?completed[current]:drafts.get(current);
+ const canReturnToQuiz=completed.length<challenges.length;
+ splitRails=!review||saved.splitRails!==false;
+ wires=(saved?.wires||[]).map(w=>({...w}));
+ poses=structuredClone(saved?.poses||{});
+ history=review?[]:saved?.history||[];
+ attempts=saved?.attempts||(review?1:0);
+ selectedPart=null;partDrag=null;serial=1;selected=null;pending=null;solved=review;
  layout=sceneLayout(challenge.count,poses,null,splitRails);byId=new Map(layout.points.map(p=>[p.id,p]));
  root.innerHTML=`${progress()}<article class="q-card ${review?'q-solved':''}" id="quiz-card" aria-labelledby="quiz-card-title">
  <div class="q-card-head"><div><span class="q-eyebrow">WIRING CHALLENGE / CARD ${String(current+1).padStart(2,'0')}</span><h2 id="quiz-card-title" tabindex="-1">${esc(challenge.title)}</h2><p>${splitRails ? esc(challenge.prompt) : 'คำตอบที่บันทึกบนบอร์ดรุ่นเดิม ใช้รางไฟต่อเนื่องตลอดแถว'}</p></div><span class="q-parts-badge">${esc(challenge.parts)}</span></div>
@@ -52,7 +80,7 @@ function renderCard(){
  <section class="q-electrical" aria-label="ผลคำนวณวงจรที่คุณต่อ"><div class="q-electrical-head"><div><strong>ไฟจำลองเปิด · ดูกระแสจากสายที่คุณต่อ</strong><p>ลูกศรแสดงกระแสตามแบบแผน + → − · ภาพเคลื่อนไหวไม่ใช่ความเร็วอิเล็กตรอนจริง</p></div><button id="quiz-flow-toggle">หยุดภาพการไหล</button></div><div id="quiz-fault" role="alert" hidden></div><div id="quiz-readings"></div><details class="q-model-notes"><summary>ค่าคำนวณนี้มาจากอะไร?</summary><p>คำนวณ DC ด้วยกฎกระแสของ Kirchhoff: แหล่งจ่ายจำลอง 3.3V, R ภายใน 0.5Ω, จำกัดกระแส 100mA; สายแต่ละเส้น 0.1Ω; R 330Ω; LED สีแดงใช้แบบจำลอง Vf 2.0V + ความต้านทานไดนามิก 10Ω; แถบโลหะถือเป็นตัวนำอุดมคติ</p><p>เมื่อวงจรลัด แหล่งจ่ายจำลองจะลดแรงดันเพื่อรักษากระแสไม่เกิน 100mA ค่านี้เป็นสมมติฐานการสอน ไม่ใช่พิกัดป้องกันลัดวงจรของ ESP32 หรือค่าที่วัดจากอุปกรณ์จริง</p><p>LED จริงมี Vf ต่างกันตามรุ่น กระแส และอุณหภูมิ ดู <a href="https://learn.adafruit.com/all-about-leds?view=all" target="_blank" rel="noopener">หลักการคำนวณ LED / Ohm</a> และ <a href="https://www.rohde-schwarz.com/sg/products/test-and-measurement/essentials-test-equipment/dc-power-supplies/understanding-benchtop-power-supplies_256011.html" target="_blank" rel="noopener">แหล่งจ่าย CV / CC</a></p></details></section>
  <div id="quiz-scroll" class="q-stage-scroll">${drawBench(challenge.count,poses,splitRails)}</div>
  <details class="q-placement-menu"><summary>ปัก / หมุนอุปกรณ์โดยไม่ต้องลาก</summary><div class="q-select-connect"><label>อุปกรณ์<select id="quiz-part-pick"></select></label><label>รูสำหรับขาแรก<select id="quiz-part-anchor"></select></label><label>ทิศขาทั้งสอง<select id="quiz-part-angle"><option value="0">0° → ขวา</option><option value="90">90° ↓ ลง</option><option value="180">180° ← ซ้าย</option><option value="270">270° ↑ ขึ้น</option></select></label><button id="quiz-part-insert">ปักอุปกรณ์</button></div><p class="q-small">LED: ขาแรกคือ A+ · ตัวต้านทาน: ขาแรกคือขา 1 · ภาพเป็นแผนผังย่อ ไม่ใช่สเกลระยะจริง</p></details><details class="q-keyboard"><summary>ต่อสายจัมเปอร์ด้วยชื่อรู</summary><div class="q-select-connect"><label for="quiz-from">ต้นทาง<select id="quiz-from"></select></label><label for="quiz-to">ปลายทาง<select id="quiz-to"></select></label><button id="quiz-connect">ต่อสาย</button></div></details>
- <div class="q-card-bottom"><div><p id="quiz-status" role="status" aria-live="polite" aria-atomic="true">${review?'นี่คือวงจรที่คุณต่อผ่านแล้ว':'มีไฟที่รางบน + / − แล้ว เริ่มลาก LED / ตัวต้านทานมาปัก แล้วต่อสายจัมเปอร์ได้เลย'}</p><span id="quiz-wire-count" class="q-small"></span><span id="quiz-attempts" class="q-small"></span></div><button id="quiz-check" class="q-primary">${review?'กลับผล Quiz':'ตรวจวงจรที่ต่อ'}</button></div>
+ <div class="q-card-bottom"><div><p id="quiz-status" role="status" aria-live="polite" aria-atomic="true">${review?'นี่คือวงจรที่คุณต่อผ่านแล้ว':'มีไฟที่รางบน + / − แล้ว เริ่มลาก LED / ตัวต้านทานมาปัก แล้วต่อสายจัมเปอร์ได้เลย'}</p><span id="quiz-wire-count" class="q-small"></span><span id="quiz-attempts" class="q-small"></span></div><button id="quiz-check" class="q-primary">${review?(canReturnToQuiz?`กลับไปทำ Quiz ${completed.length+1}`:'กลับผล Quiz'):'ตรวจวงจรที่ต่อ'}</button></div>
  <p class="q-small q-disclaimer">ค่ากระแสคำนวณจากแบบจำลอง · ${splitRails ? 'รางไฟแต่ละเส้นแยกซ้าย–ขวาที่รอยตัดกลาง' : 'รางไฟแต่ละเส้นต่อเนื่องตลอดแถว'} · รางบนกับรางล่างแยกกัน</p>
  </article><p id="quiz-storage-note" class="q-small">บันทึกเฉพาะข้อที่ผ่านบนอุปกรณ์นี้ · ไม่มีปุ่มเฉลยระหว่างทำ</p>`;
  svg=$('#quiz-bench-svg');surface=$('.q-bench-surface');
@@ -67,14 +95,18 @@ function renderCard(){
  $('#quiz-fit').addEventListener('click',()=>{const fit=$('#quiz-scroll').classList.toggle('q-fit');$('#quiz-fit').setAttribute('aria-pressed',String(fit));$('#quiz-fit').textContent=fit?'ขยายเพื่อต่อสาย':'พอดีจอ';});
  $('#quiz-help').addEventListener('click',()=>{const shown=$('#quiz-help-text').hidden;$('#quiz-help-text').hidden=!shown;$('#quiz-help').setAttribute('aria-expanded',String(shown));});
  $('#quiz-connect').addEventListener('click',()=>connect($('#quiz-from').value,$('#quiz-to').value));
- $('#quiz-check').addEventListener('click',()=>review?showSummary():check());
+ $('#quiz-check').addEventListener('click',()=>{
+  if(!review)check();
+  else if(canReturnToQuiz)openCard(completed.length);
+  else showSummary();
+ });
  $('#quiz-flow-toggle').addEventListener('click',()=>{flowPaused=!flowPaused;updateFlowMotion();});
  surface.addEventListener('pointerdown',pointerDown);surface.addEventListener('pointermove',pointerMove);surface.addEventListener('pointerup',pointerUp);surface.addEventListener('pointercancel',cancelPointer);surface.addEventListener('lostpointercapture',()=>{if(drag||partDrag)cancelPointer();});
  surface.addEventListener('keydown',keyboard);
  surface.addEventListener('click',e=>{const part=e.target.closest('[data-part]');if(part&&e.detail===0)selectPart(part.dataset.part);const node=e.target.closest('[data-node]');if(node&&e.detail===0)activate(node.dataset.node);});
  $('#quiz-wires').addEventListener('click',e=>{const el=e.target.closest('[data-wire]');if(el&&!solved){pending=null;selected=el.dataset.wire;paint();say('เลือกสายแล้ว กดลบสายที่เลือกหรือ Delete เพื่อลบ');}});
  paint();flowObserver=new IntersectionObserver(entries=>{flowOnScreen=entries[0]?.isIntersecting??true;updateFlowMotion();});flowObserver.observe($('#quiz-scroll'));root.scrollIntoView({block:'start',behavior:'instant'});$('#quiz-card-title').focus({preventScroll:true});
- if(!reduced.matches)$('#quiz-card').animate([{opacity:0,transform:'translateX(24px)'},{opacity:1,transform:'translateX(0)'}],{duration:300,easing:'ease-out'});
+ if(!reduced.matches)$('#quiz-card').animate([{opacity:0,transform:`translateX(${offset}px)`},{opacity:1,transform:'translateX(0)'}],{duration:300,easing:'ease-out'});
 }
 function stateCopy(){return {wires:wires.map(w=>({...w})),poses:structuredClone(poses)};}
 function remember(previous=stateCopy()){history.push(previous);if(history.length>100)history.shift();}
@@ -254,14 +286,14 @@ function check(){
  drafts.delete(current);completed[current]={id:challenges[current].id,wires:wires.map(w=>({...w})),poses:structuredClone(poses),attempts};persist();
  say(`ถูกต้อง! ${challenges[current].success} ${current+1<challenges.length?'กำลังเลื่อนไปการ์ดถัดไป…':'ทำครบแล้ว กำลังสรุปผล…'}`);
  $('#quiz-check').textContent='ผ่านแล้ว ✓';
- const advance=()=>{if(!quizVisible)return;if(current+1<challenges.length){current++;review=false;renderCard();}else showSummary();};
+ const advance=()=>{if(!quizVisible)return;if(current+1<challenges.length)openCard(current+1);else showSummary();};
  nextTimer=setTimeout(advance,2000);
 }
 function showSummary(){
  clearTimer();cancelPointer(false);flowObserver?.disconnect();review=false;solved=true;
  root.innerHTML=`${backToLearn()}<section class="q-summary"><span class="q-eyebrow">BREADBOARD QUIZ / COMPLETED</span><div class="q-complete-icon" aria-hidden="true">✓</div><h2 id="quiz-summary-title" tabindex="-1">ต่อวงจรผ่านครบ 2 การ์ดแล้ว</h2><p>คุณต่อ LED ดวงเดียวและ LED หลายดวงจากไฟ 3.3V ได้แล้ว</p><div class="q-summary-cards">${challenges.map((c,i)=>`<button data-review="${i}"><span>✓ การ์ด ${i+1}</span><strong>${esc(c.title)}</strong><small>ดูวงจรที่ฉันต่อผ่านแล้ว ↗</small></button>`).join('')}</div><button id="quiz-restart" class="q-primary">เริ่มทำ Quiz ใหม่</button><p class="q-small">ดูเส้นทางและค่ากระแสที่คำนวณของวงจรที่คุณต่อได้ในแต่ละการ์ด ค่านี้ขึ้นกับสมมติฐานของแบบจำลอง</p></section>`;
- root.querySelectorAll('[data-review]').forEach(b=>b.addEventListener('click',()=>{current=Number(b.dataset.review);review=true;renderCard();}));
- $('#quiz-restart').addEventListener('click',()=>{completed=[];drafts.clear();persist();current=0;review=false;renderCard();});
+ root.querySelectorAll('[data-review]').forEach(b=>b.addEventListener('click',()=>openCard(Number(b.dataset.review))));
+ $('#quiz-restart').addEventListener('click',()=>{completed=[];drafts.clear();persist();openCard(0);});
  root.scrollIntoView({block:'start',behavior:'instant'});$('#quiz-summary-title').focus({preventScroll:true});
 }
 window.addEventListener('pagehide',()=>{clearTimer();cancelPointer();});

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>โต๊ะทดลองแหล่งจ่ายไฟ · ESP32 Classroom</title>
+  <title>โปรเจคนี้ ใช้แหล่งจ่ายไฟอะไรดี? · ESP32 Classroom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 <body>
 <main class="workbench" data-workbench>
   <header class="workbench-header">
-    <h1>จ่ายไฟให้โปรเจกต์ไหนดี?</h1>
+    <h1>โปรเจคนี้ ใช้แหล่งจ่ายไฟอะไรดี?</h1>
     <p>เลือกอุปกรณ์กับที่ใช้งาน แล้วกดแหล่งจ่ายริมโต๊ะเพื่อดูผล</p>
   </header>
   <div class="workbench-layout">
@@ -81,7 +81,16 @@
       <button type="button" class="workbench-reset" data-workbench-reset disabled>ถอดแหล่งจ่าย</button>
     </aside>
   </div>
-  <footer class="workbench-footer"><span>ตัวเลขเป็นพิกัดของชุดจำลอง</span><a href="lesson-power-source-reference.html" target="_blank" rel="noopener">เปิดแล็บแบตและวงจรแบบละเอียด ↗</a></footer>
+  <footer class="workbench-footer">
+    <span>ตัวเลขเป็นพิกัดของชุดจำลอง</span>
+    <a class="workbench-reference" href="lesson-power-source-reference.html" target="_blank" rel="noopener">
+      <span class="workbench-reference-badge">แล็บเสริม</span>
+      <span>เปิดแล็บแบตและวงจรแบบละเอียด</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M13 5h6v6m0-6-8 8m6 0v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h5"/>
+      </svg>
+    </a>
+  </footer>
 </main>
 <script defer src="../scripts/slide-support.js"></script>
 <script type="module" src="../scripts/power-source/workbench.js"></script>

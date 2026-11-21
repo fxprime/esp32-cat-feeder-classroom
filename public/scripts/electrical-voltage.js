@@ -22,7 +22,7 @@ function render() {
   lowButton.setAttribute('aria-pressed', String(voltage === '3.3'));
   highButton.setAttribute('aria-pressed', String(voltage === '5'));
   number.textContent = `${voltage} V`;
-  reading.textContent = damaged ? 'GPIO33 เสียในแบบจำลอง' : awaitingDamage ? 'แรงดันเกินสเปก' : 'GPIO33 อ่าน HIGH';
+  reading.textContent = damaged ? 'GPIO 33 เสีย' : awaitingDamage ? 'แรงดันเกินสเปก' : 'GPIO 33 HIGH';
   status.textContent = damaged
     ? voltage === '5'
       ? 'กรณีจำลอง ขา GPIO33 เสียและไฟแสดงผลดับ ลองลดสัญญาณกลับไปที่ 3.3 V'

@@ -46,7 +46,9 @@
 .voltage-board { fill: #17685f; stroke: #12463e; stroke-width: 3; }
 .voltage-chip { fill: #cce0e0; stroke: #e7f3f4; stroke-width: 2; }
 .voltage-chip-label { fill: #204264; font-size: 21px; font-weight: 800; }
-.voltage-pin-label { font-size: 16px; font-weight: 700; fill: #fff; }
+.voltage-pin-label { font-size: 16px; font-weight: 700; fill: #28536e; }
+.voltage-reading-callout rect { fill: #e0f3f6; stroke: #89bac5; stroke-width: 1.5; }
+.voltage-reading-callout text { font-size: 26px; font-weight: 800; fill: #175365; }
 .voltage-wire { stroke: #2682af; stroke-width: 5; fill: none; }
 .voltage-pin { fill: #82e6bf; stroke: #e2fff4; stroke-width: 2; }
 .voltage-led { fill: #88efac; stroke: #dfffe9; stroke-width: 2; }
@@ -56,6 +58,9 @@
 [data-voltage="5"] .voltage-wire { stroke: #c7425b; }
 [data-voltage="5"] .voltage-number,
 [data-state="damaged"] [data-voltage-reading] { fill: #a5213a; }
+[data-state="surge"] .voltage-reading-callout rect { fill: #fff0dc; stroke: #d0a06b; }
+[data-state="surge"] .voltage-reading-callout text { fill: #874316; }
+[data-state="damaged"] .voltage-reading-callout rect { fill: #ffeaed; stroke: #ca7181; }
 [data-state="surge"] .voltage-pin { fill: #ff936a; stroke: #fed296; filter: drop-shadow(0 0 6px #e94a46); }
 [data-state="damaged"] .voltage-pin { fill: #55232b; stroke: #cc6d64; }
 [data-state="damaged"] .voltage-chip { fill: #acaaa9; stroke: #c1c0c1; }
