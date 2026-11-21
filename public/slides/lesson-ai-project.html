@@ -22,8 +22,9 @@
 
     <form class="ap-workspace" id="project-form" aria-labelledby="ap-prompt-heading">
       <section class="cl-panel-inner ap-prompt" aria-labelledby="ap-prompt-heading">
-        <header class="cl-example-heading">
+        <header class="cl-example-heading ap-prompt-header">
           <h2 id="ap-prompt-heading">คำถามที่จะส่ง AI</h2>
+          <label class="ap-typing-option"><input type="checkbox" id="ap-animate" checked> แอนิเมชันการพิมพ์</label>
         </header>
         <fieldset class="ap-modes">
           <legend class="ap-sr-only">เลือกหัวข้อที่จะถาม</legend>
@@ -44,7 +45,7 @@
           <span id="pt-target-text"></span>
           <button type="button" id="pt-clear">เอาออก</button>
         </div>
-        <pre id="ap-output" tabindex="-1"></pre>
+        <pre id="ap-output" tabindex="-1"><span id="ap-output-text"></span><span id="ap-typing-text" aria-hidden="true"></span></pre>
         <div class="ap-actions">
           <button type="button" class="ap-primary" id="ap-copy">คัดลอกคำถาม</button>
           <button type="button" id="ap-show-ai-result" aria-haspopup="dialog" hidden>ผลลัพธ์จาก AI</button>

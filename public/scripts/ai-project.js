@@ -92,20 +92,88 @@ const form = document.querySelector('#project-form');
 const aiResultDialog = document.querySelector('#ap-ai-result');
 const aiResultButton = document.querySelector('#ap-show-ai-result');
 const output = document.querySelector('#ap-output');
+const outputText = document.querySelector('#ap-output-text');
+const typingText = document.querySelector('#ap-typing-text');
+const typingOption = document.querySelector('#ap-animate');
 const status = document.querySelector('#ap-status');
 const idea = form.elements.namedItem('idea');
 const presetButtons = [...form.querySelectorAll('[data-preset]')];
 const fields = ['idea', 'goal', 'budget', 'time', 'tools', 'limits'];
 const target = document.querySelector('#pt-prompt-target');
+const playedTopics = new Set();
+const motion = matchMedia('(prefers-reduced-motion: no-preference)');
+const graphemes = typeof Intl.Segmenter === 'function' ? new Intl.Segmenter('th', { granularity: 'grapheme' }) : null;
+const typingPreferenceKey = 'feeder-ai-prompt-typing';
+const characterMs = 8;
+const linePauseMs = 155;
+let typingFrame = 0;
+let typingEnabled = true;
 let buildPlan;
 
+function finishTyping() {
+  cancelAnimationFrame(typingFrame);
+  typingFrame = 0;
+  output.removeAttribute('data-typing');
+  typingText.textContent = '';
+}
+
+function typePrompt(prompt) {
+  finishTyping();
+  const characters = [...graphemes.segment(prompt)];
+  let characterIndex = 0;
+  let nextAt;
+  output.setAttribute('data-typing', '');
+
+  function reveal(now) {
+    nextAt ??= now;
+    let endOffset = 0;
+    while (characterIndex < characters.length && now >= nextAt) {
+      const { segment, index } = characters[characterIndex++];
+      endOffset = index + segment.length;
+      nextAt += segment === '\n' ? linePauseMs : characterMs;
+    }
+    if (characterIndex === characters.length) {
+      finishTyping();
+      return;
+    }
+    if (endOffset) typingText.textContent = prompt.slice(0, endOffset);
+    typingFrame = requestAnimationFrame(reveal);
+  }
+
+  typingFrame = requestAnimationFrame(reveal);
+}
+
+function syncTypingPreference() {
+  typingOption.disabled = !motion.matches || !graphemes;
+  typingOption.checked = !typingOption.disabled && typingEnabled;
+  if (!typingOption.checked) finishTyping();
+}
+
+try {
+  typingEnabled = sessionStorage.getItem(typingPreferenceKey) !== 'off';
+} catch {
+  // The control still works in this slide when browser storage is unavailable.
+}
+syncTypingPreference();
+motion.addEventListener('change', syncTypingPreference);
+typingOption.addEventListener('change', () => {
+  typingEnabled = typingOption.checked;
+  syncTypingPreference();
+  try {
+    sessionStorage.setItem(typingPreferenceKey, typingEnabled ? 'on' : 'off');
+  } catch {
+    // Keep the current setting in memory.
+  }
+});
+
 aiResultButton.addEventListener('click', () => {
+  finishTyping();
   aiResultDialog.showModal();
   aiResultDialog.querySelector('.ap-ai-result-body').scrollTop = 0;
 });
 aiResultDialog.addEventListener('keydown', event => event.stopPropagation());
 
-function renderPrompt() {
+function renderPrompt({ topicSelected = false } = {}) {
   const values = new FormData(form);
   const read = name => String(values.get(name) ?? '').trim();
   const mode = read('mode');
@@ -113,7 +181,7 @@ function renderPrompt() {
   document.querySelector('#ap-format-field').hidden = !explaining;
   const request = explaining ? `${requests.explain}\n${explainFormats[read('format')]}` : requests[mode];
   const test = feederBrief ? feederTests[selectedFeederTest] : null;
-  output.textContent = [
+  const prompt = [
     'ฉันเป็นนักเรียน ม.4 เพิ่งเริ่มทำโปรเจกต์ ESP32 ช่วยตอบเป็นภาษาไทยที่อ่านง่าย',
     '',
     request,
@@ -132,6 +200,12 @@ function renderPrompt() {
       ...(mode === 'poc' ? ['ช่วยวางขั้นตอนทดลองให้ทำซ้ำได้ ระบุว่าจะดูค่าไหนบน Serial หรือหน้าเครื่อง และเสนอกรณีใกล้ขอบเงื่อนไขอีกหนึ่งกรณี'] : []),
     ] : []),
   ].join('\n');
+  const firstSelection = topicSelected && !playedTopics.has(mode);
+  const promptChanged = prompt !== outputText.textContent;
+  if (firstSelection) playedTopics.add(mode);
+  if (promptChanged) outputText.textContent = prompt;
+  if (firstSelection && typingOption.checked) typePrompt(prompt);
+  else if (promptChanged) finishTyping();
   const matchesSample = mode === 'poc' && test === feederTests.normal && !buildPlan
     && fields.every(field => read(field) === presets.feeder[field]);
   aiResultButton.hidden = !matchesSample;
@@ -157,7 +231,15 @@ for (const button of presetButtons) {
   button.addEventListener('click',()=>loadPreset(button.dataset.preset));
 }
 form.addEventListener('submit', event => event.preventDefault());
+for (const topic of form.querySelectorAll('input[name="mode"]')) {
+  topic.addEventListener('click', () => renderPrompt({ topicSelected: true }));
+}
 form.addEventListener('input', event => {
+  if (event.target === typingOption) return;
+  if (event.target.name === 'mode') {
+    renderPrompt({ topicSelected: true });
+    return;
+  }
   idea.setCustomValidity('');
   if (fields.includes(event.target.name)) markPreset('custom');
   renderPrompt();
@@ -166,14 +248,16 @@ form.addEventListener('input', event => {
 document.querySelector('#ap-copy').addEventListener('click',async () => {
   idea.setCustomValidity(idea.value.trim() ? '' : 'ใส่ไอเดียที่อยากให้ AI ช่วยดู');
   if (!form.reportValidity()) return;
-  const text = output.textContent;
+  finishTyping();
+  const text = outputText.textContent;
   try {
     await navigator.clipboard.writeText(text);
-    if (text === output.textContent) status.textContent = 'คัดลอกแล้ว วางคำถามในแชต AI ที่ใช้ได้เลย';
+    if (text === outputText.textContent) status.textContent = 'คัดลอกแล้ว วางคำถามในแชต AI ที่ใช้ได้เลย';
   } catch {
-    if (text !== output.textContent) return;
+    if (text !== outputText.textContent) return;
+    finishTyping();
     output.focus({ preventScroll: true });
-    window.getSelection()?.selectAllChildren(output);
+    window.getSelection()?.selectAllChildren(outputText);
     status.textContent = 'เลือกข้อความให้แล้ว กด Ctrl+C หรือ ⌘C เพื่อคัดลอก';
   }
 });
