@@ -1,41 +1,40 @@
-import { highlightLines } from '../vendor/code-highlight.js';
-
 export const logicLesson = { id: 'logic', label: 'ตัวเปรียบเทียบ / Logic' };
 
 const pubAge = 20;
+const isOfAge = age => age >= pubAge;
 
 export const logicRules = {
   equal: {
     symbol: '==', label: 'เท่ากันไหม',
-    condition: 'roomCode == 7', group: 'code',
-    variables: [['int', 'roomCode', 'รหัสที่ใส่']],
-    rule: 'เข้าได้เมื่อรหัสเป็นเลข 7 พอดี',
+    group: 'code',
+    variables: ['roomCode'],
+    checks: [['รหัสเท่ากับ 7', ({roomCode}) => roomCode === 7]],
     tip: 'roomCode = 7 คือเก็บค่า 7 ส่วน roomCode == 7 คือถามว่าค่าที่เก็บไว้เท่ากับ 7 ไหม',
     test: ({roomCode}) => roomCode === 7,
   },
   and: {
     symbol: '&&', label: 'และ',
     title: 'เช็กบัตรและอายุหน้าผับ',
-    condition: `hasTicket && age >= ${pubAge}`, group: 'pub',
-    variables: [['bool', 'hasTicket', 'บัตรเข้า'], ['int', 'age', 'อายุ (ปี)']],
-    rule: `ผับในตัวอย่างให้เข้าเมื่อมีบัตรและอายุอย่างน้อย ${pubAge} ปี`,
+    group: 'pub',
+    variables: ['hasTicket', 'age'],
+    checks: [['มีบัตรเข้า', ({hasTicket}) => hasTicket], [`อายุอย่างน้อย ${pubAge} ปี`, ({age}) => isOfAge(age)]],
     tip: `ลองเปลี่ยนอายุจาก ${pubAge-1} เป็น ${pubAge} ปี แล้วเอาบัตรออก ดูว่าประตูปิดอีกครั้งเมื่อเงื่อนไขข้อใดข้อหนึ่งเป็น false`,
-    test: ({hasTicket, age}) => hasTicket && age >= pubAge,
+    test: ({hasTicket, age}) => hasTicket && isOfAge(age),
   },
   or: {
     symbol: '||', label: 'หรือ',
-    condition: 'hasCard || hasPass', group: 'tickets',
-    variables: [['bool', 'hasCard', 'บัตรสมาชิก'], ['bool', 'hasPass', 'คูปอง']],
-    rule: 'กติกานี้ใช้บัตรสมาชิกหรือคูปองอย่างใดอย่างหนึ่งก็เข้าได้',
+    group: 'tickets',
+    variables: ['hasCard', 'hasPass'],
+    checks: [['มีบัตรสมาชิก', ({hasCard}) => hasCard], ['มีคูปอง', ({hasPass}) => hasPass]],
     tip: 'ลองติ๊กทั้งสองช่อง ผลยังเป็น true เพราะมีอย่างน้อยหนึ่งอย่าง',
     test: ({hasCard, hasPass}) => hasCard || hasPass,
   },
   not: {
     symbol: '!', label: 'กลับค่า',
-    condition: '!isClosed', group: 'closed',
-    variables: [['bool', 'isClosed', 'ปิดปรับปรุง']],
-    rule: 'เข้าได้เมื่อห้องเปิดตามปกติ',
-    tip: '! กลับค่าที่อยู่ด้านหลัง เมื่อ isClosed เป็น false นิพจน์ !isClosed จึงเป็น true',
+    group: 'closed',
+    variables: ['isClosed'],
+    checks: [['ห้องปิดปรับปรุง', ({isClosed}) => isClosed]],
+    tip: '! สลับจริงกับเท็จ เมื่อ “ห้องปิดปรับปรุง” เป็นเท็จ เงื่อนไข “ห้องไม่ได้ปิดปรับปรุง” จึงเป็นจริง',
     test: ({isClosed}) => !isClosed,
   },
 };
@@ -44,10 +43,10 @@ export function logicHTML() {
   return `<div class="cl-panel-inner cl-logic" data-logic>
     <div class="cl-example-heading">
       <h2 data-logic-heading>เช็กเงื่อนไขที่ประตูห้องเกม</h2>
-      <p>เลือกกติกา แล้วเปลี่ยนค่าด้านล่าง ดูว่าเงื่อนไขใน <code>if</code> ได้ <code>true</code> หรือ <code>false</code> และโปรแกรมทำบรรทัดไหนต่อ</p>
+      <p>เปลี่ยนค่าตัวแปร แล้วดูทีละข้อว่าเงื่อนไขไหนจริง (true) หรือเท็จ (false) และสุดท้ายประตูจะเปิดไหม</p>
     </div>
     <div class="cl-logic-switch" role="group" aria-label="เลือกตัวดำเนินการ">${Object.entries(logicRules).map(([id, rule]) =>
-      `<button type="button" data-logic-rule="${id}" aria-pressed="${id==='equal'}"><code>${rule.symbol.replaceAll('&','&amp;')}</code> ${rule.label}</button>`).join('')}</div>
+      `<button type="button" data-logic-rule="${id}" aria-pressed="${id==='equal'}"><span class="cl-logic-symbol">${rule.symbol.replaceAll('&','&amp;')}</span> ${rule.label}</button>`).join('')}</div>
     <div class="cl-logic-grid">
       <div class="cl-logic-inputs">
         <fieldset>
@@ -67,12 +66,24 @@ export function logicHTML() {
           </div>
           <label data-logic-group="closed" hidden><input type="checkbox" data-logic-input="isClosed"> ห้องกำลังปิดปรับปรุง</label>
         </fieldset>
-        <p data-logic-rule-text></p>
-        <div class="cl-logic-values" data-logic-values></div>
       </div>
-      <div class="cl-logic-code">
-        <div class="cl-logic-code-head"><span>เงื่อนไขใน C++ / Arduino</span><samp data-logic-bool>false</samp></div>
-        <pre aria-label="ตัวอย่าง if และ else"><code class="hljs language-arduino" data-logic-code></code></pre>
+      <div class="cl-logic-flow">
+        <div class="cl-logic-row">
+          <span class="cl-logic-step">ตัวแปร</span>
+          <div class="cl-logic-chips" data-logic-values></div>
+        </div>
+        <div class="cl-logic-row">
+          <span class="cl-logic-step">ถ้า</span>
+          <div class="cl-logic-chips" data-logic-conditions></div>
+        </div>
+        <div class="cl-logic-row">
+          <span class="cl-logic-step">แล้ว</span>
+          <div class="cl-logic-chips">
+            <span data-logic-bool class="cl-logic-verdict"></span>
+            <span aria-hidden="true" class="cl-logic-arrow">→</span>
+            <span class="cl-logic-result" role="status" data-logic-result></span>
+          </div>
+        </div>
       </div>
       <div class="cl-logic-output">
         <svg viewBox="0 0 240 136" aria-hidden="true">
@@ -92,7 +103,6 @@ export function logicHTML() {
           <path d="M184 83h17v25h-17Z" fill="#4a6684"/>
           <path d="M189 89h7m-7 5h7m-7 5h7" stroke="#d7e9fc" stroke-width="1.5"/>
         </svg>
-        <div class="cl-logic-result" role="status" data-logic-result></div>
       </div>
     </div>
     <p class="cl-setting-note" data-logic-tip></p>
@@ -108,6 +118,7 @@ export function initLogicLesson(root) {
   const heading = root.querySelector('[data-logic-heading]');
   const gameTitle = heading.textContent;
   const venue = root.querySelector('[data-logic-venue]');
+  const result = root.querySelector('[data-logic-result]');
   let active = 'equal';
 
   function paint() {
@@ -118,21 +129,19 @@ export function initLogicLesson(root) {
     root.dataset.logicOpen = String(accepted);
     heading.textContent = rule.title ?? gameTitle;
     venue.textContent = active === 'and' ? 'PUB' : 'GAME ROOM';
-    root.querySelector('[data-logic-rule-text]').textContent = rule.rule;
     root.querySelector('[data-logic-tip]').textContent = rule.tip;
-    root.querySelector('[data-logic-bool]').textContent = String(accepted);
-    root.querySelector('[data-logic-result]').textContent = accepted
-      ? 'true → เข้า if · ประตูเปิด'
-      : 'false → เข้า else · ประตูปิด';
-    root.querySelector('[data-logic-values]').innerHTML = rule.variables.map(([,name,label]) =>
-      `<span>${label} <code>${name} = ${values[name]}</code></span>`).join('');
+    root.querySelector('[data-logic-bool]').textContent = accepted ? 'จริง · true' : 'เท็จ · false';
+    const verdict = accepted ? 'เข้าได้' : 'เข้าไม่ได้';
+    if (result.textContent !== verdict) result.textContent = verdict;
+    root.querySelector('[data-logic-values]').innerHTML = rule.variables.map(name =>
+      `<span class="cl-logic-variable">${name} = <b>${values[name]}</b></span>`).join('');
 
-    const declarations = rule.variables.map(([type, name]) => `${type} ${name} = ${values[name]};`);
-    const code = [...declarations, '', `if (${rule.condition}) {`,
-      '  Serial.println("Access granted");', '} else {', '  Serial.println("Access denied");', '}'];
-    const executing = declarations.length + (accepted ? 2 : 4);
-    root.querySelector('[data-logic-code]').innerHTML = highlightLines(code.join('\n')).map((line,index) =>
-      `<span${index===executing ? ' class="cl-logic-executed"' : ''}>${line || ' '}</span>`).join('');
+    const operator = `<span class="cl-logic-operator"><span class="cl-logic-symbol">${rule.symbol.replaceAll('&','&amp;')}</span> ${rule.label}</span>`;
+    const checks = rule.checks.map(([label, check]) => {
+      const passed = check(values);
+      return `<span class="cl-logic-check"><span>${label}</span> <b data-passed="${passed}">${passed ? 'true' : 'false'}</b></span>`;
+    });
+    root.querySelector('[data-logic-conditions]').innerHTML = active === 'not' ? operator + checks[0] : checks.join(operator);
   }
 
   for (const button of buttons) button.addEventListener('click', () => {

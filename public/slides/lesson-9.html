@@ -10,9 +10,9 @@
  </g><text x="176" y="217" text-anchor="middle" class="cl-svg-small">DevKitC V4</text><g><path d="M229 41.2H246V150H293m45 0h62M432 166v27H255V32.958333333333336H229" fill="none" stroke="#a6b8b6" stroke-width="3"/><rect x="293" y="141" width="45" height="18" rx="5" fill="#ddc399" stroke="#ad8c57"/><path d="M305 142v16m10-16v16" stroke="#be6e34" stroke-width="4"/><text x="315" y="132" text-anchor="middle" class="cl-svg-small">330Ω</text><circle data-led-glow="23" cx="417" cy="146" r="28" fill="#dc2626" opacity="0"/><path data-output-target="led-23" data-led-pin="23" d="M402 165v-21a15 15 0 0 1 30 0v21Z" fill="#d8dfdf" stroke="#95a8aa" stroke-width="2"/><text x="467" y="149" class="cl-svg-value">OFF</text><g data-output-target="gpio-23"><text data-gpio-pin="23" x="255" y="170" class="cl-svg-small">GPIO23</text><text x="255" y="188" class="cl-svg-small">ยังไม่ตั้งขา</text></g></g></svg></div></div><p class="cl-live" role="status" data-live>กดเดินทีละคำสั่งเพื่อเริ่ม</p><div class="cl-stack"><span>ตอนนี้อยู่ที่</span><strong data-stack>ยังไม่เริ่ม</strong></div></div><div class="cl-serial cl-output-receiver"><span data-output-target="serial-header">Serial Monitor · 115200</span><pre data-log><span data-log-history>ยังไม่มีข้อความ</span><span data-output-target="serial-line"></span></pre></div></div></div><p class="cl-wiring"><b>ต่ออุปกรณ์:</b> GPIO23 → R 330Ω → LED (+), LED (−) → GND</p><div class="cl-predict"><span>ลองสังเกต</span><p>เปลี่ยนเวลารอเป็น 1000 ms ไฟจะเปลี่ยนช้าหรือเร็วขึ้น?</p></div></div></section><section role="tabpanel" id="code-panel-logic" aria-labelledby="code-tab-logic" data-example="logic" hidden="until-found"><div class="cl-panel-inner cl-logic" data-logic>
     <div class="cl-example-heading">
       <h2 data-logic-heading>เช็กเงื่อนไขที่ประตูห้องเกม</h2>
-      <p>เลือกกติกา แล้วเปลี่ยนค่าด้านล่าง ดูว่าเงื่อนไขใน <code>if</code> ได้ <code>true</code> หรือ <code>false</code> และโปรแกรมทำบรรทัดไหนต่อ</p>
+      <p>เปลี่ยนค่าตัวแปร แล้วดูทีละข้อว่าเงื่อนไขไหนจริง (true) หรือเท็จ (false) และสุดท้ายประตูจะเปิดไหม</p>
     </div>
-    <div class="cl-logic-switch" role="group" aria-label="เลือกตัวดำเนินการ"><button type="button" data-logic-rule="equal" aria-pressed="true"><code>==</code> เท่ากันไหม</button><button type="button" data-logic-rule="and" aria-pressed="false"><code>&amp;&amp;</code> และ</button><button type="button" data-logic-rule="or" aria-pressed="false"><code>||</code> หรือ</button><button type="button" data-logic-rule="not" aria-pressed="false"><code>!</code> กลับค่า</button></div>
+    <div class="cl-logic-switch" role="group" aria-label="เลือกตัวดำเนินการ"><button type="button" data-logic-rule="equal" aria-pressed="true"><span class="cl-logic-symbol">==</span> เท่ากันไหม</button><button type="button" data-logic-rule="and" aria-pressed="false"><span class="cl-logic-symbol">&amp;&amp;</span> และ</button><button type="button" data-logic-rule="or" aria-pressed="false"><span class="cl-logic-symbol">||</span> หรือ</button><button type="button" data-logic-rule="not" aria-pressed="false"><span class="cl-logic-symbol">!</span> กลับค่า</button></div>
     <div class="cl-logic-grid">
       <div class="cl-logic-inputs">
         <fieldset>
@@ -32,12 +32,24 @@
           </div>
           <label data-logic-group="closed" hidden><input type="checkbox" data-logic-input="isClosed"> ห้องกำลังปิดปรับปรุง</label>
         </fieldset>
-        <p data-logic-rule-text></p>
-        <div class="cl-logic-values" data-logic-values></div>
       </div>
-      <div class="cl-logic-code">
-        <div class="cl-logic-code-head"><span>เงื่อนไขใน C++ / Arduino</span><samp data-logic-bool>false</samp></div>
-        <pre aria-label="ตัวอย่าง if และ else"><code class="hljs language-arduino" data-logic-code></code></pre>
+      <div class="cl-logic-flow">
+        <div class="cl-logic-row">
+          <span class="cl-logic-step">ตัวแปร</span>
+          <div class="cl-logic-chips" data-logic-values></div>
+        </div>
+        <div class="cl-logic-row">
+          <span class="cl-logic-step">ถ้า</span>
+          <div class="cl-logic-chips" data-logic-conditions></div>
+        </div>
+        <div class="cl-logic-row">
+          <span class="cl-logic-step">แล้ว</span>
+          <div class="cl-logic-chips">
+            <span data-logic-bool class="cl-logic-verdict"></span>
+            <span aria-hidden="true" class="cl-logic-arrow">→</span>
+            <span class="cl-logic-result" role="status" data-logic-result></span>
+          </div>
+        </div>
       </div>
       <div class="cl-logic-output">
         <svg viewBox="0 0 240 136" aria-hidden="true">
@@ -57,7 +69,6 @@
           <path d="M184 83h17v25h-17Z" fill="#4a6684"/>
           <path d="M189 89h7m-7 5h7m-7 5h7" stroke="#d7e9fc" stroke-width="1.5"/>
         </svg>
-        <div class="cl-logic-result" role="status" data-logic-result></div>
       </div>
     </div>
     <p class="cl-setting-note" data-logic-tip></p>
