@@ -133,9 +133,8 @@ function mountFeederScene(lab) {
     if (name === 'old') return stage() === 'discard' && clockAvailable();
     if (name === 'box') {
       const current = stage();
-      const percent = sim.getState().foodPercent;
-      const dryRefill = current === 'ready' && (emptyFood(percent) || finishedEating && percent < 100);
-      return clockAvailable() && (current === 'refill' || dryRefill);
+      return (current === 'ready' || current === 'refill') && clockAvailable()
+        && emptyFood(sim.getState().foodPercent);
     }
     if (name === 'cloud') return refill === 0;
     return true;
@@ -307,7 +306,7 @@ function mountFeederScene(lab) {
     }
   }
 
-  function getCopy(state, current, refillReady, refillOver) {
+  function getCopy(state, current, refillOver) {
     const latest = state.events.at(-1);
     if (current === 'refilling') return ['กำลังเติมอาหารใหม่', 'ดูผิวอาหารสูงขึ้น ระยะที่วัดได้จะสั้นลง'];
     if (check) return [`ถึงมื้อ ${formatTime(check.slot)} น.`, 'หยุดรอดู ESP32 อ่านระดับอาหารกับความชื้นก่อนสั่ง Servo'];
@@ -325,9 +324,7 @@ function mountFeederScene(lab) {
     if (drag?.name === 'level') return ['ปรับระดับอาหารในถัง', 'ดูเม็ดอาหารขยับตามเส้น ยิ่งอาหารสูง ระยะที่วัดได้ยิ่งสั้น'];
     if (emptyFood(state.foodPercent)) return ['ถังอาหารหมด', 'ลากกล่องอาหารใหม่ที่ไฮไลท์ไปเทที่ปากถัง'];
     if (eating()) return ['แมวกำลังกิน', 'IR อ่าน LOW และเม็ดอาหารในชามค่อย ๆ ลดลง'];
-    if (finishedEating) return ['กินหมดชามแล้ว', refillReady
-      ? `ถังยังมีอาหาร ${state.foodPercent}% ลากกล่องไปเติมสำรอง หรือรอมื้อ ${dueLabel()}`
-      : `เครื่องรอมื้อ ${dueLabel()}`];
+    if (finishedEating) return ['กินหมดชามแล้ว', `ถังยังมีอาหาร ${state.foodPercent}% รอมื้อ ${dueLabel()}`];
     if (latest?.type === 'arrival') return ['IR บันทึกว่ามีตัวมาที่ชามแล้ว', 'ลองลากแมวถอยออกจากระยะแล้วดู IR กลับเป็น HIGH หรือลากเมฆเพื่อทดสอบถังชื้น'];
     if (atBowl()) return ['แมวอยู่ในระยะ · IR อ่าน LOW', `เครื่องใช้เวลานัดจ่ายอาหาร มื้อถัดไป ${dueLabel()}`];
     if (bowlPieces > 0) return ['มีอาหารอยู่ในชาม', 'ลากแมวมาที่ชามเพื่อให้กินทีละเม็ด'];
@@ -423,7 +420,7 @@ function mountFeederScene(lab) {
       state.buzzer ? 'Buzzer เตือนก่อนเปิดฝา' :
       state.phase === 'watching' ? 'จ่ายแล้ว · IR เฝ้าดูที่ชาม' :
       state.portions ? 'จ่ายรอบล่าสุดเสร็จแล้ว' : 'รอคำสั่งจ่ายอาหาร');
-    const [heading, instruction] = getCopy(state, current, refillReady, refillOver);
+    const [heading, instruction] = getCopy(state, current, refillOver);
     text(taskTitle, heading);
     text(taskDetail, instruction);
   }
