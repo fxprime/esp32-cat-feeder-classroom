@@ -10,8 +10,22 @@ const reveal = select('[data-project-reveal]');
 const status = select('[data-project-status]');
 const featurePanel = select('#fi-features');
 const features = [...featurePanel.querySelectorAll('li')];
+const art = select('.fi-art');
+const diagram = select('.fi-diagram');
+const leaderLayer = select('[data-feature-leaders]');
+const links = features.map(card => {
+  const group = document.createElementNS(art.namespaceURI, 'g');
+  const path = document.createElementNS(art.namespaceURI, 'path');
+  const dot = document.createElementNS(art.namespaceURI, 'circle');
+  const anchor = card.dataset.anchor.split(' ').map(Number);
+  group.dataset.featureLink = card.dataset.feature;
+  path.setAttribute('pathLength', '1');
+  dot.setAttribute('r', '4');
+  group.append(path, dot);
+  leaderLayer.append(group);
+  return { card, group, path, dot, anchor };
+});
 const legends = [...project.querySelectorAll('[data-project-parts]')];
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const stages = [
   {
     id: 'features', name: 'ฟีเจอร์', title: 'ให้อาหารตามเวลา แม้คุณไม่อยู่บ้าน',
@@ -49,7 +63,62 @@ const parts = [
 
 let stageIndex = 0;
 let shown = 0;
-let revealInProgress = false;
+let showAll = false;
+let leaderFrame = 0;
+
+function layoutLeaders() {
+  if (leaderLayer.hasAttribute('hidden')) return;
+  const projector = art.getScreenCTM();
+  if (!projector) return;
+  const frame = leaderLayer.getBoundingClientRect();
+  const artBox = art.getBoundingClientRect();
+  const horizontal = getComputedStyle(diagram).getPropertyValue('--fi-leader-axis').trim() === 'horizontal';
+  leaderLayer.setAttribute('viewBox', `0 0 ${frame.width} ${frame.height}`);
+  for (const [index, { card, path, dot, anchor }] of links.entries()) {
+    if (index >= shown) continue;
+    const point = new DOMPoint(...anchor).matrixTransform(projector);
+    const x = point.x - frame.left;
+    const y = point.y - frame.top;
+    const box = card.getBoundingClientRect();
+    dot.setAttribute('cx', x);
+    dot.setAttribute('cy', y);
+    if (horizontal) {
+      const left = card.dataset.dock === 'left';
+      const edge = (left ? box.right : box.left) - frame.left;
+      const artEdge = (left ? artBox.left : artBox.right) - frame.left;
+      const endY = box.top + box.height / 2 - frame.top;
+      const bend = edge + (artEdge - edge) * (.25 + (index % 4) * .15);
+      path.setAttribute('d', `M ${x} ${y} H ${bend} V ${endY} H ${edge}`);
+    } else {
+      const endX = box.left + box.width / 2 - frame.left;
+      const endY = box.top - frame.top;
+      const bend = (artBox.bottom - frame.top + endY) / 2;
+      path.setAttribute('d', `M ${x} ${y} V ${bend} H ${endX} V ${endY}`);
+    }
+  }
+}
+
+function queueLeaderLayout() {
+  if (leaderFrame) return;
+  leaderFrame = requestAnimationFrame(() => {
+    leaderFrame = 0;
+    layoutLeaders();
+  });
+}
+
+function renderFeatures() {
+  project.dataset.featureView = showAll ? 'all' : shown ? 'focus' : 'idle';
+  project.dataset.activeFeature = showAll ? '' : features[shown - 1]?.dataset.feature ?? '';
+  reveal.setAttribute('aria-expanded', String(shown > 0));
+  reveal.textContent = shown === features.length ? 'ดูฟีเจอร์ทั้งหมด' : shown ? `ดูฟีเจอร์ถัดไป (${shown + 1} / ${features.length})` : 'ดูฟีเจอร์';
+  for (const [index, { card, group }] of links.entries()) {
+    const state = showAll ? 'all' : index >= shown ? 'queued' : index === shown - 1 ? 'focus' : 'past';
+    card.dataset.featureState = state;
+    group.dataset.featureState = state;
+    card.setAttribute('aria-hidden', String(state === 'queued'));
+  }
+  queueLeaderLayout();
+}
 
 function render(nextStage, focus = false) {
   stageIndex = nextStage;
@@ -62,11 +131,13 @@ function render(nextStage, focus = false) {
   context.hidden = !stage.context;
   select('#fi-art-desc').textContent = stage.art;
   back.hidden = exterior;
-  reveal.hidden = !exterior || shown === features.length;
-  next.hidden = !stage.next || (exterior && shown < features.length);
+  reveal.hidden = !exterior || showAll;
+  next.hidden = !stage.next || (exterior && !showAll);
   next.textContent = stage.next ?? '';
   proof.hidden = stage.id !== 'devices';
-  featurePanel.hidden = !exterior || (!revealInProgress && shown === 0);
+  featurePanel.hidden = !exterior;
+  leaderLayer.toggleAttribute('hidden', !exterior || shown === 0);
+  if (exterior) renderFeatures();
   for (const [index, legend] of legends.entries()) {
     legend.hidden = exterior;
     if (exterior) continue;
@@ -96,32 +167,20 @@ function render(nextStage, focus = false) {
   }
 }
 
-function showFeature() {
-  features[shown].hidden = false;
-  shown += 1;
-  if (shown < features.length) {
-    setTimeout(showFeature, reducedMotion.matches ? 0 : 165);
+reveal.addEventListener('click', () => {
+  if (showAll) return;
+  if (shown === features.length) {
+    const keepFocus = document.activeElement === reveal;
+    showAll = true;
+    render(stageIndex);
+    status.textContent = 'เปิดครบทุกฟีเจอร์แล้ว';
+    if (keepFocus) next.focus({ preventScroll: true });
     return;
   }
-  revealInProgress = false;
-  const keepFocus = document.activeElement === reveal;
+  shown += 1;
   render(stageIndex);
-  status.textContent = 'เปิดฟีเจอร์ครบแล้ว';
-  if (keepFocus) next.focus();
-}
-
-reveal.addEventListener('click', () => {
-  if (revealInProgress || shown === features.length) return;
-  revealInProgress = true;
-  reveal.setAttribute('aria-expanded', 'true');
-  reveal.setAttribute('aria-disabled', 'true');
-  featurePanel.hidden = false;
-  project.dataset.featuresShown = 'true';
-  if (reducedMotion.matches) {
-    for (const feature of features.slice(0, -1)) feature.hidden = false;
-    shown = features.length - 1;
-  }
-  showFeature();
+  const feature = features[shown - 1].querySelector('strong').textContent;
+  status.textContent = `ฟีเจอร์ ${shown} จาก ${features.length} · ${feature}`;
 });
 next.addEventListener('click', () => render(stageIndex + 1, true));
 back.addEventListener('click', () => render(stageIndex - 1, true));
@@ -129,4 +188,8 @@ proof.addEventListener('click', () => {
   if (parent === window) location.assign('../#slide-17');
   else parent.postMessage({ type: 'SLIDE_NAV_KEY', key: 'ArrowRight' }, location.origin);
 });
+const resizeLeaders = new ResizeObserver(queueLeaderLayout);
+resizeLeaders.observe(diagram);
+resizeLeaders.observe(art);
+render(0);
 project.dataset.projectReady = 'true';
