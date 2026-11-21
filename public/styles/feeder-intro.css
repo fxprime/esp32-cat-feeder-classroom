@@ -216,7 +216,7 @@ body {
   background: #e3f6ff;
   box-shadow: 0 .22rem .8rem #24648323;
 }
-.fi-features li[data-feature-state="past"] { filter: blur(1.2px); opacity: .49; }
+.fi-features li[data-feature-state="past"] { filter: blur(.55px); opacity: .56; }
 .fi-features strong, .fi-features span { display: block; }
 .fi-features strong { font-size: .94rem; }
 .fi-features span { margin-block-start: .13rem; color: var(--fi-muted); font-size: .79rem; }
@@ -280,13 +280,20 @@ body {
   .fi-feature-leaders [data-feature-state="all"] path { display: inline; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .fi-project { --fi-reveal-ease: cubic-bezier(.22, 1, .36, 1); --fi-reveal-time: 450ms; }
-  .fi-features li { transition: opacity 250ms ease-in-out, filter 250ms ease-in-out; }
+  .fi-project { --fi-reveal-ease: cubic-bezier(.22, 1, .36, 1); --fi-reveal-time: 360ms; }
+  .fi-features li {
+    transition: opacity 260ms var(--fi-reveal-ease), filter 260ms ease,
+      box-shadow 260ms ease, background-color 220ms ease;
+  }
   .fi-features li[data-feature-state="focus"] { animation: fi-feature-in 300ms var(--fi-reveal-ease) 105ms both; }
+  /* Move the copy while the card edge stays aligned with its SVG leader. */
+  .fi-features li[data-feature-state="focus"] > :is(strong, span) {
+    animation: fi-feature-copy-in 300ms var(--fi-reveal-ease) 105ms both;
+  }
   .fi-feature-leaders [data-feature-state="focus"] path {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
-    animation: fi-feature-draw 450ms var(--fi-reveal-ease) forwards;
+    animation: fi-feature-draw var(--fi-reveal-time) var(--fi-reveal-ease) forwards;
   }
   [data-project-stage="questions"] .fi-questions,
   [data-project-stage="devices"] :is(.fi-parts, .fi-device) {
@@ -302,14 +309,15 @@ body {
     animation-timing-function: var(--fi-reveal-ease);
     animation-fill-mode: both;
   }
-  .fi-questions > :nth-child(2), [data-device="humidity"] { --fi-part-delay: 65ms; }
-  .fi-questions > :nth-child(3), [data-device="ir"] { --fi-part-delay: 130ms; }
-  .fi-questions > :nth-child(4), [data-device="wifi"] { --fi-part-delay: 195ms; }
-  .fi-questions > :nth-child(5), [data-device="led"] { --fi-part-delay: 260ms; }
-  .fi-questions > :nth-child(6), [data-device="buzzer"] { --fi-part-delay: 325ms; }
-  .fi-questions > :nth-child(7), [data-device="servo"] { --fi-part-delay: 390ms; }
-  .fi-questions > :nth-child(8), [data-device="piezo"] { --fi-part-delay: 455ms; }
+  .fi-questions > :nth-child(2), [data-device="humidity"] { --fi-part-delay: 42ms; }
+  .fi-questions > :nth-child(3), [data-device="ir"] { --fi-part-delay: 84ms; }
+  .fi-questions > :nth-child(4), [data-device="wifi"] { --fi-part-delay: 126ms; }
+  .fi-questions > :nth-child(5), [data-device="led"] { --fi-part-delay: 168ms; }
+  .fi-questions > :nth-child(6), [data-device="buzzer"] { --fi-part-delay: 210ms; }
+  .fi-questions > :nth-child(7), [data-device="servo"] { --fi-part-delay: 252ms; }
+  .fi-questions > :nth-child(8), [data-device="piezo"] { --fi-part-delay: 294ms; }
   @keyframes fi-feature-in { from { opacity: 0; } }
+  @keyframes fi-feature-copy-in { from { translate: 0 7px; scale: .985; } }
   @keyframes fi-feature-draw { to { stroke-dashoffset: 0; } }
   @keyframes fi-open { from { opacity: 0; transform: translateX(8px); } }
   @keyframes fi-box-open { to { opacity: 0; translate: 0 -19px; } }

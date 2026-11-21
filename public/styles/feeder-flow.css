@@ -137,31 +137,31 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .flow-map.is-revealing [data-flow-beat] {
-    animation: flow-appear 350ms cubic-bezier(.22, 1, .36, 1) var(--flow-delay, 0ms) both;
+    animation: flow-appear 300ms cubic-bezier(.22, 1, .36, 1) var(--flow-delay, 0ms) both;
   }
-  [data-flow-beat="input-bubble"] { --flow-delay: 155ms; }
-  [data-flow-beat="process"] { --flow-delay: 520ms; }
-  [data-flow-beat="process-bubble"] { --flow-delay: 155ms; }
-  [data-flow-beat="output"] { --flow-delay: 1050ms; }
-  [data-flow-beat="output-bubble"] { --flow-delay: 155ms; }
-  [data-flow-beat="feedback"] { --flow-delay: 1950ms; }
+  [data-flow-beat="input-bubble"] { --flow-delay: 115ms; }
+  [data-flow-beat="process"] { --flow-delay: 360ms; }
+  [data-flow-beat="process-bubble"] { --flow-delay: 115ms; }
+  [data-flow-beat="output"] { --flow-delay: 720ms; }
+  [data-flow-beat="output-bubble"] { --flow-delay: 115ms; }
+  [data-flow-beat="feedback"] { --flow-delay: 1280ms; }
 
   .flow-map.is-revealing [data-flow-beat$="bubble"] { animation-delay: calc(var(--flow-parent-delay, 0ms) + var(--flow-delay)); }
-  [data-flow-beat="process-bubble"] { --flow-parent-delay: 520ms; }
-  [data-flow-beat="output-bubble"] { --flow-parent-delay: 1050ms; }
+  [data-flow-beat="process-bubble"] { --flow-parent-delay: 360ms; }
+  [data-flow-beat="output-bubble"] { --flow-parent-delay: 720ms; }
   .flow-map.is-revealing .flow-links path {
     stroke-dasharray: 100;
     animation: flow-trace var(--flow-route-length, 300ms) ease-out var(--flow-route-delay) both;
   }
   .flow-map.is-revealing .flow-links circle { animation: flow-port-reveal 180ms ease-out var(--flow-route-delay) both; }
-  .flow-link-input { --flow-route-delay: 380ms; }
-  .flow-input-port { --flow-route-delay: 620ms; }
-  .flow-link-output { --flow-route-delay: 900ms; }
-  .flow-output-branch { --flow-route-delay: 1420ms; }
-  .flow-link-feedback { --flow-route-delay: 1450ms; --flow-route-length: 730ms; }
-  .flow-feedback-port { --flow-route-delay: 2110ms; }
+  .flow-link-input { --flow-route-delay: 260ms; }
+  .flow-input-port { --flow-route-delay: 440ms; }
+  .flow-link-output { --flow-route-delay: 620ms; }
+  .flow-output-branch { --flow-route-delay: 960ms; }
+  .flow-link-feedback { --flow-route-delay: 980ms; --flow-route-length: 500ms; }
+  .flow-feedback-port { --flow-route-delay: 1440ms; }
 
-  @keyframes flow-appear { from { opacity: 0; transform: translateY(.38rem); } }
+  @keyframes flow-appear { from { opacity: 0; translate: 0 .45rem; scale: .985; } }
   @keyframes flow-trace { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
   @keyframes flow-port-reveal { from { opacity: 0; } }
 }

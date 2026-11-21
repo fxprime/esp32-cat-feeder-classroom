@@ -43,7 +43,7 @@ body {
 .solder-shell button:is([aria-current="step"], [aria-pressed="true"]) { background: #e2f4ff; border-color: #698abc; color: #204687; }
 .solder-shell .solder-primary { background: var(--solder-accent); border-color: var(--solder-accent); color: #fff; }
 .solder-shell .solder-primary:hover { background: #07527c; border-color: #07527c; }
-.solder-shell :is(button, .solder-button, summary):focus-visible { outline: 3px solid #2257ae; outline-offset: 2px; }
+.solder-shell :is(button, a):focus-visible { outline: 3px solid #2257ae; outline-offset: 2px; }
 
 .solder-stage {
   container: soldering / inline-size;
@@ -132,10 +132,8 @@ body {
 .solder-break { padding: .42rem .65rem; border-radius: .68rem; background: #eaf8ee; color: #245d44; font-size: .91rem; }
 .solder-break p { margin: .1rem 0 0; }
 .solder-navigation { display: flex; justify-content: space-between; gap: .48rem; margin-block-start: .56rem; }
-.solder-notes { margin-block-start: .6rem; padding: .3rem .65rem .42rem; border: 1px solid var(--solder-edge); border-radius: .78rem; background: #fafcff; color: var(--solder-muted); font-size: .88rem; }
-.solder-notes summary { min-block-size: 44px; align-content: center; color: #174c78; font-weight: 700; cursor: pointer; }
-.solder-notes p { max-inline-size: 76ch; margin: .45rem 0; }
-.solder-notes a { color: #184b9a; text-underline-offset: .18em; }
+.solder-sources { margin-block-start: .72rem; padding-inline: .32rem; color: var(--solder-muted); font-size: .83rem; }
+.solder-sources a { color: #184b9a; text-underline-offset: .18em; }
 
 @container soldering (max-width: 36rem) {
   .solder-rules { grid-template-columns: 1fr; gap: .38rem; }

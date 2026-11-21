@@ -14,7 +14,10 @@ function slideFromHash() {
 
 export default function App() {
   // Current active slide: null means Dashboard, otherwise a lesson ID.
-  const [currentSlideId, setCurrentSlideId] = useState(slideFromHash);
+  const [{ id: currentSlideId, direction }, setNavigation] = useState(() => ({
+    id: slideFromHash(),
+    direction: "fade",
+  }));
   const slideIndex = LESSONS.findIndex((lesson) => lesson.id === currentSlideId);
   const currentSlide = LESSONS[slideIndex];
   const prevSlide = slideIndex > 0 ? LESSONS[slideIndex - 1] : undefined;
@@ -34,13 +37,23 @@ export default function App() {
   const [isNavHidden, setIsNavHidden] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
+  const selectSlide = useCallback((id) => {
+    setNavigation((previous) => {
+      if (previous.id === id) return previous;
+      if (previous.id === null || id === null) return { id, direction: "fade" };
+      const from = LESSONS.findIndex((lesson) => lesson.id === previous.id);
+      const to = LESSONS.findIndex((lesson) => lesson.id === id);
+      return { id, direction: to > from ? "forward" : "backward" };
+    });
+  }, []);
+
   // Sync state with URL Hash
   useEffect(() => {
-    const handleHashChange = () => setCurrentSlideId(slideFromHash());
+    const handleHashChange = () => selectSlide(slideFromHash());
 
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+  }, [selectSlide]);
 
   useEffect(() => {
     document.title = currentSlideId
@@ -50,12 +63,9 @@ export default function App() {
 
   // Update hash when slide changes
   const navigateToSlide = useCallback((id) => {
-    if (id === null) {
-      window.location.hash = "";
-      setCurrentSlideId(null);
-    } else {
-      window.location.hash = `#slide-${id}`;
-      setCurrentSlideId(id);
+    window.location.hash = id === null ? "" : `#slide-${id}`;
+    selectSlide(id);
+    if (id !== null) {
       // Auto-record progress
       setCompletedSlides((prev) => {
         if (!prev.includes(id)) {
@@ -68,7 +78,7 @@ export default function App() {
         return prev;
       });
     }
-  }, []);
+  }, [selectSlide]);
 
   // Fullscreen change listener
   useEffect(() => {
@@ -158,18 +168,20 @@ export default function App() {
       }
     };
 
-    // Also handle postMessage forwarded from inside the slide iframe
+    // Only the visible, ready lesson can forward navigation while layers overlap.
     const handleMessage = (e) => {
+      const frame = document.querySelector('iframe[data-active-slide="true"][data-slide-ready="true"]');
       if (
         e.origin === window.location.origin &&
-        e.source === document.querySelector("iframe")?.contentWindow &&
+        frame?.dataset.slideId === String(currentSlideId) &&
+        e.source === frame.contentWindow &&
         e.data?.type === "SLIDE_NAV_KEY"
       ) {
         if (e.data.key === "ArrowLeft") {
           handlePrevSlide();
         } else if (e.data.key === "ArrowRight") {
           handleNextSlide();
-        } else if (e.data.key?.toLowerCase() === "f") {
+        } else if (e.data.key === "f" || e.data.key === "F") {
           toggleFullscreen();
         }
       }
@@ -214,6 +226,7 @@ export default function App() {
       {currentSlide ? (
         <SlideViewer
           slide={currentSlide}
+          direction={direction}
           isNavHidden={isNavHidden}
           onToggleNavHidden={toggleNavHidden}
           isFullscreen={isFullscreen}
@@ -225,7 +238,7 @@ export default function App() {
           canNext={canNext}
         />
       ) : (
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto animate-dashboardIn">
           <Dashboard
             completedSlides={completedSlides}
             onSelectSlide={navigateToSlide}

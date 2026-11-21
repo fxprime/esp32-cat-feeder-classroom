@@ -56,8 +56,8 @@ export default function Navbar({
       {/* Top micro progress bar */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-slate-800">
         <div
-          className="h-full bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 transition-all duration-300 ease-out shadow-sm"
-          style={{ width: `${progressPercent}%` }}
+          className="h-full w-full origin-left bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 progress-bar-smooth shadow-sm"
+          style={{ transform: `scaleX(${progressPercent / 100})` }}
         />
       </div>
 
@@ -144,7 +144,7 @@ export default function Navbar({
           </button>
 
           {/* Current Slide Info Badge */}
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 rounded-xl bg-slate-800 border border-slate-700 text-center min-w-0">
+          <div key={currentSlide.id} className="animate-badgeIn flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 rounded-xl bg-slate-800 border border-slate-700 text-center min-w-0">
             <span className="text-xs sm:text-sm font-extrabold text-cyan-400 font-mono whitespace-nowrap">
               {currentSlide.slideNum} / {LESSONS.length}
             </span>

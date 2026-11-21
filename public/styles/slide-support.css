@@ -26,9 +26,7 @@ html.is-embedded header > div:first-child {
   opacity: 1;
   fill: #eaf0f5;
 }
-.output-subcard.is-dimmed > g,
-.output-subcard.is-dimmed > path,
-.output-subcard.is-dimmed > circle {
+.output-subcard.is-dimmed :where(path, circle, rect, ellipse, line, polyline, polygon) {
   opacity: 0.3;
 }
 .output-subcard.is-dimmed text {
@@ -38,6 +36,22 @@ html.is-embedded header > div:first-child {
   button,
   select {
     min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :where(button, summary) {
+    transition: background-color 160ms cubic-bezier(.22, 1, .36, 1),
+      border-color 160ms cubic-bezier(.22, 1, .36, 1),
+      color 160ms ease,
+      scale 120ms cubic-bezier(.22, 1, .36, 1),
+      box-shadow 180ms ease;
+  }
+  :where(button:active:not(:disabled)) {
+    scale: .98;
+  }
+  .output-subcard,
+  .output-subcard :where(path, circle, rect, ellipse, line, polyline, polygon) {
+    transition: opacity 240ms cubic-bezier(.22, 1, .36, 1), fill 240ms ease;
   }
 }
 @media (prefers-reduced-motion: reduce) {
