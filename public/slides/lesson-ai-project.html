@@ -18,11 +18,104 @@
       <span class="cl-kicker">โปรเจกต์ ESP32 ม.4</span>
       <h1>เลือกกรณีทดสอบเครื่องให้อาหารแมว</h1>
       <p>เราอยากให้เครื่องเช็กถังก่อนเปิดฝา และรู้ว่ามีตัวมาที่ชามหลังจ่าย แบบนี้ทำได้จริงไหม?</p>
-      <div class="ap-gemini-entry">
-        <button type="button" id="ap-show-gemini" class="ap-primary" aria-haspopup="dialog">ผลลัพธ์จาก Gemini</button>
-        <span>ตัวอย่างคำตอบสำหรับ “มื้อปกติ”</span>
-      </div>
     </header>
+
+    <form class="ap-workspace" id="project-form" aria-labelledby="ap-prompt-heading">
+      <section class="cl-panel-inner ap-prompt" aria-labelledby="ap-prompt-heading">
+        <header class="cl-example-heading">
+          <h2 id="ap-prompt-heading">คำถามที่จะส่ง Gemini</h2>
+        </header>
+        <fieldset class="ap-modes">
+          <legend class="ap-sr-only">เลือกหัวข้อที่จะถาม</legend>
+          <div><input type="radio" id="ap-assess" name="mode" value="assess"><label for="ap-assess">ประเมินไอเดีย</label></div>
+          <div><input type="radio" id="ap-poc" name="mode" value="poc" checked><label for="ap-poc">วางแผน POC</label></div>
+          <div><input type="radio" id="ap-diagram" name="mode" value="diagram"><label for="ap-diagram">วาดไดอะแกรม</label></div>
+          <div><input type="radio" id="ap-explain" name="mode" value="explain"><label for="ap-explain">อธิบายอีกแบบ</label></div>
+        </fieldset>
+        <div class="ap-field" id="ap-format-field" hidden>
+          <label for="ap-format">อยากให้ AI อธิบายแบบไหน</label>
+          <select id="ap-format" name="format">
+            <option value="analogy">เปรียบเทียบกับของใกล้ตัว</option>
+            <option value="story">เล่าเป็นเหตุการณ์ 3 ฉาก</option>
+            <option value="table">สรุปเป็นตารางสั้น ๆ</option>
+          </select>
+        </div>
+        <div class="pt-prompt-target" id="pt-prompt-target" hidden>
+          <span id="pt-target-text"></span>
+          <button type="button" id="pt-clear">เอาออก</button>
+        </div>
+        <pre id="ap-output" tabindex="-1"></pre>
+        <div class="ap-actions">
+          <button type="button" class="ap-primary" id="ap-copy">คัดลอกคำถาม</button>
+          <a class="ap-link-button" href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">เปิด Gemini ↗</a>
+          <button type="button" id="ap-show-gemini" aria-haspopup="dialog" hidden>ผลลัพธ์จาก Gemini</button>
+        </div>
+        <p class="ap-status" id="ap-status" role="status"></p>
+        <p class="ap-note">เปิด Gemini แล้ววางคำถามและกดส่ง ใช้แบบฟรีได้ ถ้าบัญชีมี Pro ให้เลือก ก็ลองคำถามเดียวกันแล้วเทียบคำตอบได้</p>
+        <p class="ap-note">ข้อมูลที่กรอกอยู่ในหน้านี้ เลือกเฉพาะข้อมูลโปรเจกต์ที่ต้องการส่งให้ AI</p>
+      </section>
+
+      <section class="cl-panel-inner ap-feeder-test" aria-labelledby="ap-test-heading">
+        <div>
+          <span class="cl-kicker">เตรียมก่อนลง Lab</span>
+          <h2 id="ap-test-heading">ถ้าเปลี่ยนหนึ่งอย่าง เครื่องควรทำอะไร?</h2>
+          <p>เลือกเหตุการณ์เดียว แล้วลองคิดว่าควรเห็นอะไรที่เครื่องก่อนเอาคำถามไปให้ Gemini ช่วยวางแผน</p>
+        </div>
+        <div class="ap-feeder-cases" role="group" aria-label="กรณีทดสอบเครื่องให้อาหาร">
+          <button type="button" data-feeder-test="normal" aria-pressed="true">มื้อปกติ</button>
+          <button type="button" data-feeder-test="humid" aria-pressed="false">ถังชื้น</button>
+          <button type="button" data-feeder-test="empty" aria-pressed="false">ถังหมด</button>
+          <button type="button" data-feeder-test="repeat" aria-pressed="false">ส่งมื้อเดิมซ้ำ</button>
+          <button type="button" data-feeder-test="arrival" aria-pressed="false">มีตัวมาที่ชาม</button>
+        </div>
+        <dl class="ap-feeder-expect" aria-live="polite" aria-atomic="true">
+          <div><dt>ตั้งค่า / ทำอะไร</dt><dd id="ap-feeder-input"></dd></div>
+          <div><dt>ถือว่าผ่านเมื่อ</dt><dd id="ap-feeder-pass"></dd></div>
+        </dl>
+      </section>
+
+      <section class="cl-panel-inner ap-brief">
+        <header class="cl-example-heading">
+          <h2 id="ap-brief-heading">ปรับไอเดียของกลุ่ม</h2>
+          <p>เริ่มจากตัวอย่างแล้วแก้ได้ หรือกดกรอกไอเดียเอง</p>
+        </header>
+        <div class="ap-presets" aria-label="เลือกตัวอย่างโปรเจกต์">
+          <button type="button" data-preset="feeder">เครื่องให้อาหารแมว</button>
+          <button type="button" data-preset="plant">เตือนรดน้ำ</button>
+          <button type="button" data-preset="locker">เตือนตู้เปิดค้าง</button>
+          <button type="button" data-preset="desk">ไฟโต๊ะอัตโนมัติ</button>
+          <button type="button" data-preset="custom">กรอกไอเดียเอง</button>
+        </div>
+        <div class="ap-fields">
+          <div class="ap-field">
+            <label for="ap-idea">อยากทำอะไร <small>จำเป็น</small></label>
+            <input id="ap-idea" name="idea" required maxlength="140" placeholder="เช่น ระบบเตือนรดน้ำต้นไม้">
+          </div>
+          <div class="ap-field">
+            <label for="ap-goal">ตอนสาธิต อยากให้เห็นอะไร</label>
+            <textarea id="ap-goal" name="goal" rows="2" maxlength="350" placeholder="เช่น ดินแห้งแล้วไฟติด ดินชื้นแล้วไฟดับ"></textarea>
+          </div>
+          <div class="ap-field-pair">
+            <div class="ap-field">
+              <label for="ap-budget">งบสูงสุด (บาท)</label>
+              <input id="ap-budget" name="budget" type="number" min="0" step="1" inputmode="numeric">
+            </div>
+            <div class="ap-field">
+              <label for="ap-time">เวลาที่มี</label>
+              <input id="ap-time" name="time" maxlength="100" placeholder="เช่น 2 สัปดาห์">
+            </div>
+          </div>
+          <div class="ap-field">
+              <label for="ap-tools">บอร์ด อุปกรณ์ และเครื่องมือที่มี</label>
+            <textarea id="ap-tools" name="tools" rows="2" maxlength="350" placeholder="เช่น ESP32 DevKit V1, LED, Arduino IDE, Wokwi"></textarea>
+          </div>
+          <div class="ap-field">
+            <label for="ap-limits">ข้อจำกัดของกลุ่ม <small>ถ้ามี</small></label>
+            <input id="ap-limits" name="limits" maxlength="200" placeholder="เช่น เพิ่งหัดเขียนโค้ด ใช้ USB 5 V และยังบัดกรีไม่เป็น">
+          </div>
+        </div>
+      </section>
+    </form>
 
     <dialog class="ap-gemini" id="ap-gemini" aria-labelledby="ap-gemini-title">
       <header class="ap-gemini-head">
@@ -77,108 +170,9 @@
       </div>
     </dialog>
 
-    <section class="cl-panel-inner ap-feeder-test" aria-labelledby="ap-test-heading">
-      <div>
-        <span class="cl-kicker">เตรียมก่อนลง Lab</span>
-        <h2 id="ap-test-heading">ถ้าเปลี่ยนหนึ่งอย่าง เครื่องควรทำอะไร?</h2>
-        <p>เลือกเหตุการณ์เดียว แล้วลองคิดว่าควรเห็นอะไรที่เครื่องก่อนเอาคำถามไปให้ Gemini ช่วยวางแผน</p>
-      </div>
-      <div class="ap-feeder-cases" role="group" aria-label="กรณีทดสอบเครื่องให้อาหาร">
-        <button type="button" data-feeder-test="normal" aria-pressed="true">มื้อปกติ</button>
-        <button type="button" data-feeder-test="humid" aria-pressed="false">ถังชื้น</button>
-        <button type="button" data-feeder-test="empty" aria-pressed="false">ถังหมด</button>
-        <button type="button" data-feeder-test="repeat" aria-pressed="false">ส่งมื้อเดิมซ้ำ</button>
-        <button type="button" data-feeder-test="arrival" aria-pressed="false">มีตัวมาที่ชาม</button>
-      </div>
-      <dl class="ap-feeder-expect" aria-live="polite" aria-atomic="true">
-        <div><dt>ตั้งค่า / ทำอะไร</dt><dd id="ap-feeder-input"></dd></div>
-        <div><dt>ถือว่าผ่านเมื่อ</dt><dd id="ap-feeder-pass"></dd></div>
-      </dl>
-    </section>
-    <form class="ap-workspace" id="project-form" aria-labelledby="ap-brief-heading">
-      <section class="cl-panel-inner ap-brief">
-        <header class="cl-example-heading">
-          <h2 id="ap-brief-heading">1. เล่าไอเดียของกลุ่ม</h2>
-          <p>เริ่มจากตัวอย่างแล้วแก้ได้ หรือกดกรอกไอเดียเอง</p>
-        </header>
-        <div class="ap-presets" aria-label="เลือกตัวอย่างโปรเจกต์">
-          <button type="button" data-preset="feeder">เครื่องให้อาหารแมว</button>
-          <button type="button" data-preset="plant">เตือนรดน้ำ</button>
-          <button type="button" data-preset="locker">เตือนตู้เปิดค้าง</button>
-          <button type="button" data-preset="desk">ไฟโต๊ะอัตโนมัติ</button>
-          <button type="button" data-preset="custom">กรอกไอเดียเอง</button>
-        </div>
-        <div class="ap-fields">
-          <div class="ap-field">
-            <label for="ap-idea">อยากทำอะไร <small>จำเป็น</small></label>
-            <input id="ap-idea" name="idea" required maxlength="140" placeholder="เช่น ระบบเตือนรดน้ำต้นไม้">
-          </div>
-          <div class="ap-field">
-            <label for="ap-goal">ตอนสาธิต อยากให้เห็นอะไร</label>
-            <textarea id="ap-goal" name="goal" rows="2" maxlength="350" placeholder="เช่น ดินแห้งแล้วไฟติด ดินชื้นแล้วไฟดับ"></textarea>
-          </div>
-          <div class="ap-field-pair">
-            <div class="ap-field">
-              <label for="ap-budget">งบสูงสุด (บาท)</label>
-              <input id="ap-budget" name="budget" type="number" min="0" step="1" inputmode="numeric">
-            </div>
-            <div class="ap-field">
-              <label for="ap-time">เวลาที่มี</label>
-              <input id="ap-time" name="time" maxlength="100" placeholder="เช่น 2 สัปดาห์">
-            </div>
-          </div>
-          <div class="ap-field">
-              <label for="ap-tools">บอร์ด อุปกรณ์ และเครื่องมือที่มี</label>
-            <textarea id="ap-tools" name="tools" rows="2" maxlength="350" placeholder="เช่น ESP32 DevKit V1, LED, Arduino IDE, Wokwi"></textarea>
-          </div>
-          <div class="ap-field">
-            <label for="ap-limits">ข้อจำกัดของกลุ่ม <small>ถ้ามี</small></label>
-            <input id="ap-limits" name="limits" maxlength="200" placeholder="เช่น เพิ่งหัดเขียนโค้ด ใช้ USB 5 V และยังบัดกรีไม่เป็น">
-          </div>
-        </div>
-      </section>
-
-      <section class="cl-panel-inner ap-prompt" aria-labelledby="ap-prompt-heading">
-        <header class="cl-example-heading">
-          <h2 id="ap-prompt-heading">2. เลือกสิ่งที่อยากถาม AI</h2>
-          <p>เริ่มจากประเมินไอเดีย แล้วใช้คำถามอื่นถามต่อในแชตเดิมได้</p>
-        </header>
-        <fieldset class="ap-modes">
-          <legend class="ap-sr-only">เลือกหัวข้อที่จะถาม</legend>
-          <div><input type="radio" id="ap-assess" name="mode" value="assess" checked><label for="ap-assess">ประเมินไอเดีย</label></div>
-          <div><input type="radio" id="ap-poc" name="mode" value="poc"><label for="ap-poc">วางแผน POC</label></div>
-          <div><input type="radio" id="ap-diagram" name="mode" value="diagram"><label for="ap-diagram">วาดไดอะแกรม</label></div>
-          <div><input type="radio" id="ap-explain" name="mode" value="explain"><label for="ap-explain">อธิบายอีกแบบ</label></div>
-        </fieldset>
-        <div class="ap-field" id="ap-format-field" hidden>
-          <label for="ap-format">อยากให้ AI อธิบายแบบไหน</label>
-          <select id="ap-format" name="format">
-            <option value="analogy">เปรียบเทียบกับของใกล้ตัว</option>
-            <option value="story">เล่าเป็นเหตุการณ์ 3 ฉาก</option>
-            <option value="table">สรุปเป็นตารางสั้น ๆ</option>
-          </select>
-        </div>
-        <div class="pt-prompt-target" id="pt-prompt-target" hidden>
-          <span id="pt-target-text"></span>
-          <button type="button" id="pt-clear">เอาออก</button>
-        </div>
-        <div class="ap-field">
-          <label for="ap-output">คำถามพร้อมคัดลอก</label>
-          <textarea id="ap-output" rows="12" readonly></textarea>
-        </div>
-        <div class="ap-actions">
-          <button type="button" class="ap-primary" id="ap-copy">คัดลอกคำถาม</button>
-          <a class="ap-link-button" href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">เปิด Gemini ↗</a>
-        </div>
-        <p class="ap-status" id="ap-status" role="status"></p>
-        <p class="ap-note">เปิด Gemini แล้ววางคำถามและกดส่ง ใช้แบบฟรีได้ ถ้าบัญชีมี Pro ให้เลือก ก็ลองคำถามเดียวกันแล้วเทียบคำตอบได้</p>
-        <p class="ap-note">ข้อมูลที่กรอกอยู่ในหน้านี้ เลือกเฉพาะข้อมูลโปรเจกต์ที่ต้องการส่งให้ AI</p>
-      </section>
-    </form>
-
     <section class="cl-panel-inner ap-follow-up" aria-labelledby="ap-follow-up-heading">
       <header class="cl-example-heading">
-        <h2 id="ap-follow-up-heading">3. เช็กคำตอบก่อนเริ่มลงมือ</h2>
+        <h2 id="ap-follow-up-heading">เช็กคำตอบก่อนเริ่มลงมือ</h2>
       </header>
       <ul class="ap-review">
         <li><strong>ทำทันไหม</strong> เลือกฟีเจอร์หลักหนึ่งอย่างที่กลุ่มทำทัน ถ้างานใหญ่ไป ให้ถามว่าตัดอะไรออกได้ก่อน</li>

@@ -90,6 +90,7 @@ const requests = {
 
 const form = document.querySelector('#project-form');
 const geminiDialog = document.querySelector('#ap-gemini');
+const geminiResult = document.querySelector('#ap-show-gemini');
 const output = document.querySelector('#ap-output');
 const status = document.querySelector('#ap-status');
 const idea = form.elements.namedItem('idea');
@@ -98,7 +99,7 @@ const fields = ['idea', 'goal', 'budget', 'time', 'tools', 'limits'];
 const target = document.querySelector('#pt-prompt-target');
 let buildPlan;
 
-document.querySelector('#ap-show-gemini').addEventListener('click', () => {
+geminiResult.addEventListener('click', () => {
   geminiDialog.showModal();
   geminiDialog.querySelector('.ap-gemini-body').scrollTop = 0;
 });
@@ -112,8 +113,10 @@ function renderPrompt() {
   document.querySelector('#ap-format-field').hidden = !explaining;
   const request = explaining ? `${requests.explain}\n${explainFormats[read('format')]}` : requests[mode];
   const test = feederBrief ? feederTests[selectedFeederTest] : null;
-  output.value = [
+  output.textContent = [
     'ฉันเป็นนักเรียน ม.4 เพิ่งเริ่มทำโปรเจกต์ ESP32 ช่วยตอบเป็นภาษาไทยที่อ่านง่าย',
+    '',
+    request,
     '',
     `ไอเดีย: ${read('idea') || 'ยังไม่ได้ระบุ'}`,
     `ผลที่อยากให้เห็นตอนสาธิต: ${read('goal') || 'ช่วยเสนอผลที่วัดได้'}`,
@@ -122,17 +125,16 @@ function renderPrompt() {
     `บอร์ด อุปกรณ์ และเครื่องมือที่มี: ${read('tools') || 'ยังไม่ได้ระบุ'}`,
     `ข้อจำกัดเพิ่มเติม: ${read('limits') || 'ยังไม่ได้ระบุ'}`,
     ...(buildPlan ? [`เป้าหมายความพร้อม: ${buildPlan.goal} ช่วยประเมินงบและเวลาของโปรเจกต์ฉันตามเป้าหมายนี้`] : []),
-    '',
-    request,
     ...(test ? [
       '',
       `กรณีทดสอบที่เลือก: ${test.input}`,
       `ผลที่คาดไว้: ${test.pass}`,
-      'ช่วยวางขั้นตอนทดลองให้ทำซ้ำได้ ระบุว่าจะดูค่าไหนบน Serial หรือหน้าเครื่อง และเสนอกรณีใกล้ขอบเงื่อนไขอีกหนึ่งกรณี',
+      ...(mode === 'poc' ? ['ช่วยวางขั้นตอนทดลองให้ทำซ้ำได้ ระบุว่าจะดูค่าไหนบน Serial หรือหน้าเครื่อง และเสนอกรณีใกล้ขอบเงื่อนไขอีกหนึ่งกรณี'] : []),
     ] : []),
   ].join('\n');
-  output.setSelectionRange(0,0);
-  output.scrollTop = 0;
+  const matchesSample = mode === 'poc' && test === feederTests.normal && !buildPlan
+    && fields.every(field => read(field) === presets.feeder[field]);
+  geminiResult.hidden = !matchesSample;
   status.textContent = '';
 }
 
@@ -164,14 +166,14 @@ form.addEventListener('input', event => {
 document.querySelector('#ap-copy').addEventListener('click',async () => {
   idea.setCustomValidity(idea.value.trim() ? '' : 'ใส่ไอเดียที่อยากให้ AI ช่วยดู');
   if (!form.reportValidity()) return;
-  const text = output.value;
+  const text = output.textContent;
   try {
     await navigator.clipboard.writeText(text);
-    if (text === output.value) status.textContent = 'คัดลอกแล้ว เปิด Gemini แล้ววางคำถามได้เลย';
+    if (text === output.textContent) status.textContent = 'คัดลอกแล้ว เปิด Gemini แล้ววางคำถามได้เลย';
   } catch {
-    if (text !== output.value) return;
-    output.focus();
-    output.select();
+    if (text !== output.textContent) return;
+    output.focus({ preventScroll: true });
+    window.getSelection()?.selectAllChildren(output);
     status.textContent = 'เลือกข้อความให้แล้ว กด Ctrl+C หรือ ⌘C เพื่อคัดลอก';
   }
 });

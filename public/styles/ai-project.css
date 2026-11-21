@@ -1,7 +1,8 @@
 .ap-lesson { max-inline-size: 1120px; }
 .ap-workspace, .ap-follow-up, .ap-glossary { margin-block-start: 1rem; }
-.ap-workspace { display: grid; grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr); gap: .9rem; align-items: stretch; }
+.ap-workspace { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; align-items: start; }
 .ap-workspace > section { min-inline-size: 0; }
+.ap-prompt { grid-column: 1 / -1; }
 .ap-lesson .cl-example-heading h2 { margin-block: 0 .35rem; }
 .ap-lesson .cl-example-heading p { margin-block: .2rem .85rem; }
 .ap-presets, .ap-actions { display: flex; flex-wrap: wrap; gap: .45rem; }
@@ -46,7 +47,7 @@
 .ap-field textarea { resize: vertical; }
 .ap-field :is(input,textarea)::placeholder { color: #526580; }
 .ap-field input:user-invalid { border-color: #b91c1c; }
-.ap-lesson :is(button,a,input,textarea,select,summary):focus-visible, .ap-modes input:focus-visible + label { outline: 2px solid #2563eb; outline-offset: 2px; }
+.ap-lesson :is(button,a,input,textarea,select,summary,pre):focus-visible, .ap-modes input:focus-visible + label { outline: 2px solid #2563eb; outline-offset: 2px; }
 .ap-modes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -69,8 +70,20 @@
 }
 .ap-field[hidden] { display: none; }
 #ap-format-field { margin-block-end: .7rem; }
-#ap-output { background: #182235; border-color: #263957; color: #e0f2fe; font: 400 .8rem/1.7 'JetBrains Mono', Prompt, monospace; }
+#ap-output {
+  margin: 0;
+  padding: .85rem clamp(.75rem, 2.2vw, 1.15rem);
+  border: 1px solid #c6daf1;
+  border-radius: .7rem;
+  background: #f6faff;
+  color: #233b59;
+  font: 400 clamp(.94rem, 1.65vw, 1.05rem)/1.63 Prompt, system-ui, sans-serif;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .ap-actions { margin-block-start: .7rem; }
+.ap-actions :is(button, a) { min-block-size: 44px; }
+.ap-actions button[hidden] { display: none; }
 .ap-status { color: #1e40af; font-size: .82rem; font-weight: 600; margin: .4rem 0 0; }
 .ap-status:empty { margin: 0; }
 .ap-note { margin: .5rem 0 0; font-size: .8rem; color: #475569; }
@@ -87,6 +100,9 @@
 .ap-block-diagram b { color: #2563eb; }
 @container code-panel (max-width: 740px) {
   .ap-workspace { grid-template-columns: minmax(0, 1fr); }
+}
+@container code-panel (min-width: 520px) {
+  .ap-modes { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 @container code-panel (max-width: 380px) {
   .ap-block-diagram { flex-direction: column; }
@@ -110,16 +126,7 @@
 .ap-optional-tradeoff > summary { color: #1e3a8a; cursor: pointer; min-block-size: 2.75rem; align-content: center; }
 @media (max-width: 37rem) { .ap-feeder-expect { grid-template-columns: minmax(0, 1fr); } }
 
-.ap-gemini-entry {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .4rem .65rem;
-  align-items: center;
-  margin-block-start: .72rem;
-  color: #395373;
-  font-size: .9rem;
-}
-.ap-gemini-entry button, .ap-gemini-head button { min-block-size: 44px; font-size: .94rem; }
+.ap-gemini-head button { min-block-size: 44px; font-size: .94rem; }
 .ap-gemini {
   box-sizing: border-box;
   inline-size: min(58rem, calc(100% - 1.5rem));
