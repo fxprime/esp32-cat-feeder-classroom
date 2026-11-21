@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "prebuild": "node scripts/build-signal-assets.mjs && node scripts/export-labs.mjs && node scripts/build-classroom.mjs && node scripts/check-feeder.mjs && node scripts/check-code-lesson.mjs && node scripts/check-block-structure.mjs && node scripts/check-multimeter.mjs && node scripts/build-code-lesson.mjs && node scripts/check-placement.mjs && node scripts/check-signals.mjs && node scripts/check-circuit-analysis.mjs && node scripts/check-breadboard-quiz.mjs && node scripts/check-pinout.mjs && node scripts/build-pinout.mjs && tailwindcss -i src/classroom/index.css -o public/styles/classroom.css --minify",
+    "prebuild": "node scripts/build-signal-assets.mjs && node scripts/export-labs.mjs && node scripts/build-classroom.mjs && node scripts/check-feeder.mjs && node scripts/check-power-teaching.mjs && node scripts/check-code-lesson.mjs && node scripts/check-block-structure.mjs && node scripts/check-multimeter.mjs && node scripts/build-code-lesson.mjs && node scripts/check-placement.mjs && node scripts/check-signals.mjs && node scripts/check-circuit-analysis.mjs && node scripts/check-breadboard-quiz.mjs && node scripts/check-pinout.mjs && node scripts/build-pinout.mjs && tailwindcss -i src/classroom/index.css -o public/styles/classroom.css --minify",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
     "predev": "npm run prebuild",

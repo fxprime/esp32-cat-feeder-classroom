@@ -1,14 +1,15 @@
 import { usbScene } from './usb-scene.js';
 import { showSourcePanel } from './source-panels.js';
+import { POWER_EXAMPLE } from './teaching-model.js';
 
-const limits = {usb:500, chart:1300};
-const board = {run:150, peak:250};
+const limits = { usb: POWER_EXAMPLE.usbLimit, chart: 1300 };
+const board = POWER_EXAMPLE.board;
 const loads = {
-  board: {label:'ESP32 อย่างเดียว', run:0, peak:0, zone:'safe', title:'เขียว · มีที่เผื่อ', message:'ESP32 ใช้กระแสอยู่แล้ว แม้ยังไม่ต่ออุปกรณ์ ยอดในฉากนี้มาจากช่วงบอร์ดทำงานหนักขึ้น'},
-  led: {label:'LED + R', run:5, peak:5, zone:'safe', title:'เขียว · ใช้ได้ในฉากนี้', message:'LED มี R จำกัดกระแส เพิ่มเพียง 5mA ในภาพ เมื่อรวมกับบอร์ดแล้วยังเหลือจากเพดานพอร์ต'},
-  servo: {label:'Servo', run:180, peak:400, zone:'warning', title:'เหลือง · เสี่ยงไฟตก', message:'กระแสขณะขยับดูพอ แต่ยอดตอนออกแรงเกินงบ 500mA บอร์ดอาจรีเซตหรือแขนสั่น ใช้ไฟเลี้ยง Servo แยกตามพิกัดและต่อ GND อ้างอิงร่วม'},
-  motor: {label:'DC Motor + Driver', run:230, peak:650, zone:'danger', title:'แดง · เกินพิกัดช่วงกระชาก', message:'ขณะหมุนดูเหมือนอยู่ในงบ แต่ตอนเริ่มหมุนโหลดขอถึง 900mA พอร์ตอาจตัดหรืออุปกรณ์เสียหาย ฉากควันแสดงกรณีเสียหาย ใช้แหล่งจ่ายมอเตอร์แยกที่รองรับกระแสพุ่งและวงจรขับที่จัดการไฟย้อน'},
-  stall: {label:'Motor · ล้อติด', run:950, peak:950, zone:'danger', title:'แดง · ล้อติด กระแสค้างสูง', message:'เมื่อมือหยุดล้อขณะยังสั่งให้หมุน ความเร็วเป็นศูนย์ แรงดันที่มอเตอร์สร้างตามความเร็วลดลงเกือบเป็นศูนย์ กระแสจากพอร์ตจึงสูงและค้างจนกว่าจะตัดไฟหรือปล่อยโหลด'},
+  board: {label:'ESP32 อย่างเดียว', run:0, peak:0, zone:'safe', title:'เขียว · พิกัดจ่ายพอในฉากนี้', message:'บอร์ดต้องการกระแสแม้ยังไม่ต่ออุปกรณ์เพิ่ม ช่วงที่บอร์ดทำงานหนักขึ้นจะต้องการมากขึ้น'},
+  led: {label:'LED + R', run:5, peak:5, zone:'safe', title:'เขียว · พิกัดจ่ายพอในฉากนี้', message:'LED ผ่านตัวต้านทานต้องการกระแสเพิ่มเพียง 5 mA ในฉากนี้ รวมกับบอร์ดแล้วยังต่ำกว่าพิกัดตัวอย่าง'},
+  servo: {label:'Servo', ...POWER_EXAMPLE.servo, zone:'warning', title:'เหลือง · พิกัดจ่ายไม่พอช่วงพีก', message:'เมื่อ Servo ออกแรง ความต้องการรวมเกินพิกัดพอร์ตในฉากนี้ บอร์ดอาจรีเซตหรือแขนสั่น ใช้ไฟเลี้ยง Servo แยกตามพิกัดและต่อ GND อ้างอิงร่วม'},
+  motor: {label:'DC Motor + Driver', run:230, peak:650, zone:'danger', title:'แดง · พิกัดจ่ายไม่พอช่วงเริ่มหมุน', message:'มอเตอร์ต้องการกระแสเพิ่มตอนเริ่มหมุนจนเกินพิกัดตัวอย่าง พอร์ตอาจตัด ฉากควันแสดงกรณีเสียหาย ใช้แหล่งจ่ายมอเตอร์แยกตามพิกัดและวงจรขับที่จัดการไฟย้อน'},
+  stall: {label:'Motor · ล้อติด', run:950, peak:950, zone:'danger', title:'แดง · ล้อติด โหลดต้องการกระแสสูงต่อเนื่อง', message:'เมื่อล้อหยุดขณะยังสั่งให้หมุน แรงดันที่มอเตอร์สร้างตามความเร็วจะลดลง มอเตอร์จึงต้องการกระแสสูงต่อเนื่อง พิกัดพอร์ตในฉากนี้รองรับไม่พอ'},
   brake: {label:'Motor · ช่วงเบรก', run:0, peak:0, zone:'danger', title:'แดง · พลังงานย้อนเข้ารางไฟ', message:'ขณะล้อยังหมุน มอเตอร์สร้างแรงดันจากการหมุน เรียกว่า Back EMF ถ้าไดรเวอร์คืนพลังงานเข้ารางและมีทางย้อนถึง VBUS แรงดันอาจพุ่งจนพอร์ตเสียหายได้ เมื่อหยุดสนิทแรงดันจากการหมุนก็หมดไป'}
 };
 
@@ -50,16 +51,32 @@ function showCurrent() {
   const meter = $('power-live');
   meter.dataset.zone = linked ? active.zone : 'off';
   $('power-zone').textContent = linked ? active.title : 'ยังไม่ได้เสียบสาย';
-  $('power-total').textContent = !linked ? '0mA' : reverse ? (brakeFinished ? 'จบฉาก · พอร์ตเสียหาย' : 'พลังงานย้อน ↑ VBUS') : motor === 'stall' ? `${running}mA ต่อเนื่อง` : `${running}mA · ยอด ${peak}mA`;
   meter.style.setProperty('--running',percent(linked&&!reverse ? running : 0));
   meter.style.setProperty('--peak',percent(linked&&!reverse ? peak : 0));
   meter.style.setProperty('--usb-limit',percent(limits.usb));
-  $('current-scale').hidden = reverse;
-  $('current-scale').setAttribute('aria-label', linked&&!reverse ? `กระแสปกติ ${running} มิลลิแอมป์ ยอด ${peak} มิลลิแอมป์ พิกัดพอร์ต 500 มิลลิแอมป์` : 'กระแสจาก USB เป็นศูนย์');
-  $('power-current-parts').textContent = !linked ? 'กดเสียบสาย USB เพื่อเริ่ม' : reverse ? (brakeFinished ? 'ล้อหยุดแล้ว · เครื่องหมายที่พอร์ตแสดงผลเสียหายสมมติ' : 'Motor → Driver → รางไฟร่วม → USB (เฉพาะวงจรที่เปิดทางให้ไฟย้อน)') :
-    `ขณะทำงาน ESP32 ${board.run}mA + ${active.label} ${active.run}mA · ช่วงพุ่ง ESP32 ${board.peak}mA + โหลด ${active.peak}mA`;
-  if (linked && load === 'board') $('power-current-parts').textContent = 'ESP32 150mA ขณะทำงาน · ยอด 250mA ในภาพจำลอง';
-  $('power-message').textContent = linked ? active.message : 'เลือกอุปกรณ์ไว้ก่อนก็ได้ กระแสจะเริ่มวิ่งเมื่อหัวสายทั้งสองด้านเสียบครบ';
+  const scale = $('current-scale');
+  const total = $('power-total');
+  const parts = $('power-current-parts');
+  scale.hidden = reverse;
+  scale.setAttribute('aria-label', linked && !reverse
+    ? `กราฟกระแสที่โหลดต้องการ ช่วงทำงาน ${running} มิลลิแอมป์ ช่วงพีก ${peak} มิลลิแอมป์ พิกัดจ่ายตัวอย่าง ${limits.usb} มิลลิแอมป์`
+    : 'กราฟกระแสที่โหลดต้องการ ยังไม่ได้เสียบสาย USB');
+  if (!linked) {
+    total.textContent = 'รอเสียบสาย USB';
+    parts.textContent = 'กดเสียบสาย USB เพื่อเริ่ม';
+  } else if (reverse) {
+    total.textContent = brakeFinished ? 'จบฉาก · ตัวอย่างเมื่อพอร์ตเสียหาย' : 'พลังงานย้อน ↑ VBUS';
+    parts.textContent = brakeFinished
+      ? 'ล้อหยุดแล้ว เครื่องหมายที่พอร์ตแสดงผลเสียหายสมมติ'
+      : 'Motor → Driver → รางไฟร่วม → USB (เฉพาะวงจรที่เปิดทางให้ไฟย้อน)';
+  } else {
+    total.textContent = `โหลดต้องการ ${running} mA · พีก ${peak} mA`;
+    const breakdown = load === 'board'
+      ? 'ตัวอย่างสำหรับ ESP32 อย่างเดียว'
+      : `ช่วงทำงาน ESP32 ${board.run} mA + ${active.label} ${active.run} mA · ช่วงพีก ESP32 ${board.peak} mA + โหลด ${active.peak} mA`;
+    parts.textContent = `พิกัดจ่ายตัวอย่าง ${limits.usb} mA · ${breakdown}`;
+  }
+  $('power-message').textContent = linked ? active.message : 'เลือกอุปกรณ์ แล้วเสียบสายเพื่อเทียบความต้องการของโหลดกับพิกัดจ่ายตัวอย่าง';
 }
 
 function render() {

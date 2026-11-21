@@ -1,0 +1,260 @@
+.power-story.power-page {
+  container: power-lesson / inline-size;
+  padding: .65rem clamp(.75rem, 2.4vw, 1.7rem) 1.25rem;
+}
+.power-story .power-hero { margin: 0 auto .45rem; }
+.power-story .power-hero h1 {
+  font-size: clamp(1.55rem, 4vw, 2.55rem);
+  line-height: 1.36;
+  margin: 0;
+  text-wrap: balance;
+}
+.power-lesson-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .45rem;
+  margin-block-end: .65rem;
+}
+.power-lesson-nav button,
+.power-lesson-choices button,
+.power-story .ff-power-controls button {
+  min-block-size: 44px;
+  min-inline-size: 44px;
+  padding: .38rem .62rem;
+  border: 1px solid #9fbcd7;
+  border-radius: .65rem;
+  background: #fff;
+  color: #174764;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.power-lesson-nav button:hover:not(:disabled),
+.power-lesson-choices button:hover,
+.power-story .ff-power-controls button:hover { border-color: #2175aa; background: #eef7ff; }
+.power-lesson-nav button[aria-current],
+.power-lesson-choices button[aria-pressed="true"],
+.power-story .ff-power-controls button[aria-pressed="true"] {
+  border-color: #2479ad;
+  background: #e4f4ff;
+  color: #113e60;
+  box-shadow: inset 0 -3px #2479ad;
+}
+.power-lesson-nav button.power-lesson-primary,
+.power-story .ff-power-controls button.ff-primary {
+  background: #075985;
+  border-color: #075985;
+  color: #fff;
+}
+.power-lesson-nav button.power-lesson-primary:hover:not(:disabled),
+.power-story .ff-power-controls button.ff-primary:hover { background: #06486c; }
+.power-lesson-stages {
+  display: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.power-lesson-position { color: #315675; font-weight: 700; }
+.power-lesson-panel {
+  border: 1px solid #a9c9de;
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 .55rem 1.5rem #21496a13;
+  padding: clamp(.8rem, 1.8vw, 1.2rem);
+  margin: 0 0 .65rem;
+  overflow-wrap: break-word;
+}
+.power-lesson-panel h2 {
+  color: #123e65;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 800;
+  line-height: 1.38;
+  text-wrap: balance;
+}
+.power-lesson-panel h2:focus { outline: none; }
+.power-lesson-panel p { text-wrap: pretty; }
+.power-lesson-panel .power-lesson-prompt {
+  margin: .12rem 0 .65rem;
+  color: #344e62;
+  font-size: clamp(1rem, 1.7vw, 1.15rem);
+  line-height: 1.5;
+}
+.power-lesson-layout,
+.power-story .ff-power-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: .7rem;
+  margin: 0;
+}
+.power-lesson-visual {
+  border: 1px solid #c5deed;
+  border-radius: .85rem;
+  background: #f2faff;
+  padding: .65rem .8rem;
+}
+.power-lesson-controls {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: .45rem;
+}
+.power-lesson-choices {
+  min-inline-size: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .38rem;
+}
+.power-lesson-choices legend {
+  padding: 0;
+  margin-block-end: .15rem;
+  color: #153a57;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.power-lesson-panel .power-lesson-note {
+  color: #355268;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.power-lesson-result {
+  margin-block-start: .55rem;
+  padding: .48rem .7rem;
+  border-inline-start: 4px solid #1376aa;
+  border-radius: .38rem;
+  background: #edf7fc;
+  color: #153e5b;
+  font-size: clamp(1rem, 1.65vw, 1.1rem);
+  line-height: 1.45;
+  font-weight: 700;
+}
+.power-lesson-result[data-tone="good"] { border-color: #167455; background: #e9f8ef; color: #15533e; }
+.power-lesson-result[data-tone="warn"] { border-color: #b74a30; background: #fff1e9; color: #843325; }
+.power-wire-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .45rem;
+  margin-bottom: .35rem;
+  font-size: 1.02rem;
+}
+.power-wire-head b,
+.power-pack-value strong,
+.power-lithium-path strong,
+.power-energy strong {
+  font: 600 clamp(1.45rem, 3vw, 2.1rem)/1.2 'JetBrains Mono', monospace;
+  color: #153e5b;
+  white-space: nowrap;
+}
+.power-meter {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+  gap: .18rem .45rem;
+  margin-block-end: .32rem;
+  color: #234d64;
+  font-weight: 600;
+}
+.power-meter b { font: 600 clamp(.95rem, 1.7vw, 1.15rem) 'JetBrains Mono', monospace; white-space: nowrap; }
+.power-meter-track { grid-column: 1 / -1; height: .7rem; background: #d8e8f2; border-radius: 2rem; }
+.power-meter-track span { display: block; height: 100%; border-radius: inherit; background: #0874af; transform: scaleX(var(--ratio, .25)); transform-origin: left; }
+.power-meter-track span[data-wire-peak-bar] { --ratio: .125; background: #5273a7; }
+.power-wire-visual[data-over-budget="true"] [data-wire-peak-bar] { background: #b74a30; }
+.power-meter-axis { display: flex; justify-content: space-between; color: #3e5a72; font: 500 .82rem 'JetBrains Mono', monospace; }
+.power-wire-demo { display: flex; flex-wrap: wrap; align-items: center; gap: .15rem .7rem; margin-block-start: .25rem; color: #234d64; }
+.power-wire-demo svg { inline-size: 6.5rem; flex: none; }
+.power-wire-demo[data-gate="low"] { color: #843325; }
+.power-wire-gate { transform-origin: 75px 31px; }
+.power-wire-demo[data-gate="low"] .power-wire-gate { transform: rotate(7deg); }
+.power-wire-demo[data-gate="open"] .power-wire-gate { transform: rotate(27deg); }
+.power-wire-kibble { opacity: 0; }
+.power-wire-demo[data-gate="open"] .power-wire-kibble { opacity: 1; }
+.power-battery-visual { display: grid; align-content: center; gap: .55rem; }
+.power-cells {
+  --cell-gap: clamp(.4rem, 1.25vw, .85rem);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: var(--cell-gap);
+  padding-inline-end: .28rem;
+}
+.power-cells div {
+  position: relative;
+  min-block-size: 2.7rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid #9a5a35;
+  border-radius: .4rem;
+  background: linear-gradient(#efb274, #ffe8c7 52%, #ffd39e);
+  color: #653417;
+  font: 600 clamp(.75rem, 1.7vw, 1rem) 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+.power-cells div::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 100%;
+  inline-size: .27rem;
+  block-size: 42%;
+  background: #728898;
+  border-radius: 0 .15rem .15rem 0;
+}
+.power-cells div:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: calc(100% + .27rem);
+  inline-size: calc(var(--cell-gap) - .2rem);
+  block-size: 2px;
+  background: #537185;
+}
+.power-cells[data-chemistry="nimh"] div { border-color: #38724e; background: linear-gradient(#a5d7a6, #e2f6dc 52%, #9fdfb5); color: #235137; }
+.power-pack-value { display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: .36rem .68rem; }
+.power-battery-summary { color: #164c72; font-weight: 800; font-size: 1.19rem; }
+.power-lithium-visual { display: grid; align-content: center; gap: .65rem; }
+.power-lithium-path { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: .4rem; text-align: center; }
+.power-lithium-cell,
+.power-converter { display: grid; place-items: center; gap: .18rem; padding: .45rem .2rem; border: 1px solid #8da7c1; border-radius: .45rem; background: #e6edf7; color: #254663; line-height: 1.35; }
+.power-lithium-cell[data-cell-form="cylinder"] { border-radius: 1.65rem; border-color: #6d9f87; background: linear-gradient(#d9f4e2,#b0dec9); }
+.power-converter { background: #e0f4ff; }
+.power-path-arrow { color: #176a99; font-size: 1.6rem; }
+.power-energy { display: flex; justify-content: center; align-items: baseline; flex-wrap: wrap; gap: .25rem .55rem; line-height: 1.35; }
+.power-scenario { display: grid; gap: .45rem; align-content: space-between; }
+.power-scenario p { color: #163e5c; line-height: 1.45; font-size: 1.06rem; font-weight: 600; }
+.power-story .ff-power-grid { align-items: center; }
+.power-story .ff-power-controls { grid-template-columns: repeat(2, minmax(0,1fr)); gap: .38rem; }
+.power-story .ff-power-controls button { text-align: start; }
+.power-story .ff-power-controls button[data-power-test] { text-align: center; }
+.power-story .ff-power-controls small { display: block; }
+.power-story .ff-power-controls .ff-power-status {
+  grid-column: 1 / -1;
+  min-block-size: 3.25rem;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.power-story .power-demo-note { margin-block-start: .5rem; font-size: 1rem; color: #254663; }
+.power-story .ff-svg-label { font-size: 17px; }
+.power-demo-lamp { fill: #546f89; }
+.power-ground-junction { fill: #354d65; opacity: 0; }
+.power-story .ff-power[data-ground="true"] .power-ground-junction { opacity: 1; }
+.power-story .ff-power[data-adapter="true"] .power-servo-return { stroke: #354d65; stroke-dasharray: none; }
+.power-story .ff-power[data-usb="true"] .power-signal { stroke: #b45309; stroke-dasharray: none; }
+.power-story .ff-power[data-usb="true"] .power-demo-lamp { fill: #90ff9b; filter: drop-shadow(0 0 4px #78ff94); }
+.power-story .power-more { padding: .5rem .8rem; margin: 0 0 .65rem; box-shadow: none; }
+.power-story .power-more summary { display: list-item; min-block-size: 2.75rem; align-content: center; }
+.power-story .power-more[open] summary { margin-block-end: .5rem; }
+
+@container power-lesson (min-width: 44rem) {
+  .power-lesson-stages { display: flex; justify-content: center; flex-wrap: wrap; gap: .34rem; }
+  .power-lesson-position { display: none; }
+  .power-lesson-layout, .power-story .ff-power-grid { grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); }
+  .power-story .ff-power-svg { max-block-size: 12.5rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .power-meter-track span { transition: transform var(--power-slow) var(--power-ease), background-color var(--power-quick) ease; }
+  .power-wire-gate, .power-wire-kibble { transition: transform var(--power-slow) ease-in-out, opacity var(--power-slow) ease-in-out; }
+  .power-lesson-panel:not([hidden]) { animation: power-stage-in var(--power-quick) ease-in-out; }
+  @keyframes power-stage-in { from { opacity: .65; transform: translateY(.2rem); } }
+}
