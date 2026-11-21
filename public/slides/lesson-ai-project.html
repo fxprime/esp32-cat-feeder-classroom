@@ -16,14 +16,14 @@
   <main class="cl-lesson ap-lesson">
     <header class="cl-hero">
       <span class="cl-kicker">โปรเจกต์ ESP32 ม.4</span>
-      <h1>เลือกกรณีทดสอบเครื่องให้อาหารแมว</h1>
-      <p>เราอยากให้เครื่องเช็กถังก่อนเปิดฝา และรู้ว่ามีตัวมาที่ชามหลังจ่าย แบบนี้ทำได้จริงไหม?</p>
+      <h1>งานประเมิน ไอเดีย AI ดีๆ ช่วยคุณได้ !</h1>
+      <p>เราอยากรู้ว่าไอเดียที่จะทำสามารถเกิดขึ้นจริงหรือเจ๊งได้จากในจอ ลดความสูญเสียทั้งเงิน เวลา และพลังงาน</p>
     </header>
 
     <form class="ap-workspace" id="project-form" aria-labelledby="ap-prompt-heading">
       <section class="cl-panel-inner ap-prompt" aria-labelledby="ap-prompt-heading">
         <header class="cl-example-heading">
-          <h2 id="ap-prompt-heading">คำถามที่จะส่ง Gemini</h2>
+          <h2 id="ap-prompt-heading">คำถามที่จะส่ง AI</h2>
         </header>
         <fieldset class="ap-modes">
           <legend class="ap-sr-only">เลือกหัวข้อที่จะถาม</legend>
@@ -47,11 +47,10 @@
         <pre id="ap-output" tabindex="-1"></pre>
         <div class="ap-actions">
           <button type="button" class="ap-primary" id="ap-copy">คัดลอกคำถาม</button>
-          <a class="ap-link-button" href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">เปิด Gemini ↗</a>
-          <button type="button" id="ap-show-gemini" aria-haspopup="dialog" hidden>ผลลัพธ์จาก Gemini</button>
+          <button type="button" id="ap-show-ai-result" aria-haspopup="dialog" hidden>ผลลัพธ์จาก AI</button>
         </div>
         <p class="ap-status" id="ap-status" role="status"></p>
-        <p class="ap-note">เปิด Gemini แล้ววางคำถามและกดส่ง ใช้แบบฟรีได้ ถ้าบัญชีมี Pro ให้เลือก ก็ลองคำถามเดียวกันแล้วเทียบคำตอบได้</p>
+        <p class="ap-note">คัดลอกคำถามไปวางในแชต AI ที่ใช้ แล้วลองเทียบคำตอบกับสิ่งที่วัดหรือสังเกตได้ใน Lab</p>
         <p class="ap-note">ข้อมูลที่กรอกอยู่ในหน้านี้ เลือกเฉพาะข้อมูลโปรเจกต์ที่ต้องการส่งให้ AI</p>
       </section>
 
@@ -59,7 +58,7 @@
         <div>
           <span class="cl-kicker">เตรียมก่อนลง Lab</span>
           <h2 id="ap-test-heading">ถ้าเปลี่ยนหนึ่งอย่าง เครื่องควรทำอะไร?</h2>
-          <p>เลือกเหตุการณ์เดียว แล้วลองคิดว่าควรเห็นอะไรที่เครื่องก่อนเอาคำถามไปให้ Gemini ช่วยวางแผน</p>
+          <p>เลือกเหตุการณ์เดียว แล้วลองคิดว่าควรเห็นอะไรที่เครื่องก่อนเอาคำถามไปให้ AI ช่วยวางแผน</p>
         </div>
         <div class="ap-feeder-cases" role="group" aria-label="กรณีทดสอบเครื่องให้อาหาร">
           <button type="button" data-feeder-test="normal" aria-pressed="true">มื้อปกติ</button>
@@ -117,37 +116,37 @@
       </section>
     </form>
 
-    <dialog class="ap-gemini" id="ap-gemini" aria-labelledby="ap-gemini-title">
-      <header class="ap-gemini-head">
+    <dialog class="ap-ai-result" id="ap-ai-result" aria-labelledby="ap-ai-result-title">
+      <header class="ap-ai-result-head">
         <hgroup>
-          <p>ผลลัพธ์จาก Gemini · มื้อปกติ</p>
-          <h2 id="ap-gemini-title">กดครั้งเดียว ฝาจะเปิด–ปิดหนึ่งรอบไหม?</h2>
+          <p>ผลลัพธ์จาก AI · มื้อปกติ</p>
+          <h2 id="ap-ai-result-title">กดครั้งเดียว ฝาจะเปิด–ปิดหนึ่งรอบไหม?</h2>
         </hgroup>
         <form method="dialog"><button type="submit" autofocus>ปิด</button></form>
       </header>
-      <div class="ap-gemini-body" tabindex="0" role="region" aria-label="แผนทดลองในหนึ่งคาบ">
-        <p class="ap-gemini-source">เรียบเรียงจากคำตอบที่ลองถาม Gemini และปรับรายละเอียดให้ตรงกับ Lab 3</p>
+      <div class="ap-ai-result-body" tabindex="0" role="region" aria-label="แผนทดลองในหนึ่งคาบ">
+        <p class="ap-ai-result-source">เรียบเรียงจากคำตอบของ AI และปรับรายละเอียดให้ตรงกับ Lab 3</p>
         <p>ใช้หนึ่งคาบทำ <strong>POC</strong> หรือการทดลองเล็ก ๆ เพื่อพิสูจน์เรื่องเดียวว่า เมื่อความชื้นและอาหารผ่านเกณฑ์ คำสั่งหนึ่งครั้งจะจ่ายอาหารเพียงหนึ่งรอบ</p>
 
-        <ol class="ap-gemini-flow" role="list">
+        <ol class="ap-ai-result-flow" role="list">
           <li><strong>ตั้งค่าใน Wokwi</strong><span>ความชื้น <b>55% RH</b> · ระยะถึงผิวเม็ด <b>10 ซม.</b> · ตั้ง <b>IR เป็น HIGH</b> (ชามว่าง)</span></li>
           <li><strong>กดให้อาหารหนึ่งครั้ง</strong><span>รอประมาณ 3 วินาทีหลังตั้งค่า แล้วกด <b>MEAL</b> หนึ่งครั้ง ดูว่าฝาขยับกี่รอบ</span></li>
           <li><strong>นับว่าผ่านเมื่อ</strong><span>Buzzer ดัง 1 ครั้ง ฝาเปิดแล้วปิด 1 รอบ และไฟแดงดับ</span></li>
         </ol>
 
-        <section class="ap-gemini-boundary" aria-labelledby="ap-boundary-title">
+        <section class="ap-ai-result-boundary" aria-labelledby="ap-boundary-title">
           <h3 id="ap-boundary-title">ลองความชื้นใกล้เกณฑ์</h3>
           <p>คงระยะ <b>10 ซม.</b> กับ IR ที่ <b>HIGH</b> เปลี่ยนแค่ความชื้น รอให้รอบก่อนจบและให้เซนเซอร์อ่านค่าใหม่ก่อนกดแต่ละครั้ง</p>
           <div><span><b>69% RH</b> จ่ายหนึ่งรอบ</span><span><b>70% RH</b> งดจ่าย ฝาปิดและไฟแดงติด</span></div>
         </section>
 
-        <section class="ap-gemini-serial" aria-labelledby="ap-serial-title">
+        <section class="ap-ai-result-serial" aria-labelledby="ap-serial-title">
           <h3 id="ap-serial-title">ดูอะไรใน Serial Monitor?</h3>
           <p>มื้อปกติดู <code>CHECK</code> ว่าความชื้นราว 55% และอาหารราว 78% จากนั้นดู <code>BEEP</code> → <code>FLAP_OPEN</code> → <code>DISPENSED</code> อย่างละหนึ่งครั้ง กรณี 70% จะขึ้น <code>BLOCK_HUMIDITY</code></p>
           <p>หลังขึ้น <code>DISPENSED</code> ให้เลื่อนสวิตช์ IR เป็น <b>LOW</b> ภายใน 8 วินาที แล้วดู <code>CAT_AT_BOWL</code> เพื่อยืนยันว่ามีตัวเข้าใกล้ชาม ฝายังคงปิดอยู่</p>
         </section>
 
-        <div class="ap-gemini-checks">
+        <div class="ap-ai-result-checks">
           <section aria-labelledby="ap-wokwi-title">
             <h3 id="ap-wokwi-title">เช็กกติกาใน Wokwi</h3>
             <p>ใช้ Lab 3 ที่มี HTU21D แบบจำลอง, HC-SR04 และสวิตช์แทน IR ลองมื้อปกติกับค่าขอบ แล้วจดค่าที่ตั้งและสิ่งที่เกิดขึ้นในแต่ละรอบ</p>
@@ -158,7 +157,7 @@
           </section>
         </div>
 
-        <details class="ap-gemini-debug">
+        <details class="ap-ai-result-debug">
           <summary>ถ้าผลยังไม่ผ่าน ลองเช็กทีละอย่าง</summary>
           <ul>
             <li><strong>บอร์ดรีเซ็ตตอนฝาขยับ</strong> ลองวัดไฟที่ Servo ขณะออกแรง เช็กแหล่งจ่าย 5 V และสาย GND ร่วม</li>
@@ -381,9 +380,6 @@
 
     </details>
 
-    <footer class="cl-footnotes">
-      <a href="https://support.google.com/gemini/answer/16275805" target="_blank" rel="noopener noreferrer">ความสามารถและขีดจำกัดของ Gemini แต่ละบัญชี</a>
-    </footer>
   </main>
   <script type="module" src="../scripts/ai-project.js"></script>
   <script defer src="../scripts/slide-support.js"></script>

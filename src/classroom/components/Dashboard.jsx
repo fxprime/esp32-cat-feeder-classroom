@@ -20,7 +20,7 @@ import {
   Flame,
   Award,
 } from "lucide-react";
-import { LESSONS, PHASES } from "../data/lessons";
+import { FEEDER_LAB_URL, LESSONS, PHASES } from "../data/lessons";
 
 // Icon mapping helper
 const ICONS = {
@@ -311,6 +311,13 @@ export default function Dashboard({
 
       {/* Footer */}
       <footer className="mt-16 py-8 border-t border-slate-800 text-center text-xs text-slate-500">
+        <section className="max-w-xl mx-auto px-4 mb-5" aria-labelledby="course-references">
+          <h2 id="course-references" className="mb-1.5 text-sm font-bold text-slate-300">แหล่งอ้างอิง</h2>
+          <a href={FEEDER_LAB_URL} target="_blank" rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center px-3 font-semibold text-cyan-300 hover:text-cyan-200 underline underline-offset-4">
+            ESP32 Feeder Lab <span aria-hidden="true" className="ml-1">↗</span>
+          </a>
+        </section>
         <p className="max-w-xl mx-auto px-4">
           สื่อการเรียนรู้เชิงปฏิบัติการสำหรับนักเรียนชั้นมัธยมศึกษาปีที่ 4 •
           พัฒนาด้วย React, Vite &amp; Tailwind CSS

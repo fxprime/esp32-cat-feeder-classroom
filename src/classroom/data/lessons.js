@@ -1,3 +1,5 @@
+export const FEEDER_LAB_URL = "https://esp32-cat-feeder-lab.modulemore.chatgpt.site/";
+
 export const PHASES = [
   {
     id: 1,
@@ -56,10 +58,10 @@ export const LESSONS = [
     id: 17,
     slideNum: 2,
     phaseId: 1,
-    title: "เลือกกรณีทดสอบเครื่องให้อาหารแมว",
-    fullName: "2. เลือกกรณีทดสอบเครื่องให้อาหารแมว",
-    subtitle: "แบบที่เราอยากได้ ทำได้จริงไหม?",
-    description: "เลือกหนึ่งกรณีมาพิสูจน์ ลองถาม Gemini แล้วเทียบตัวอย่างคำตอบกับสิ่งที่จะสังเกตใน Lab",
+    title: "งานประเมิน ไอเดีย AI ดีๆ ช่วยคุณได้ !",
+    fullName: "2. งานประเมิน ไอเดีย AI ดีๆ ช่วยคุณได้ !",
+    subtitle: "ไอเดียนี้จะเกิดขึ้นจริงหรือเจ๊ง?",
+    description: "ให้ AI ช่วยประเมินไอเดียก่อนลงมือ แล้วเลือกหนึ่งกรณีไปพิสูจน์ใน Lab",
     file: "lesson-ai-project.html",
     allowExternalTabs: true,
     tag: "สร้าง Prompt · ลองกับ AI",
@@ -240,12 +242,12 @@ export const LESSONS = [
     phaseId: 3,
     title: "Lab เครื่องให้อาหารแมว",
     allowExternalTabs: true,
-    fullName: "13. รวมเครื่องให้อาหารแมวใน Wokwi",
-    subtitle: "สั่งฝาและเสียง → อ่านเซนเซอร์ → รวมระบบ",
+    fullName: "13. Lab เครื่องให้อาหารแมว",
+    subtitle: "เลือก Lab จริง หรือ Lab simulation",
     description:
-      "ทดสอบฝาและเสียง อ่านระดับอาหารกับความชื้น แล้วรวมระบบที่จ่ายได้หนึ่งรอบต่อมื้อ มีผังสายและโค้ด Wokwi",
+      "เปิด ESP32 Feeder Lab สำหรับบอร์ดจริง หรือลองฝา เสียง และเซนเซอร์บน Wokwi พร้อมผังสายและโค้ด",
     file: "lesson-10.html",
-    tag: "Wokwi Lab 1-3 & โค้ด",
+    tag: "บอร์ดจริง · Wokwi",
     icon: "Terminal",
     themeColor: "teal",
     gradient: "from-emerald-500 to-teal-600",

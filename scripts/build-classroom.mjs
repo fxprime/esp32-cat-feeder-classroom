@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { classroomLabs } from "../src/classroom/labs.mjs";
+import { FEEDER_LAB_URL } from "../src/classroom/data/lessons.js";
 import { FEEDER_PINS } from "../public/scripts/feeder/model.js";
 const root = new URL("../", import.meta.url);
 const template = await readFile(
@@ -8,7 +9,9 @@ const template = await readFile(
 );
 await writeFile(
   new URL("public/slides/lesson-10.html", root),
-  template.replace("__ESP32_LABS__", JSON.stringify(classroomLabs)),
+  template
+    .replace("__FEEDER_LAB_URL__", FEEDER_LAB_URL)
+    .replace("__ESP32_LABS__", JSON.stringify(classroomLabs)),
 );
 for (const [key, lab] of Object.entries(classroomLabs)) {
   const path = new URL(`public/labs/${key}/`, root);

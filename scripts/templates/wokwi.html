@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>หน้าปฏิบัติการ Wokwi (Lab 1–3) — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
+  <title>Lab เครื่องให้อาหารแมว — สื่อการสอนพื้นฐาน ESP32 ม.4</title>
   <link rel="stylesheet" href="../styles/classroom.css">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -33,12 +33,88 @@
     .code-scroll::-webkit-scrollbar-thumb:hover {
       background: #475569;
     }
+
+    .lab-choice {
+      container: lab-choice / inline-size;
+      inline-size: min(54rem, calc(100% - 2rem));
+      margin: auto;
+      padding: clamp(1rem, 4vw, 2.1rem);
+      border: 1px solid #bfdae9;
+      border-radius: 1.45rem;
+      background: #fff;
+      box-shadow: 0 .7rem 2rem #244a6917;
+    }
+
+    .lab-choice h1 {
+      margin: 0 0 1rem;
+      color: #16436a;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 800;
+      line-height: 1.32;
+      text-wrap: balance;
+    }
+
+    .lab-choice-actions { display: grid; gap: .72rem; }
+    @container lab-choice (min-width: 34rem) {
+      .lab-choice-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .lab-choice-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .6rem;
+      min-block-size: 5.4rem;
+      padding: .7rem .95rem;
+      border: 1px solid #aec8e5;
+      border-radius: .88rem;
+      background: #eff6ff;
+      color: #17446d;
+      cursor: pointer;
+      text-align: start;
+    }
+
+    .lab-choice-option strong { display: block; font-size: 1.15rem; font-weight: 800; }
+    .lab-choice-option small { display: block; margin-block-start: .16rem; font-size: .87rem; }
+    .lab-choice-option:hover { background: #e1efff; }
+    .lab-choice-option--real { color: #fff; background: #0e725c; border-color: #0e725c; }
+    .lab-choice-option--real:hover { background: #0c604e; }
+    .lab-choice-option:focus-visible, .lab-switch-back:focus-visible { outline: 3px solid #2a79a9; outline-offset: 3px; }
+    .lab-switch-back {
+      min-block-size: 44px;
+      margin-inline-end: auto;
+      padding: .4rem .72rem;
+      border: 1px solid #bfd6e8;
+      border-radius: .7rem;
+      background: #fff;
+      color: #1b4d73;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .lab-switch-back:hover { background: #e9f5ff; }
+    #lab-choice[hidden], #lab-simulation[hidden] { display: none; }
   </style>
 <link rel="stylesheet" href="../styles/slide-support.css">
 <link rel="stylesheet" href="../styles/feeder-capstone.css">
   <link rel="stylesheet" href="../styles/feeder-ir.css"></head>
 <body class="text-slate-800 min-h-screen flex flex-col">
 
+  <section class="lab-choice" id="lab-choice" aria-labelledby="lab-choice-title">
+    <h1 id="lab-choice-title">เลือก Lab เครื่องให้อาหารแมว</h1>
+    <div class="lab-choice-actions">
+      <a class="lab-choice-option lab-choice-option--real" href="__FEEDER_LAB_URL__" target="_blank" rel="noopener noreferrer">
+        <span><strong>Lab จริง</strong><small>ESP32 Feeder Lab</small></span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <button class="lab-choice-option" id="lab-show-simulation" type="button" aria-controls="lab-simulation">
+        <span><strong>Lab simulation</strong><small>(not completed)</small></span>
+        <span aria-hidden="true">→</span>
+      </button>
+    </div>
+  </section>
+
+  <div id="lab-simulation" class="w-full flex flex-1 flex-col" hidden>
   <!-- Top Header -->
   <header class="w-full max-w-6xl mx-auto px-4 pt-4 pb-2 flex flex-wrap items-center justify-between gap-3">
     <div class="flex flex-wrap items-center gap-2.5">
@@ -50,6 +126,7 @@
       </span>
     </div>
 
+    <button class="lab-switch-back" id="lab-back-to-choice" type="button">← กลับไปเลือก Lab</button>
     <a href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer"
       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs sm:text-sm font-extrabold shadow-md transition transform active:scale-95">
       <span>🚀 เปิดหน้า Wokwi เปล่า (ESP32)</span>
@@ -305,10 +382,25 @@
 
     </section>
   <p class="mx-auto max-w-6xl px-4 pb-5 text-xs text-slate-700">ESP32 DevKit V1 (WROOM-32) · GPIO 3.3V · HC-SR04 Echo ต้องผ่านตัวแบ่งแรงดัน 1kΩ / 1.8kΩ · Servo ใช้แหล่งจ่าย 5V ที่เพียงพอและ GND ร่วมกัน · ใช้ Arduino-ESP32 core 3.x และ ESP32Servo รุ่นที่รองรับ (Wokwi ปัจจุบันใช้ core 3.x)</p></main>
+  </div>
 
   <script>
     (function () {
       const labsData = __ESP32_LABS__;
+      const choice = document.getElementById('lab-choice');
+      const simulation = document.getElementById('lab-simulation');
+      const openSimulation = document.getElementById('lab-show-simulation');
+      const backToChoice = document.getElementById('lab-back-to-choice');
+
+      function showSimulation(open) {
+        choice.hidden = open;
+        simulation.hidden = !open;
+        window.scrollTo(0, 0);
+        (open ? backToChoice : openSimulation).focus({ preventScroll: true });
+      }
+
+      openSimulation.addEventListener('click', () => showSimulation(true));
+      backToChoice.addEventListener('click', () => showSimulation(false));
 
       const guideToggleBtn = document.getElementById('guideToggleBtn');
       const guideChevron = document.getElementById('guideChevron');

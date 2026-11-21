@@ -89,8 +89,8 @@ const requests = {
 };
 
 const form = document.querySelector('#project-form');
-const geminiDialog = document.querySelector('#ap-gemini');
-const geminiResult = document.querySelector('#ap-show-gemini');
+const aiResultDialog = document.querySelector('#ap-ai-result');
+const aiResultButton = document.querySelector('#ap-show-ai-result');
 const output = document.querySelector('#ap-output');
 const status = document.querySelector('#ap-status');
 const idea = form.elements.namedItem('idea');
@@ -99,11 +99,11 @@ const fields = ['idea', 'goal', 'budget', 'time', 'tools', 'limits'];
 const target = document.querySelector('#pt-prompt-target');
 let buildPlan;
 
-geminiResult.addEventListener('click', () => {
-  geminiDialog.showModal();
-  geminiDialog.querySelector('.ap-gemini-body').scrollTop = 0;
+aiResultButton.addEventListener('click', () => {
+  aiResultDialog.showModal();
+  aiResultDialog.querySelector('.ap-ai-result-body').scrollTop = 0;
 });
-geminiDialog.addEventListener('keydown', event => event.stopPropagation());
+aiResultDialog.addEventListener('keydown', event => event.stopPropagation());
 
 function renderPrompt() {
   const values = new FormData(form);
@@ -134,7 +134,7 @@ function renderPrompt() {
   ].join('\n');
   const matchesSample = mode === 'poc' && test === feederTests.normal && !buildPlan
     && fields.every(field => read(field) === presets.feeder[field]);
-  geminiResult.hidden = !matchesSample;
+  aiResultButton.hidden = !matchesSample;
   status.textContent = '';
 }
 
@@ -169,7 +169,7 @@ document.querySelector('#ap-copy').addEventListener('click',async () => {
   const text = output.textContent;
   try {
     await navigator.clipboard.writeText(text);
-    if (text === output.textContent) status.textContent = 'คัดลอกแล้ว เปิด Gemini แล้ววางคำถามได้เลย';
+    if (text === output.textContent) status.textContent = 'คัดลอกแล้ว วางคำถามในแชต AI ที่ใช้ได้เลย';
   } catch {
     if (text !== output.textContent) return;
     output.focus({ preventScroll: true });
